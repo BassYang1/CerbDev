@@ -1,0 +1,136 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title> Cerberus iSCS </title>
+<link href="css/top.css" rel="stylesheet" type="text/css">
+<link type="text/css" href="css/TopStyle.css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='js/lang/"+getLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="js/custom/system.js"></script>
+<style type="text/css">
+<!--
+.style1 {color: #1B3D49}
+-->
+</style>
+</head>
+<script language="javascript">
+function Init()
+{
+	//CheckLoginStatusForRoot();
+	//fCheckMsg();
+	//setInterval("fCheckMsg();",10000);
+}
+$(document).ready(function(){
+	$(this).find(".pulldown-nav").addClass("hover");
+	$(this).find(".pulldown").show();
+});
+</script>
+<body onLoad="Init()">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="left" width="100%"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="376" valign="bottom"><img id="logopic" src="images/logo.gif" width="390" height="65"></td>
+        <td align="right">
+        <table width="100%"  border="0" cellspacing="0" cellpadding="0"><TBODY>
+          <tr>
+            <td style="height:14px;" align="left" class="toptime"><span><span id="Hello"></span><span id="UserNameMsg"></span></span></td>
+          </tr>
+          <tr>
+            <td >
+			<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+              <tr valign="middle">
+                <td width="28%"></td>
+                <td align="right" class="toptd" height="">
+                
+<div class="hd-main " id="header">
+	<div class="navs">
+		<div class="pulldown app-url">
+            <div class="content">
+                <a class="li banEmp top" href="Employees/nav.html" target="navFrame">
+                    <span class="icon"></span>
+                    <span class="text" id="Employees">personnel</span>
+                </a>
+                <a class="li banController top" href='Equipment/nav.html' target='navFrame' >
+                    <span class="icon"></span>
+                    <span class="text" id="Equipment">Controller</span>
+                </a>
+                <a class="li banReport top" href='Report/nav.html' target='navFrame'>
+                    <span class="icon"></span>
+                    <span class="text" id="Report">Report</span>
+                </a>
+                <a class="li banTool top" href='Tools/nav.html?nd=254' target='navFrame' >
+                    <span class="icon"></span>
+                    <span class="text" id="Tool">Tool</span>
+                </a>
+                <a class="li banMonitor top" href='Monitor/nav.html' target='navFrame' >
+                    <span class="icon"></span>
+                    <span class="text" id="Monitor">Monitor</span>
+                </a>
+                <a class="li banLoginOut top" href="javascript:void(0)" onClick="LoginOut()">
+                    <span class="icon"></span>
+                    <span class="text" id="LogOut">LoginOut</span>
+                </a>
+                <a class="li banHelp top" href="javascript:void(0)" onClick="HelpClick()" >
+                    <span class="icon"></span>
+                    <span class="text" id="Help">LoginOut</span>
+                </a>
+            </div>
+        </div>
+	</div>
+</div>
+                
+
+				</td>
+				<td width="1"></td>
+              </tr>
+            </table></td>
+          </tr></TBODY>
+        </table>
+        </td>
+      </tr>
+    </table></td>
+	<td>
+   
+    </td>
+  </tr>
+  <tr>
+    <td style="height:2px; " colspan="2" bgcolor="#c5c5c5"></td>
+  </tr>
+  <tr>
+    <td style="height:12px; background:url(images/top_line.gif) " colspan="2" ></td>
+  </tr>
+</table>
+<script language="javascript">
+$("#Hello").html(getlbl("login.Hello"));
+$("#Employees").html(getlbl("login.Employees"));
+$("#Equipment").html(getlbl("login.Equipment"));
+$("#Report").html(getlbl("login.Report"));
+$("#Tool").html(getlbl("login.Tool"));
+$("#Monitor").html(getlbl("login.Monitor"));
+$("#LogOut").html(getlbl("login.LogOut"));
+$("#Help").html(getlbl("login.Help"));
+$("#logopic").attr("src",getlbl("login.logopic"));
+
+var htmlObj = $.ajax({url:"Common/GetLoginUserName.asp",async:false});
+$("#UserNameMsg").html(htmlObj.responseText); 
+
+function LoginOut(){
+window.location.href="LoginOut.asp";
+}
+
+function HelpClick(){
+	L = getCookie("CerbLan");
+	if(LanTemp == "1" || LanTemp == 1)
+		window.open("Help/J/iscsHelp_J.mht");
+	else if(LanTemp == "2" || LanTemp == 2)
+		window.open("Help/F/iscsHelp_F.mht");
+	else
+		window.open("Help/F/iscsHelp_F.mht");
+}
+</script>
+</body>
+</html>

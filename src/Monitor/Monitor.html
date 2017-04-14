@@ -1,0 +1,859 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Monitor</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.custom.css" />
+<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"' rel='nofollow'><\/script>");
+</script>
+<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.core.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
+
+<script src="../js/ui/jquery.ui.mouse.js"></script>
+<script src="../js/ui/jquery.ui.button.js"></script>
+<script src="../js/ui/jquery.ui.draggable.js"></script>
+<script src="../js/ui/jquery.ui.position.js"></script>
+<script src="../js/ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../css/demos.css">
+<style type="text/css">
+.ui-widget-content2 {
+	border: 1px solid #FFFFFF;
+	/*background: #fcfdfd url(images/ui-bg_inset-hard_100_fcfdfd_1x100.png) 50% bottom repeat-x;*/
+	color: #222222;
+	font-size:35px;
+}
+.dataTR {
+	border-bottom-width: 1px;
+	border-bottom-style:dashed;
+	border-bottom-color: #a6c9e2;
+	line-height:47px;
+}
+.dataTRSmall {
+	line-height:37px;
+	font-size:30px;
+}
+.ui-widget-content3 {
+	border: 1px solid #FFFFFF;
+	/*background: #fcfdfd url(images/ui-bg_inset-hard_100_fcfdfd_1x100.png) 50% bottom repeat-x;*/
+	color: #222222;
+	font-size:18px;
+}
+.dataTR3 {
+	border-bottom-width: 1px;
+	border-bottom-style:dashed;
+	border-bottom-color: #a6c9e2;
+	line-height:26px;
+}
+</style>
+
+<body>
+<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_DataGrid" dir="ltr" style="width: 1024px;">
+<div id="lui_DataGrid" class="ui-widget-overlay jqgrid-overlay"></div>
+<div id="load_DataGrid" class="loading ui-state-default ui-state-active" style="display: none;">正在獲取，請稍後...</div>
+<div class="ui-jqgrid-view" id="gview_DataGrid" style="width: 100%">
+  <div id="gview_DataGrid_Title" class="ui-jqgrid-titlebar ui-jqgrid-caption ui-widget-header ui-corner-top ui-helper-clearfix"><span class="ui-jqgrid-title">Monitor</span></div>
+  <div id="DataGrid_toppager" class="ui-state-default ui-jqgrid-toppager" style="width: 100%" dir="ltr">
+    <div role="group" class="ui-pager-control" id="pg_DataGrid_toppager">
+      <table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table">
+        <tbody><tr><td align="left" id="DataGrid_toppager_left" style="width: 70%;">
+         <table cellspacing="0" cellpadding="0" border="0" style="float:left;table-layout:auto;" class="ui-pg-table navtable">
+          <tbody>
+              <tr id="trOper">
+             </tr>
+           </tbody>
+         </table></td>
+        <td align="right" id="DataGrid_toppager_right" style="width: 30%;">
+        	<table cellspacing="0" cellpadding="0" border="0" style="float:left;table-layout:auto; " class="ui-pg-table navtable" id="table_DataGrid_top_right">
+             <tbody><tr id="tr_DataGrid_toppager_right">
+			</tr></tbody>
+           </table>
+        </td></tr></tbody></table></div></div>
+           <div class="ui-jqgrid-bdiv" style="height: auto; width: 100%"><div style="position:relative;"><div></div>
+           <table cellspacing="0" cellpadding="0" border="0" class="ui-jqgrid-btable" id="DataGrid" tabindex="0" role="grid" aria-multiselectable="true" aria-labelledby="gbox_DataGrid" style="width: 100%"><tbody>
+           <tr id="firstBlankLine" style="height:10px" role="row" class="ui-widget-content2 jqgrow ui-row-ltr jqgfirstrow">
+            <td style="height:0px;width:10px;" role="gridcell"></td>
+            <td style="height:0px;width:150px;" role="gridcell"></td>
+            <td style="height:0px;width:150px;" role="gridcell"></td>
+            <td style="height:0px;width:150px;" role="gridcell"></td>
+            <td style="height:0px;width:120px;" role="gridcell"></td>
+            <td style="height:0px;width:80px;" role="gridcell"></td>
+            <td style="height:0px;width:50px;" role="gridcell"></td>
+          </tr>
+          <tr class="" tabindex="-1" id="508" role="row">
+          <td aria-describedby="DataGrid_DepartmentID" style="text-align:center;height:auto;" role="gridcell" colspan="3">
+          <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+              <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr "  id="firstdataPhoto">
+                <td style="width:10px;" role="gridcell"></td>
+                <td style="text-align:center;" role="gridcell" ><img name='iMage' id='firstiMage'  width='308' height='355' border='1'></td>
+                <td style="width:1px;" role="gridcell"></td>
+              </tr>
+             </tbody>
+          </table>
+          </td>
+          <td aria-describedby="DataGrid_Number" style="text-align:center;" role="gridcell" colspan="3">&nbsp;
+          	<table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable"><tbody>
+              <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataName">
+                <td style="width:0px;" role="gridcell"></td>
+                <td style="width:130px;" role="gridcell">Name</td>
+                <td style="" role="gridcell"></td>
+                <td style="width:1px;" role="gridcell"></td>
+              </tr>
+              <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataNumber">
+                <td role="gridcell"></td>
+                <td role="gridcell" >Number</td>
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+              </tr>
+              <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataCard">
+                <td role="gridcell"></td>
+                <td role="gridcell">Card</td>
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+              </tr>
+              <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataDept">
+                <td role="gridcell"></td>
+                <td role="gridcell">Dept</td>
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+              </tr>
+              <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataTime">
+                <td role="gridcell"></td>
+                <td role="gridcell">Time</td>
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+              </tr>
+               <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataController">
+                <td role="gridcell"></td>
+                <td role="gridcell">Controller</td>
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+              </tr>
+               <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr dataTR"  id="firstdataProperty">
+                <td role="gridcell"></td>
+                <td role="gridcell">Property</td>
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+              </tr>
+            </tbody></table>
+          </td>
+          <td aria-describedby="DataGrid_Headship" style="text-align:center;" role="gridcell">&nbsp;</td>
+         </tr>
+         <tr class="" tabindex="-1"role="row">
+          <td style="text-align:center;" colspan="7">
+            <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable"><tbody>
+            	<tr id="secondBlankLine" style="height:10px" role="row" class="ui-"><td cstyle="height:0px"></td></tr>
+            </tbody></table>
+            <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable"><tbody>
+              <tr style="height:auto" role="row" class="ui-">
+                <td style="width:25%;" role="gridcell" id="tdsecond">
+
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable">
+                  <tr class="" role="row">
+                  <td aria-describedby="DataGrid_DepartmentID" style="text-align:center;height:auto;" role="gridcell">
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content2 jqgrow ui-row-ltr "  id="seconddataPhoto">
+                        <td style="width:10px;" role="gridcell"></td>
+                        <td style="text-align:center;" role="gridcell" ><img name='iMage' id='secondiMage'  width='130' height='150' border='1'></td>
+                        <td style="width:1px;" role="gridcell"></td>
+                      </tr>
+                     </tbody>
+                  </table>
+                  </td>
+                  <td aria-describedby="DataGrid_Number" style="text-align:center;" role="gridcell">&nbsp;
+                    <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="seconddataName">
+                        <td style="width:0px;" role="gridcell"></td>
+                        <td style="width:50px;" role="gridcell">Name</td>
+                        <td style="" role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="seconddataNumber">
+                        <td role="gridcell"></td>
+                        <td role="gridcell" >Number</td>
+                        <td role="gridcell"></td>
+                       </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="seconddataCard">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Card</td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="seconddataTime">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Time</td>
+                        <td role="gridcell"></td>
+                      </tr>
+                       <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="seconddataProperty">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Property</td>
+                        <td role="gridcell"></td>
+                       </tr>
+                    </tbody></table>
+                  </td>
+                  </tr>
+                  </table>
+                
+                </td>
+                <td style="width:25%;" role="gridcell" id="tdthird">
+                
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable">
+                  <tr class="" role="row">
+                  <td aria-describedby="DataGrid_DepartmentID" style="text-align:center;height:auto;" role="gridcell">
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr "  id="thirddataPhoto">
+                        <td style="width:10px;" role="gridcell"></td>
+                        <td style="text-align:center;" role="gridcell" ><img name='iMage' id='thirdiMage'  width='130' height='150' border='1'></td>
+                        <td style="width:1px;" role="gridcell"></td>
+                      </tr>
+                     </tbody>
+                  </table>
+                  </td>
+                  <td aria-describedby="DataGrid_Number" style="text-align:center;" role="gridcell">&nbsp;
+                    <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="thirddataName">
+                        <td style="width:0px;" role="gridcell"></td>
+                        <td style="width:50px;" role="gridcell">Name</td>
+                        <td style="" role="gridcell"></td>
+                        <td style="width:0px;" role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="thirddataNumber">
+                        <td role="gridcell"></td>
+                        <td role="gridcell" >Number</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="thirddataCard">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Card</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="thirddataTime">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Time</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                       <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="thirddataProperty">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Property</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                    </tbody></table>
+                  </td>
+                  </tr>
+                  </table>             
+                
+                </td>
+                <td style="width:25%;" role="gridcell" id="tdfourth">
+                
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable">
+                  <tr class="" role="row">
+                  <td aria-describedby="DataGrid_DepartmentID" style="text-align:center;height:auto;" role="gridcell">
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr "  id="fourthdataPhoto">
+                        <td style="width:10px;" role="gridcell"></td>
+                        <td style="text-align:center;" role="gridcell" ><img name='iMage' id='fourthiMage'  width='130' height='150' border='1'></td>
+                        <td style="width:1px;" role="gridcell"></td>
+                      </tr>
+                     </tbody>
+                  </table>
+                  </td>
+                  <td aria-describedby="DataGrid_Number" style="text-align:center;" role="gridcell">&nbsp;
+                    <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fourthdataName">
+                        <td style="width:0px;" role="gridcell"></td>
+                        <td style="width:50px;" role="gridcell">Name</td>
+                        <td style="" role="gridcell"></td>
+                        <td style="width:0px;" role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fourthdataNumber">
+                        <td role="gridcell"></td>
+                        <td role="gridcell" >Number</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fourthdataCard">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Card</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fourthdataTime">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Time</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                       <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fourthdataProperty">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Property</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                    </tbody></table>
+                  </td>
+                  </tr>
+                  </table>
+                
+                </td>
+                <td style="width:25%;" role="gridcell" id="tdfifth">
+                
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable">
+                  <tr class="" role="row">
+                  <td aria-describedby="DataGrid_DepartmentID" style="text-align:center;height:auto;" role="gridcell">
+                  <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr "  id="fifthdataPhoto">
+                        <td style="width:10px;" role="gridcell"></td>
+                        <td style="text-align:center;" role="gridcell" ><img name='iMage' id='fifthiMage'  width='130' height='150' border='1'></td>
+                        <td style="width:1px;" role="gridcell"></td>
+                      </tr>
+                     </tbody>
+                  </table>
+                  </td>
+                  <td aria-describedby="DataGrid_Number" style="text-align:center;" role="gridcell">&nbsp;
+                    <table cellspacing="0" cellpadding="0" border="0" style="width:100%" class="ui-jqgrid-btable"><tbody>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fifthdataName">
+                        <td style="width:0px;" role="gridcell"></td>
+                        <td style="width:50px;" role="gridcell">Name</td>
+                        <td style="" role="gridcell"></td>
+                        <td style="width:0px;" role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fifthdataNumber">
+                        <td role="gridcell"></td>
+                        <td role="gridcell" >Number</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fifthdataCard">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Card</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                      <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fifthdataTime">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Time</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                       <tr style="height:auto" role="row" class="ui-widget-content3 jqgrow ui-row-ltr dataTR3"  id="fifthdataProperty">
+                        <td role="gridcell"></td>
+                        <td role="gridcell">Property</td>
+                        <td role="gridcell"></td>
+                        <td role="gridcell"></td>
+                      </tr>
+                    </tbody></table>
+                  </td>
+                  </tr>
+                  </table>
+                
+                </td>
+              </tr>
+            </tbody></table>
+            <table cellspacing="0" cellpadding="0" border="0" style="width:98%" class="ui-jqgrid-btable"><tbody>
+            	<tr id="thirdBlankLine" style="height:20px" role="row" class="ui-"><td cstyle="height:0px"></td></tr>
+            </tbody></table>
+          </td>
+         </tr>
+         </tbody></table></div></div></div>
+<div style="text-align: center; width: 100%" class="scroll ui-state-default ui-jqgrid-pager ui-corner-bottom" id="pager" dir="ltr">
+ <div role="group" class="ui-pager-control" id="pg_pager">
+   <table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table">
+    <tbody><tr><td align="left" id="pager_left"></td></td></tr>
+    </tbody>
+  </table>
+ </div>
+</div>
+<div id="newMessageDIV" style="display:none"></div> 
+</div>
+</body>
+</html>
+<script language="javascript">
+var iInter=0;
+var strController="";
+var isFullScreen = false;
+var strURL = "";
+
+$(document).ready(function(){
+	
+	strURL = unescape(getCookie("CerbSeverURLForMonitor"));
+	if(strURL != "" && strURL != undefined){
+		if(strURL.toLowerCase().indexOf(".aspx")<0){
+			//strURL=strURL + "/" + "GetBrushCardData.aspx";
+			strURL=strURL + "/" + "GetBrushCardDataByID.aspx";
+		}
+		if(strURL.toLowerCase().indexOf("http")<0){
+			strURL="http://"+strURL;
+		}
+	}
+//setInterval("GetBrushCardData();",1000);//自动刷新状态
+//GetBrushCardData();
+	$(function(){
+		ReSize();
+	});
+
+///CheckLoginStatus();  
+//获取操作权限
+///var role = GetOperRole("Shifts");
+var iedit=false,iadd=false,idel=false,iview=false,irefresh=false,isearch=false,iexport=false,isync=false;
+/*try{
+	iedit=role.edit;
+	iadd=role.add;
+	idel=role.del;
+	iview=role.view;
+	irefresh=role.refresh;
+	isearch=role.search;
+	iexport=role.exportdata;
+	isync=role.sync;
+}
+catch(exception) {
+	alert(exception);
+}*/
+iedit=true;
+$("#tr_DataGrid_toppager_right").append("<td class='ui-pg-button ui-corner-all' id='btnMonitorDoorStatus' title='"+getlbl("mon.MonitorDoorStatus")+"'><div class='ui-pg-div'><a>"+getlbl("mon.MonitorDoorStatus")+"</a></div></td>");//监控门状态
+
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnMonitor' title='"+getlbl("mon.Monitor")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-search'></span><a>"+getlbl("mon.Monitor")+"</a></div></td>");//监控
+}
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all ' id='DataGrid_btnMonitorAll' title='"+getlbl("mon.MonitorAll")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-circle-zoomout'></span><a>"+getlbl("mon.MonitorAll")+"</a></div></td>");//监控所有设备
+}
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnStopMonitor' title='"+getlbl("mon.StopMonitor")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-stop'></span><a>"+getlbl("mon.StopMonitor")+"</a></div></td>");//停止监控
+}
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnFullScreen' title='"+getlbl("mon.FullScreen")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-newwin'></span><a>"+getlbl("mon.FullScreen")+"</a></div></td>");//全屏显示
+}
+Init();
+
+})
+
+function Init(){
+	$("#gview_DataGrid_Title").children().html(getlbl("mon.MonitorTitle"));//实时监控
+	$("#firstdataName").children('td').eq(1).html(getlbl("mon.Name"));
+	$("#firstdataNumber").children('td').eq(1).html(getlbl("mon.Num"));
+	$("#firstdataCard").children('td').eq(1).html(getlbl("mon.Card"));
+	$("#firstdataDept").children('td').eq(1).html(getlbl("mon.Dept"));
+	$("#firstdataTime").children('td').eq(1).html(getlbl("mon.Time"));
+	$("#firstdataController").children('td').eq(1).html(getlbl("mon.Controller"));
+	$("#firstdataProperty").children('td').eq(1).html(getlbl("mon.Property"));
+	
+	$("#seconddataName").children('td').eq(1).html(getlbl("mon.Name"));
+	$("#seconddataNumber").children('td').eq(1).html(getlbl("mon.Num"));
+	$("#seconddataCard").children('td').eq(1).html(getlbl("mon.Card"));
+	$("#seconddataTime").children('td').eq(1).html(getlbl("mon.Time"));
+	$("#seconddataProperty").children('td').eq(1).html(getlbl("mon.Property"));
+	
+	$("#thirddataName").children('td').eq(1).html(getlbl("mon.Name"));
+	$("#thirddataNumber").children('td').eq(1).html(getlbl("mon.Num"));
+	$("#thirddataCard").children('td').eq(1).html(getlbl("mon.Card"));
+	$("#thirddataTime").children('td').eq(1).html(getlbl("mon.Time"));
+	$("#thirddataProperty").children('td').eq(1).html(getlbl("mon.Property"));
+			
+	$("#fourthdataName").children('td').eq(1).html(getlbl("mon.Name"));
+	$("#fourthdataNumber").children('td').eq(1).html(getlbl("mon.Num"));
+	$("#fourthdataCard").children('td').eq(1).html(getlbl("mon.Card"));
+	$("#fourthdataTime").children('td').eq(1).html(getlbl("mon.Time"));
+	$("#fourthdataProperty").children('td').eq(1).html(getlbl("mon.Property"));		
+	
+	$("#fifthdataName").children('td').eq(1).html(getlbl("mon.Name"));
+	$("#fifthdataNumber").children('td').eq(1).html(getlbl("mon.Num"));
+	$("#fifthdataCard").children('td').eq(1).html(getlbl("mon.Card"));
+	$("#fifthdataTime").children('td').eq(1).html(getlbl("mon.Time"));
+	$("#fifthdataProperty").children('td').eq(1).html(getlbl("mon.Property"));
+	
+	$("#DataGrid_btnHideNav").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnHideNavClick(); 
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnMonitor").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnMonitorClick(); 
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnMonitorAll").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnMonitorAllClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnStopMonitor").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnStopMonitorClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnFullScreen").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnFullScreenClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	
+	$("#btnMonitorDoorStatus").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnMonitorDoorStatusClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);	
+	
+	$("#DataGrid_btnStopMonitor").addClass("ui-state-disabled");
+}
+
+function btnMonitorDoorStatusClick(){
+	window.parent.document.getElementsByTagName("frameset")[1].cols="0,*";
+	window.parent.mainFrame.location.href = "MonitorDoor.html";
+}
+
+function btnMonitorClick(){
+	var obj=$(parent.navFrame.document).contents().find("#DataGrid");
+	var rowidArr = obj.jqGrid("getGridParam", "selarrrow");
+	if(rowidArr == "" || rowidArr == undefined){
+		alert(getlbl("mon.PSelectCon"));//请先选择设备
+		return;
+	}
+	if(strURL == "" || strURL == undefined){
+		alert(getlbl("mon.MonitorIsEmpty"));//监控地址为空，请重新登录再试！
+		return;
+	}
+	StartMonitor();
+	ShowMsg(getlbl("mon.MonitorPartIng")+rowidArr);//正在监控部分设备:
+	strController=","+rowidArr+",";
+	//alert(rowidArr);
+}
+function btnMonitorAllClick(){
+	if(strURL == "" || strURL == undefined){
+		alert(getlbl("mon.MonitorIsEmpty"));//监控地址为空，请重新登录再试！
+		return;
+	}
+	StartMonitor();
+	strController = "all";
+	ShowMsg(getlbl("mon.MonitorAllIng"));//正在监控所有设备...
+}
+function btnStopMonitorClick(){
+	StopMonitor();
+	ShowMsg(getlbl("mon.StopMonitored"));//已停止监控
+}
+function btnFullScreenClick(){
+	if(isFullScreen == false){
+		window.parent.document.getElementsByTagName("frameset")[1].cols="0,*"
+		window.parent.document.getElementsByTagName("frameset")[0].rows="0,*"
+		//launchFullscreen(document.documentElement);
+		//launchFullscreen(document.getElementById("gbox_DataGrid"));
+		ReSize();
+		setTimeout('ReSize()',1000); 
+		$("#DataGrid_btnFullScreen").children().children().eq(1).html(getlbl("mon.ExitFullScreen"));//退出全屏
+		$("#DataGrid_btnFullScreen").attr("title",getlbl("mon.ExitFullScreen"));//退出全屏
+		isFullScreen = true;
+	}else{
+		window.parent.document.getElementsByTagName("frameset")[1].cols="167,*"
+		window.parent.document.getElementsByTagName("frameset")[0].rows="93,*"
+		//exitFullscreen();
+		ReSize();
+		setTimeout('ReSize()',1000); 
+		$("#DataGrid_btnFullScreen").children().children().eq(1).html(getlbl("mon.FullScreen"));//全屏显示
+		$("#DataGrid_btnFullScreen").attr("title",getlbl("mon.FullScreen"));//全屏显示
+		isFullScreen = false;		
+	}
+	//ReSize(); //这里没用。
+}
+//全屏后，改变界面大小
+//http://www.weste.net/2014/4-4/96193.html
+//document.addEventListener("fullscreenchange", function () {ReSize();alert("11");}, false);
+//document.addEventListener("mozfullscreenchange", function () {ReSize();alert("22");}, false);
+//document.addEventListener("webkitfullscreenchange", function () {ReSize();alert("33");}, false);
+
+function StartMonitor(){
+	if(iInter != 0)
+		StopMonitor();
+	iInter=setInterval("GetBrushCardData();",1000);
+	$("#DataGrid_btnStopMonitor").removeClass("ui-state-disabled");
+	$("#DataGrid_btnMonitor").addClass("ui-state-disabled");
+	$("#DataGrid_btnMonitorAll").addClass("ui-state-disabled");
+}
+function StopMonitor(){
+	clearInterval(iInter);
+	iInter = 0;
+	$("#DataGrid_btnStopMonitor").addClass("ui-state-disabled");
+	$("#DataGrid_btnMonitor").removeClass("ui-state-disabled");
+	$("#DataGrid_btnMonitorAll").removeClass("ui-state-disabled");
+}
+function launchFullscreen(element) {
+	if(element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if(element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if(element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if(element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+  }
+}
+function exitFullscreen() {
+	if(document.exitFullscreen) {
+		document.exitFullscreen();
+	} else if(document.mozCancelFullScreen) {
+		document.mozCancelFullScreen();
+	} else if(document.webkitExitFullscreen) {
+		document.webkitExitFullscreen();
+	}else if (document.msExitFullscreen) { 
+		document.msExitFullscreen(); 
+	}
+}
+
+function ShowMsg(strMsg){
+	$("#pager_left").html(strMsg);
+}
+
+function PlaySound(Property){
+	var fileName = "";
+	if(Property > 0){
+		fileName="01.wav";
+	}
+	if(fileName != ""){
+		if(navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0 || navigator.userAgent.indexOf("MSIE 8.0")>0){
+			//本来这里用的是<bgsound src="system.wav"/>,结果IE8不播放声音,于是换成了embed
+			//alert("iE8")
+			$('#newMessageDIV').html('<embed src='+fileName+'/>');
+		}else{
+		//IE9+,Firefox,Chrome均支持<audio/>
+			//alert("ie1");
+			$('#newMessageDIV').html('<audio autoplay="autoplay"><source src='+fileName+' type="audio/wav"/></audio>');
+		}
+	}
+	else{
+		if(navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0 || navigator.userAgent.indexOf("MSIE 8.0")>0){
+			//本来这里用的是<bgsound src="system.wav"/>,结果IE8不播放声音,于是换成了embed
+			//alert("iE8")
+			$('#newMessageDIV').html('');
+		}else{
+		//IE9+,Firefox,Chrome均支持<audio/>
+			//alert("ie1");
+			$('#newMessageDIV').html('');
+		}
+	}	
+}
+
+var LastID = 0;
+function GetBrushCardData(){
+$.ajax({
+	type: 'GET',
+	//url: 'http://192.168.1.18/sync1/GetBrushCardData.aspx?nd='+getRandom(),
+	url:strURL+'?nd='+getRandom(),
+	//dataType:'JSONP', 
+	data:{"ID":LastID,"datatype":"2"},
+	success: function(data) {
+		if($.trim(data).length > 0){
+			try  {
+				var responseMsg = $.parseJSON(data);
+				if(responseMsg.success == "false"){
+					//alert(responseMsg.message);
+				}else if(responseMsg.success == "true"){
+					//成功
+					if(responseMsg.rows.length > 0){
+						for(var i=0;i<responseMsg.rows.length; i++){
+							var tmpId=parseInt(responseMsg.rows[i].ID)
+							LastID = tmpId > LastID ? tmpId:LastID;
+							//这里的判断用于，担心服务器重启或IIS重启后，ID从0开始重新计算。　？？应该要到服务器上判断？？
+							if(tmpId < 5 && LastID > tmpId)
+								LastID = tmpId;
+							//监控部分设备，判断ID是否存在
+							if(strController != "" && strController != "all"){
+								var ConId = ","+responseMsg.rows[i].ControllerId + ",";
+								if(strController.indexOf(ConId)<0)
+									continue;
+							}
+							var EmpId = responseMsg.rows[i].EmployeeId;
+							
+							$("#fifthdataName").children('td').eq(2).html($("#fourthdataName").children('td').eq(2).html());
+							$("#fifthdataNumber").children('td').eq(2).html($("#fourthdataNumber").children('td').eq(2).html());
+							$("#fifthdataCard").children('td').eq(2).html($("#fourthdataCard").children('td').eq(2).html());
+							$("#fifthdataTime").children('td').eq(2).html($("#fourthdataTime").children('td').eq(2).html());
+							$("#fifthdataProperty").children('td').eq(2).html($("#fourthdataProperty").children('td').eq(2).html());
+							$("#fifthiMage").attr("src",$("#fourthiMage").attr("src"));
+
+							$("#fourthdataName").children('td').eq(2).html($("#thirddataName").children('td').eq(2).html());
+							$("#fourthdataNumber").children('td').eq(2).html($("#thirddataNumber").children('td').eq(2).html());
+							$("#fourthdataCard").children('td').eq(2).html($("#thirddataCard").children('td').eq(2).html());
+							$("#fourthdataTime").children('td').eq(2).html($("#thirddataTime").children('td').eq(2).html());
+							$("#fourthdataProperty").children('td').eq(2).html($("#thirddataProperty").children('td').eq(2).html());
+							$("#fourthiMage").attr("src",$("#thirdiMage").attr("src"));
+
+							$("#thirddataName").children('td').eq(2).html($("#seconddataName").children('td').eq(2).html());
+							$("#thirddataNumber").children('td').eq(2).html($("#seconddataNumber").children('td').eq(2).html());
+							$("#thirddataCard").children('td').eq(2).html($("#seconddataCard").children('td').eq(2).html());
+							$("#thirddataTime").children('td').eq(2).html($("#seconddataTime").children('td').eq(2).html());
+							$("#thirddataProperty").children('td').eq(2).html($("#seconddataProperty").children('td').eq(2).html());
+							$("#thirdiMage").attr("src",$("#secondiMage").attr("src"));
+							
+							$("#seconddataName").children('td').eq(2).html($("#firstdataName").children('td').eq(2).html());
+							$("#seconddataNumber").children('td').eq(2).html($("#firstdataNumber").children('td').eq(2).html());
+							$("#seconddataCard").children('td').eq(2).html($("#firstdataCard").children('td').eq(2).html());
+							$("#seconddataProperty").children('td').eq(2).html($("#firstdataProperty").children('td').eq(2).html());
+							$("#secondiMage").attr("src",$("#firstiMage").attr("src"));
+							var lastTime = $("#firstdataTime").children('td').eq(2).html();
+							if($.trim(lastTime).length > 0){
+								lastTime = lastTime.substr(lastTime.indexOf(" ")+1);
+							}
+							$("#seconddataTime").children('td').eq(2).html(lastTime);
+
+							$("#firstdataName").children('td').eq(2).html(responseMsg.rows[i].Name);
+							$("#firstdataNumber").children('td').eq(2).html(responseMsg.rows[i].Number);
+							$("#firstdataCard").children('td').eq(2).html(responseMsg.rows[i].Card);
+							$("#firstdataDept").children('td').eq(2).html(responseMsg.rows[i].DepartmentName);
+							$("#firstdataTime").children('td').eq(2).html(responseMsg.rows[i].BrushTime);
+							$("#firstdataController").children('td').eq(2).html(responseMsg.rows[i].Location);
+							
+							var pro = responseMsg.rows[i].Property;
+							var desc = getBrushCardProDesc(pro,'','');
+							if($.trim(desc).length <= 0)
+								desc = pro;
+							$("#firstdataProperty").children('td').eq(2).html(desc);
+							var strUrl;
+							if(pro=="1" || pro=="2" || pro=="3" || pro=="4" || pro=="5" || pro=="6" || pro=="7" || pro=="8" || pro=="9"){
+								PlaySound(1);
+								strUrl = 'DisplayImg.asp?nd='+getRandom()+'&id=-1';//非法不显示照片
+							}else{
+								PlaySound(-1);
+								//strUrl = 'DisplayImg.asp?nd='+getRandom()+'&id='+EmpId+'&number='+responseMsg.rows[i].Number;
+								strUrl = 'DisplayImg.asp?nd='+getRandom()+'&id='+EmpId;
+							}
+							$("#firstiMage").attr("src",strUrl);
+						}
+					}
+				}else{
+					//alert("同步异常");
+				}
+			}
+			catch(exception) {
+				//alert(exception+"," + data);
+			}
+		}
+	},
+	error:function(XmlHttpRequest,textStatus, errorThrown){
+		//alert(textStatus+":ExportData.asp,"+XmlHttpRequest.responseText);
+	}
+});		
+}
+
+function ReSize(){
+	var iWidth = $(window).width()-40;
+	var iHeight = $(window).height()-40;
+	
+	//alert(iWidth+","+iHeight);
+	if (iWidth <= 970)
+		iWidth = 970;
+	if (iHeight <= 500)
+		iHeight = 500;
+	$("#gview_DataGrid").css("height",iHeight);
+	$("#gbox_DataGrid").width(iWidth);
+	if(iWidth < 1300){
+		$("#tdfifth").hide();
+	}
+	else
+	{
+		$("#tdfifth").show();
+	}
+	if(iHeight<=540){
+		$("#firstdataName").addClass("dataTRSmall");
+		$("#firstdataNumber").addClass("dataTRSmall");
+		$("#firstdataCard").addClass("dataTRSmall");
+		$("#firstdataDept").addClass("dataTRSmall");
+		$("#firstdataTime").addClass("dataTRSmall");
+		$("#firstdataController").addClass("dataTRSmall");
+		$("#firstdataProperty").addClass("dataTRSmall");
+		$("#firstiMage").attr("height",300).attr("width",260);//width='308' height='355'
+	}else{
+		$("#firstdataName").removeClass("dataTRSmall");
+		$("#firstdataNumber").removeClass("dataTRSmall");
+		$("#firstdataCard").removeClass("dataTRSmall");
+		$("#firstdataDept").removeClass("dataTRSmall");
+		$("#firstdataTime").removeClass("dataTRSmall");
+		$("#firstdataController").removeClass("dataTRSmall");
+		$("#firstdataProperty").removeClass("dataTRSmall");
+		$("#firstiMage").attr("height",355).attr("width",308);//width='308' height='355'
+	}
+	if(iHeight<=590){
+		$("#firstBlankLine").height(5);
+		$("#secondBlankLine").height(5);
+		$("#thirdBlankLine").height(5);
+	}
+	if(iHeight>=610){
+		$("#firstBlankLine").height(20);
+		$("#secondBlankLine").height(20);
+		$("#thirdBlankLine").height(20);
+	}	
+	if(iHeight>=720){
+		$("#firstBlankLine").height(50);
+		$("#secondBlankLine").height(50);
+		$("#thirdBlankLine").height(50);
+	}
+	if(iHeight>=900){
+		$("#firstBlankLine").height(100);
+		$("#secondBlankLine").height(100);
+		$("#thirdBlankLine").height(100);
+	}
+}
+
+$(window).resize(function(){
+   ReSize();
+});
+
+</script>

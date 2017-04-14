@@ -1,0 +1,126 @@
+﻿ 
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="../js/zTree/css/demo.css" type="text/css">
+<link rel="stylesheet" href="../js/zTree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript" src="../js/zTree/jquery.ztree.core-3.5.js"></script>
+<script type="text/javascript" src="../js/zTree/jquery.ztree.excheck-3.5.js"></script>
+<script type="text/javascript" src="../js/zTree/jquery.ztree.exedit-3.5.js"></script>
+<title></title>
+</head>
+
+<body >
+	<ul id="treeDemo" class="ztree"></ul>
+	
+</BODY>
+
+<SCRIPT type="text/javascript">
+$("#treeDemo").css({'height':'220px'});
+$("#treeDemo").css({'width':'240px'});
+
+	<!--
+var setting = {
+	check: {
+		enable: true
+	},
+	data: {
+		simpleData: {
+			enable: true
+		}
+	},
+	callback: {
+		onCheck: zTreeOnCheck
+	},
+	view: {
+		showLine:true
+	}
+};
+
+var strUserId = Request( location.href,"userId");
+var strView = Request( location.href,"view");
+var strUrl = '../Common/GetControllerJSON.asp?nd='+getRandom()+'&userId='+strUserId;
+var htmlObj = $.ajax({url:strUrl,async:false});
+var zNodes = "";
+try{
+	zNodes = $.parseJSON(htmlObj.responseText);
+}
+catch(exception) {
+	alert(exception);
+}	
+var code;
+
+function setCheck() {
+	var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+	type = { "Y":"ps", "N":"ps"};
+	zTree.setting.check.chkboxType = type;
+	showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
+}
+function showCode(str) {
+	if (!code) code = $("#code");
+	code.empty();
+	code.append("<li>"+str+"</li>");
+}
+function zTreeOnCheck(event, treeId, treeNode) {
+    //alert(treeNode.id + ", " + treeNode.name + "," + treeNode.checked);
+	//判断是否为全选按钮
+	if(treeNode.id == 999999999){
+		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+		treeObj.checkAllNodes(treeNode.checked);
+	}
+};
+$(document).ready(function(){
+	$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+	setCheck();
+	
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var newNode = {id:999999999,name:getlbl("tool.SelectAll"),icon:"../js/zTree/css/zTreeStyle/img/diy/1_open.png"}; //"全选"
+	newNode = treeObj.addNodes(null, newNode);
+	
+	var nodes = treeObj.getNodes();
+	treeObj.moveNode(nodes[0], nodes[nodes.length-1], "prev");
+	
+	//nodes[0]为全选按钮。这里是将全选按钮前的虚线去掉，实现全选按钮左移
+	var tId = nodes[0].tId;
+	$("#"+tId+"_switch").hide();
+	
+	//view时，将复选框禁用
+	if(strView == "1"){
+		treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+		nodes = treeObj.getNodes();
+		for (var i=0, l=nodes.length; i < l; i++) {
+			treeObj.setChkDisabled(nodes[i],true,true,true);
+		}
+	}
+});
+//-->
+
+//获取所以选择的节点ID
+function GetCheckIDs()
+{
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes = treeObj.getCheckedNodes(true);
+	var Ids = "";
+	for(var i=0; i<nodes.length; i++){
+		if(nodes[i].id != 999999999)
+			Ids = Ids + nodes[i].id + ",";
+	}
+	if(Ids != "")
+		Ids = Ids.substring(0,Ids.length-1);
+	return Ids;
+}
+
+function CheckAll()
+{
+	alert("aa");
+}
+</SCRIPT>
+
+</body>
+</html>

@@ -1,0 +1,951 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Monitor</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.custom.css" />
+<link rel="stylesheet" type="text/css" href="../css/MonitorStyle.css"/>
+<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"' rel='nofollow'><\/script>");
+</script>
+<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.core.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
+
+<script src="../js/ui/jquery.ui.mouse.js"></script>
+<script src="../js/ui/jquery.ui.button.js"></script>
+<script src="../js/ui/jquery.ui.draggable.js"></script>
+<script src="../js/ui/jquery.ui.position.js"></script>
+<script src="../js/ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../css/demos.css">
+<style type="text/css">
+.ui-widget-content2 {
+	border: 1px solid #FFFFFF;
+	/*background: #fcfdfd url(images/ui-bg_inset-hard_100_fcfdfd_1x100.png) 50% bottom repeat-x;*/
+	color: #222222;
+	font-size:35px;
+}
+.dataTR {
+	border-bottom-width: 1px;
+	border-bottom-style:dashed;
+	border-bottom-color: #a6c9e2;
+	line-height:47px;
+}
+.dataTRSmall {
+	line-height:37px;
+	font-size:30px;
+}
+.ui-widget-content3 {
+	border: 1px solid #FFFFFF;
+	/*background: #fcfdfd url(images/ui-bg_inset-hard_100_fcfdfd_1x100.png) 50% bottom repeat-x;*/
+	color: #222222;
+	font-size:18px;
+}
+.dataTR3 {
+	border-bottom-width: 1px;
+	border-bottom-style:dashed;
+	border-bottom-color: #a6c9e2;
+	line-height:26px;
+}
+.css2 {
+	border: 1px solid #79b7e7;
+	background: #d0e5f5 url(../css/images/ui-bg_glass_75_d0e5f5_1x400.png) 50% 50% repeat-x;
+	color: #1d5987;	
+}
+.ui-select {
+	border: 1px solid #fad42e;
+	background: #fbec88 url(../css/images/ui-bg_flat_55_fbec88_40x100.png) 50% 50% repeat-x;
+	color: #363636;
+}
+</style>
+
+<body>
+<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_DataGrid" dir="ltr" style="width: 1024px;">
+<div id="lui_DataGrid" class="ui-widget-overlay jqgrid-overlay"></div>
+<div id="load_DataGrid" class="loading ui-state-default ui-state-active" style="display: none;">正在獲取，請稍後...</div>
+<div class="ui-jqgrid-view" id="gview_DataGrid" style="width: 100%">
+  <div id="gview_DataGrid_Title" class="ui-jqgrid-titlebar ui-jqgrid-caption ui-widget-header ui-corner-top ui-helper-clearfix"><span class="ui-jqgrid-title">Monitor Door</span></div>
+  <div id="DataGrid_toppager" class="ui-state-default ui-jqgrid-toppager" style="width: 100%" dir="ltr">
+    <div role="group" class="ui-pager-control" id="pg_DataGrid_toppager">
+      <table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table">
+        <tbody><tr><td align="left" id="DataGrid_toppager_left" style="width: 70%;">
+         <table cellspacing="0" cellpadding="0" border="0" style="float:left;table-layout:auto;" class="ui-pg-table navtable">
+          <tbody>
+              <tr id="trOper">
+             </tr>
+           </tbody>
+         </table></td>
+        <td align="right" id="DataGrid_toppager_right" style="width: 30%;">
+        	<table cellspacing="0" cellpadding="0" border="0" style="float:left;table-layout:auto; " class="ui-pg-table navtable" id="table_DataGrid_top_right">
+             <tbody><tr id="tr_DataGrid_toppager_right">
+			</tr></tbody>
+           </table>
+        </td></tr></tbody></table></div></div>
+           <div class="ui-jqgrid-bdiv" style="height: auto; width: 100%"><div style="position:relative;">
+           <table cellspacing="0" cellpadding="0" border="0" class="ui-jqgrid-btable" id="DataGrid" tabindex="0" role="grid" aria-multiselectable="true" aria-labelledby="gbox_DataGrid" style="width: 100%"><tbody>
+           <tr id="firstBlankLine" style="height:10px" role="row" class="ui-widget-content2 jqgrow ui-row-ltr jqgfirstrow">
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+              <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+            <td style="height:0px;width:11%;" role="gridcell"></td>
+          </tr>
+          <tr class="" tabindex="-1" id="508" role="row">
+          <td style="text-align:center;height:auto;" role="gridcell" >
+           <table cellspacing='0' cellpadding='0' border='0' style='width:100%; height:100%'><tbody>
+           <tr><td style='width:20%'></td><td></td></tr>
+           <tr><td><input type='checkbox' value='1' id="chkAll"/></td><td style='text-align:center;margin: 0 auto;'></td></tr>
+           </tbody></table>
+          </td>
+          <td style="text-align:center;height:auto;" role="gridcell" > </td>
+          <td style="text-align:center;height:auto;" role="gridcell" > </td>
+          <td style="text-align:center;" role="gridcell">&nbsp;</td>
+          <td style="text-align:center;" role="gridcell">&nbsp;</td>
+          <td style="text-align:center;" role="gridcell">&nbsp;</td>
+          <td aria-describedby="DataGrid_Headship" style="text-align:center;" role="gridcell">&nbsp;</td>
+          <td aria-describedby="DataGrid_Headship" style="text-align:center;" role="gridcell">&nbsp;</td>
+         </tr>
+         
+         </tbody></table></div></div>
+         <div id="ControllerList"></div>
+         </div>
+<div style="text-align: center; width: 100%" class="scroll ui-state-default ui-jqgrid-pager ui-corner-bottom" id="pager" dir="ltr">
+ <div role="group" class="ui-pager-control" id="pg_pager">
+   <table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table">
+    <tbody><tr><td align="left" id="pager_left"></td></td></tr>
+    </tbody>
+  </table>
+ </div>
+</div>
+<div id="newMessageDIV" style="display:none"></div> 
+</div>
+<div id="dialog-confirm-OpenDoor" title="Open Door" style="display: none;">
+	<p>&nbsp;<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id="OpenDoorButtonExplain">Confirm Open Door?</span></p>
+    <table id='fbox_Output' style='border:0px none;margin-top:-10px; margin-left:30px;' class='EditTable'>
+			<tbody><tr>
+            	<td style='text-align:left; width:30%' class='EditButton DataTD'> <a title="Select Output" class='fm-button ui-state-default ui-corner-all ui-reset' id='btn_showOutput' style="width:15px; height:12px; font-size:10px">>></a></td>
+                <td id="tdShowOutput" style='text-align:left; width:70%; display:none;' class='EditButton DataTD'><span id="OutputMsg">Output</span>&nbsp;<select id="selOutput" class="FormElement ui-widget-content ui-corner-all" style="height:18px;" ><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
+       </tr></tbody></table>         
+</div>
+</body>
+</html>
+<script language="javascript">
+$("a").hover(
+	function() {
+		$( this ).addClass( "ui-state-hover" );
+	},function() {
+		$( this ).removeClass( "ui-state-hover" );
+	}
+);
+var iInter=0;
+var strController="";
+var isFullScreen = false;
+var strURL = "";
+var strURLRoot = "";
+$(document).ready(function(){
+	
+	strURL = unescape(getCookie("CerbSeverURLForMonitor"));
+	if(strURL != "" && strURL != undefined){
+		if(strURL.toLowerCase().indexOf(".aspx")<0){
+			strURLRoot = strURL + "/";
+			strURL=strURL + "/" + "GetDoorStatus.aspx";
+		}
+		else{
+			//strURLRoot = strURL.toLowerCase().replace("getbrushcarddata.asp","");
+			//strURL=strURL.toLowerCase().replace("getbrushcarddata.asp","GetDoorStatus.aspx");
+			strURLRoot = strURL.substring(0,strURL.lastIndexOf("/")+1);
+			strURL=strURLRoot+"GetDoorStatus.aspx";
+		}
+		if(strURL.toLowerCase().indexOf("http")<0){
+			strURLRoot="http://"+strURLRoot;
+			strURL="http://"+strURL;
+		}
+	}
+	else{
+		alert("URL ERROR! ");
+		return;
+	}
+
+
+
+///CheckLoginStatus();  
+//获取操作权限
+var role = GetOperRole("MonitorDoor");
+var iedit=false,iadd=false,idel=false,iview=false,irefresh=false,isearch=false,iexport=false,isync=false;
+try{
+	iedit=role.edit;
+	iadd=role.add;
+	idel=role.del;
+	iview=role.view;
+	irefresh=role.refresh;
+	isearch=role.search;
+	iexport=role.exportdata;
+	isync=role.sync;
+}
+catch(exception) {
+	alert(exception);
+}
+
+$("#tr_DataGrid_toppager_right").append("<td class='ui-pg-button ui-corner-all' id='btnMonitorBrushCardDetail' title='"+getlbl("mon.MonitorBrushCard")+"'><div class='ui-pg-div'><a>"+getlbl("mon.MonitorBrushCard")+"</a></div></td>");//监控进出明细
+
+if(iedit && false){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnMonitor' title='"+getlbl("mon.Monitor")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-search'></span><a>"+getlbl("mon.Monitor")+"</a></div></td>");//监控
+}
+if(iedit && false){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all ' id='DataGrid_btnMonitorAll' title='"+getlbl("mon.MonitorAll")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-circle-zoomout'></span><a>"+getlbl("mon.MonitorAll")+"</a></div></td>");//监控所有设备
+}
+if(iedit && false){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnStopMonitor' title='"+getlbl("mon.StopMonitor")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-stop'></span><a>"+getlbl("mon.StopMonitor")+"</a></div></td>");//停止监控
+}
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnSyncData' title='"+getlbl("mon.SyncData")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-transferthick-e-w'></span><a>"+getlbl("mon.SyncData")+"</a></div></td>");//立即同步
+}
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnSyncTime' title='"+getlbl("mon.SyncTime")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-clock'></span><a>"+getlbl("mon.SyncTime")+"</a></div></td>");//立即校时
+}
+if(iedit){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnOpenDoor' title='"+getlbl("mon.OpenDoor")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-unlocked'></span><a>"+getlbl("mon.OpenDoor")+"</a></div></td>");//远程开门
+}
+
+if(iview){
+	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnFullScreen' title='"+getlbl("mon.FullScreen")+"'><div class='ui-pg-div'><span class='ui-icon ui-icon-newwin'></span><a>"+getlbl("mon.FullScreen")+"</a></div></td>");//全屏显示
+}
+Init();
+InitControllerList();
+$(function(){
+	ReSize();
+});
+GetConnStatus();
+setInterval("GetDoorStatusData();",1000);
+setInterval("GetConnStatus();",5000);
+
+})
+
+function InitControllerList(){
+	var strHtml = ""
+	strHtml = "<div class='ui-jqgrid-bdiv' style='height: auto; width: 100%'><div style='position:relative;'> <table cellspacing='0' cellpadding='0' border='0' class='ui-jqgrid-btable' id='DataGrid' tabindex='0' role='grid' aria-multiselectable='true' aria-labelledby='gbox_DataGrid' style='width: 100%'><tbody> <tr id='firstBlankLine' style='height:10px' role='row' class='ui-widget-content2 jqgrow ui-row-ltr jqgfirstrow'> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td> <td style='height:0px;width:11%;' role='gridcell'></td><td style='height:0px;width:11%;' role='gridcell'></td> </tr>";
+	
+$.ajax({
+	type: 'GET',
+	url:'GetControllers.asp?nd='+getRandom(),
+	//dataType:'JSONP', 
+	success: function(data) {
+		if($.trim(data).length > 0){
+			try  {
+				var responseMsg = $.parseJSON(data);
+				if(responseMsg.success == "false"){
+					//alert(responseMsg.message);
+				}else if(responseMsg.success == "true"){
+					//成功
+					if(responseMsg.rows.length > 0){
+						var rows = responseMsg.rows.length;
+						var conID,strname;
+						for(var i=0;i<rows;){
+							strHtml = strHtml + "<tr class='' tabindex='-1' id='"+i+"' role='row'>"
+							for(var j=0; j<9; j++){
+								if(i<rows){
+									conID=parseInt(responseMsg.rows[i].id)
+									strname = responseMsg.rows[i].name;
+								}else{
+									conID = 0;
+									strname="";
+								}
+								strHtml = strHtml + "  <td style='text-align:center;height:auto;' role='gridcell' >"+GetHtmlStr(conID,strname)+" </td>"
+								i++;
+							}
+							strHtml = strHtml + " </tr>";
+							
+						}
+						strHtml = strHtml + "</tbody></table></div></div>";
+						$("#ControllerList").append(strHtml);	
+					}
+				}else{
+					//alert("同步异常");
+				}
+			}
+			catch(exception) {
+				//alert(exception+"," + data);
+			}
+		}
+	},
+	error:function(XmlHttpRequest,textStatus, errorThrown){
+		//alert(textStatus+":ExportData.asp,"+XmlHttpRequest.responseText);
+	}
+});		
+
+}
+
+function GetHtmlStr(strID,strname){
+	if(strID==0 || strID=="")
+		return " ";
+	var str = "<table cellspacing='0' cellpadding='0' border='0' style='width:100%; height:100%' onMouseOver='mouseOver(this)' onMouseOut='mouseOut(this)'><tbody>"
+        str = str + "<tr><td style='width:20%'></td><td></td></tr>"
+		str = str + "<tr id='"+strID+"' ><td><input type='checkbox' name='ConID' value='"+strID+"' disabled='disabled' /></td><td style='text-align:center;margin: 0 auto;' onClick='mouseClick(this)'><span class='ui-doorStyle ui-door ui-DoorDisConn'></span></td></tr>"
+        str = str + "<tr><td colspan='2'>"+strname+"</td></tr>"
+		str = str + "<tr><td colspan='2'>&nbsp;</td></tr>"
+        str = str + "</tbody></table>"
+	return str;
+}
+
+function GetConnStatus(){
+	$.ajax({
+		type: 'Post',
+		url: '../Equipment/GetConnStatus.asp?nd='+getRandom(),
+		data:{"ControllerId":""},
+		success: function(data) {
+			try  {
+				if(data != null || data != ""){
+					eval(data);
+					//$("#DataGrid").setRowData( Arr[0][1], { SyncStatus:"未同步"}); 
+					for(var i=0; i<Arr[1].length; i++)
+					{
+						if(Arr[1][i] == "1"){
+							//$("tr[id='"+Arr[0][i]+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorConn");
+							//这里必须要求当前状态是断开时，才能更改为连接状态
+							if($("tr[id='"+Arr[0][i]+"']").children().eq(1).children().hasClass("ui-DoorDisConn")){
+								$("tr[id='"+Arr[0][i]+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorConn");
+								$("tr[id='"+Arr[0][i]+"']").children().eq(1).children().attr("title",getlbl("mon.DoorConnSta"));//"已连接网络，但门状态未知"
+								$("tr[id='"+Arr[0][i]+"']").children().eq(0).find('input[type=checkbox]').removeAttr('disabled');
+							}
+						}
+						else{
+							$("tr[id='"+Arr[0][i]+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorDisConn");
+							$("tr[id='"+Arr[0][i]+"']").children().eq(1).children().attr("title",getlbl("mon.DoorDisConnSta"));//已断开
+							$("tr[id='"+Arr[0][i]+"']").children().eq(0).find('input[type=checkbox]').attr("disabled","disabled");
+						}
+					}
+				}
+			}
+			catch(exception) {
+				//alert(exception+"," + data);
+			}
+		},
+		error:function(XmlHttpRequest,textStatus, errorThrown){
+			//alert(textStatus+":ExportData.asp,"+XmlHttpRequest.responseText);
+		}
+	});		
+}
+
+var LastID = 0;
+function GetDoorStatusData(){
+//strURL="http://localhost/sync1/GetDoorStatus.aspx";	
+$.ajax({
+	type: 'GET',
+	//url: 'http://192.168.1.18/sync1/GetDoorStatus.aspx?nd='+getRandom(),
+	url:strURL+'?nd='+getRandom(),
+	//dataType:'JSONP', 
+	data:{"ControllerID":""},
+	success: function(data) {
+		if($.trim(data).length > 0){
+			try  {
+				var responseMsg = $.parseJSON(data);
+				if(responseMsg.success == "false"){
+					//alert(responseMsg.message);
+				}else if(responseMsg.success == "true"){
+					//成功
+					if(responseMsg.rows.length > 0){
+						for(var i=0;i<responseMsg.rows.length; i++){
+							var ControllerId=parseInt(responseMsg.rows[i].ControllerId)
+							var Door=responseMsg.rows[i].Door;
+							var Status=responseMsg.rows[i].Status;//0关 1开 2报警  3未知
+							var IsConnect=responseMsg.rows[i].IsConnect;
+							var LastConnTime=responseMsg.rows[i].LastConnTime;
+							//当前状态不等于断开状态时，才允许更新门状态
+							if(IsConnect.toLowerCase() == "true" && !$("tr[id='"+ControllerId+"']").children().eq(1).children().hasClass("ui-DoorDisConn")){
+								if(Status == "0"){
+									$("tr[id='"+ControllerId+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorClose");
+									$("tr[id='"+ControllerId+"']").children().eq(1).children().attr("title",getlbl("mon.DoorCloseSta"));//门已关闭
+								}else if(Status == "1")	{
+									$("tr[id='"+ControllerId+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorOpen");
+									$("tr[id='"+ControllerId+"']").children().eq(1).children().attr("title",getlbl("mon.DoorOpenSta"));//门已打开
+								}else if(Status == "2")	{
+									$("tr[id='"+ControllerId+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorAlarm");
+									$("tr[id='"+ControllerId+"']").children().eq(1).children().attr("title",getlbl("mon.DoorAlarmSta"));//非法开门
+								}else{
+									//$("tr[id='"+ControllerId+"']").children().eq(1).children().removeClass().addClass("ui-doorStyle ui-door ui-DoorConn");
+								}
+							}
+						}
+					}
+				}else{
+					//alert("同步异常");
+				}
+			}
+			catch(exception) {
+				//alert(exception+"," + data);
+			}
+		}
+	},
+	error:function(XmlHttpRequest,textStatus, errorThrown){
+		//alert(textStatus+":ExportData.asp,"+XmlHttpRequest.responseText);
+	}
+});		
+}
+
+
+function Init(){
+	$("#gview_DataGrid_Title").children().html(getlbl("mon.MonitorTitle"));//实时监控
+	$("#dialog-confirm-OpenDoor").attr("title",getlbl("mon.OpenDoor"));	//远程开门
+	$("#OpenDoorButtonExplain").html(getlbl("mon.ConfirmOpenDoor"));//确定远程开门?
+	$("#btn_showOutput").attr("title",getlbl("mon.SelectOutput"));	//选择输出点
+	$("#OutputMsg").html(getlbl("mon.OutputMsg"));//输出点
+	
+	$("#DataGrid_btnSyncData").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnSyncDataClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+
+	$("#DataGrid_btnSyncTime").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnSyncTimeClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	
+	$("#DataGrid_btnOpenDoor").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnOpenDoorClickDialog();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);	
+	$("#btnMonitorBrushCardDetail").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnMonitorBrushCardClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);	
+/*	
+	$("#DataGrid_btnHideNav").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnHideNavClick(); 
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnMonitor").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnMonitorClick(); 
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnMonitorAll").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnMonitorAllClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	$("#DataGrid_btnStopMonitor").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnStopMonitorClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);*/
+	$("#DataGrid_btnFullScreen").click(function(){
+		 if (!$(this).hasClass('ui-state-disabled')) {
+			btnFullScreenClick();      
+		}
+		return false;
+	}).hover(
+		function () {
+			if (!$(this).hasClass('ui-state-disabled')) {
+				$(this).addClass("ui-state-hover");
+			}
+		},
+		function() {$(this).removeClass("ui-state-hover");}
+	);
+	
+	//$("#DataGrid_btnStopMonitor").addClass("ui-state-disabled");
+
+}
+function btnMonitorBrushCardClick(){
+	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*"
+	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*"
+	window.parent.mainFrame.location.href = "Monitor.html";
+}
+
+function btnOpenDoorClickDialog(){
+	var str = "";
+	$("[name='ConID']:checked").each(function(){
+		str+=$(this).val()+",";
+		//alert($(this).val());
+	})
+	if(str.length > 0) //如果获取到
+		str = str.substring(0, str.length - 1); //把最后一个逗号去掉
+	if(str.length <= 0){
+		alert(getlbl("mon.PleSelCon"));//请先选择设备！
+		return;
+	}
+		
+	var obj = {
+		resizable: false,
+		height:188,
+		width:320,		
+		modal: true,
+		buttons : {},
+	};
+	var SyncChange = getlbl("mon.OpenDoor");	//远程开门
+	obj.buttons[SyncChange] = function(){
+		btnOpenDoorClick();
+		$( this ).dialog( "close" );
+		$("#tdShowOutput").hide();		
+	}
+	
+	$( "#dialog-confirm-OpenDoor" ).dialog(obj);
+}
+
+
+function btnOpenDoorClick(){
+	var str = "";
+	$("[name='ConID']:checked").each(function(){
+		str+=$(this).val()+",";
+		//alert($(this).val());
+	})
+	if(str.length > 0) //如果获取到
+		str = str.substring(0, str.length - 1); //把最后一个逗号去掉
+	if(str.length <= 0){
+		alert(getlbl("mon.PleSelCon"));//请先选择设备！
+		return;
+	}
+	var check = false;
+	var oper = false;
+	var strOutput = "1";
+	check = GetRemoteOperRole(str,"opendoor");
+	if(check == false){
+		return false;
+	}
+	strOutput = $("#selOutput").val();
+	if(strOutput != "1" && strOutput != "2" && strOutput != "3" && strOutput != "4" && strOutput != "5")
+		strOutput = "1";
+	$.ajax({
+		type: 'GET',
+		//url: 'http://192.168.1.18/sync1/GetDoorStatus.aspx?nd='+getRandom(),
+		url:strURLRoot+'SetRemoteOper.aspx?nd='+getRandom(),
+		//dataType:'JSONP', 
+		data:{"ControllerId":str,"datatype":"opendoor","key":"c1b2cerberusefad","data2":strOutput},
+		async:false,
+		success: function(data) {
+			if($.trim(data).length > 0){
+				try  {
+					var responseMsg = $.parseJSON(data);
+					if(responseMsg.success == "false"){
+						alert(responseMsg.error);
+					}else if(responseMsg.success == "true"){
+						//成功
+						oper = true;
+						alert(getlbl("mon.ExecSuccess"));//执行成功
+						
+					}else{
+						//alert("同步异常");
+					}
+				}
+				catch(exception) {
+					//alert(exception+"," + data);
+				}
+			}
+		},
+		error:function(XmlHttpRequest,textStatus, errorThrown){
+			alert(textStatus+XmlHttpRequest.responseText);
+		}
+	});		
+	
+	//写日志
+	if(oper == false)
+		return;
+	WriteLog(str,"opendoor");
+}
+
+//立即校时
+function btnSyncTimeClick(){
+	var str = "";
+	$("[name='ConID']:checked").each(function(){
+		str+=$(this).val()+",";
+	})
+	if(str.length > 0) //如果获取到
+		str = str.substring(0, str.length - 1); //把最后一个逗号去掉
+	if(str.length <= 0){
+		alert(getlbl("mon.PleSelCon"));//请先选择设备！
+		return;
+	}
+	var check = false;
+	var oper = false;
+	check = GetRemoteOperRole(str,"synctime");
+	if(check == false){
+		return false;
+	}
+	$.ajax({
+		type: 'GET',
+		url:strURLRoot+'SetRemoteOper.aspx?nd='+getRandom(),
+		//dataType:'JSONP', 
+		data:{"ControllerId":str,"datatype":"synctime","key":"c1b2cerberusefad","data2":""},
+		async:false,
+		success: function(data) {
+			if($.trim(data).length > 0){
+				try  {
+					var responseMsg = $.parseJSON(data);
+					if(responseMsg.success == "false"){
+						alert(responseMsg.error);
+					}else if(responseMsg.success == "true"){
+						//成功
+						oper = true;
+						alert(getlbl("mon.ExecSuccess"));//执行成功
+						
+					}else{
+						//alert("同步异常");
+					}
+				}
+				catch(exception) {
+					//alert(exception+"," + data);
+				}
+			}
+		},
+		error:function(XmlHttpRequest,textStatus, errorThrown){
+			alert(textStatus+XmlHttpRequest.responseText);
+		}
+	});		
+	
+	//写日志
+	if(oper == false)
+		return;
+	WriteLog(str,"synctime");
+}
+
+//立即同步数据
+function btnSyncDataClick(){
+	var str = "";
+	$("[name='ConID']:checked").each(function(){
+		str+=$(this).val()+",";
+	})
+	if(str.length > 0) //如果获取到
+		str = str.substring(0, str.length - 1); //把最后一个逗号去掉
+	if(str.length <= 0){
+		alert(getlbl("mon.PleSelCon"));//请先选择设备！
+		return;
+	}
+	var check = false;
+	var oper = false;
+	check = GetRemoteOperRole(str,"syncdata");
+	if(check == false){
+		return false;
+	}
+	$.ajax({
+		type: 'GET',
+		url:strURLRoot+'SetRemoteOper.aspx?nd='+getRandom(),
+		//dataType:'JSONP', 
+		data:{"ControllerId":str,"datatype":"syncdata","key":"c1b2cerberusefad","data2":""},
+		async:false,
+		success: function(data) {
+			if($.trim(data).length > 0){
+				try  {
+					var responseMsg = $.parseJSON(data);
+					if(responseMsg.success == "false"){
+						alert(responseMsg.error);
+					}else if(responseMsg.success == "true"){
+						//成功
+						oper = true;
+						alert(getlbl("mon.ExecSuccess"));//执行成功
+						
+					}else{
+						//alert("同步异常");
+					}
+				}
+				catch(exception) {
+					//alert(exception+"," + data);
+				}
+			}
+		},
+		error:function(XmlHttpRequest,textStatus, errorThrown){
+			alert(textStatus+XmlHttpRequest.responseText);
+		}
+	});		
+	
+	//写日志
+	if(oper == false)
+		return;
+	WriteLog(str,"syncdata");
+}
+
+function GetRemoteOperRole(ControllerID,datatype){
+var val = false;	
+$.ajax({
+	type: 'POST',
+	url:'MonitorDoorEdit.asp?nd='+getRandom(),
+	data:{"ControllerId":ControllerID,"datatype":datatype,"check":"1","oper":"edit"},
+	async:false,
+	success: function(data) {
+		if($.trim(data).length > 0){
+			try  {
+				var responseMsg = $.parseJSON(data);
+				if(responseMsg.success == false){
+					alert(responseMsg.message);
+				}else if(responseMsg.success == true){
+					val = true;
+				}else{
+					alert("exception");
+				}
+			}
+			catch(exception) {
+				alert(exception+"," + data);
+			}
+		}
+	},
+	error:function(XmlHttpRequest,textStatus, errorThrown){
+		alert(textStatus+XmlHttpRequest.responseText);
+	}
+});	
+return val;
+}
+
+function WriteLog(ControllerID,datatype){
+$.ajax({
+	type: 'POST',
+	url:'MonitorDoorEdit.asp?nd='+getRandom(),
+	data:{"ControllerId":ControllerID,"datatype":datatype,"check":"0","oper":"edit"},
+	success: function(data) {
+		if($.trim(data).length > 0){
+			try  {
+				var responseMsg = $.parseJSON(data);
+				if(responseMsg.success == false){
+					alert(responseMsg.message);
+				}else if(responseMsg.success == true){
+					//
+				}else{
+					alert("exception");
+				}
+			}
+			catch(exception) {
+				alert(exception+"," + data);
+			}
+		}
+	},
+	error:function(XmlHttpRequest,textStatus, errorThrown){
+		alert(textStatus+XmlHttpRequest.responseText);
+	}
+});	
+}
+
+function btnFullScreenClick(){
+	if(isFullScreen == false){
+		window.parent.document.getElementsByTagName("frameset")[1].cols="0,*"
+		window.parent.document.getElementsByTagName("frameset")[0].rows="0,*"
+		//launchFullscreen(document.documentElement);
+		//launchFullscreen(document.getElementById("gbox_DataGrid"));
+		ReSize();
+		setTimeout('ReSize()',1000); 
+		$("#DataGrid_btnFullScreen").children().children().eq(1).html(getlbl("mon.ExitFullScreen"));//退出全屏
+		$("#DataGrid_btnFullScreen").attr("title",getlbl("mon.ExitFullScreen"));//退出全屏
+		isFullScreen = true;
+	}else{
+		//window.parent.document.getElementsByTagName("frameset")[1].cols="167,*"
+		window.parent.document.getElementsByTagName("frameset")[1].cols="0,*";
+		window.parent.document.getElementsByTagName("frameset")[0].rows="93,*"
+		//exitFullscreen();
+		ReSize();
+		setTimeout('ReSize()',1000); 
+		$("#DataGrid_btnFullScreen").children().children().eq(1).html(getlbl("mon.FullScreen"));//全屏显示
+		$("#DataGrid_btnFullScreen").attr("title",getlbl("mon.FullScreen"));//全屏显示
+		isFullScreen = false;		
+	}
+	//ReSize(); //这里没用。
+}
+//全屏后，改变界面大小
+//http://www.weste.net/2014/4-4/96193.html
+//document.addEventListener("fullscreenchange", function () {ReSize();alert("11");}, false);
+//document.addEventListener("mozfullscreenchange", function () {ReSize();alert("22");}, false);
+//document.addEventListener("webkitfullscreenchange", function () {ReSize();alert("33");}, false);
+
+function StartMonitor(){
+	if(iInter != 0)
+		StopMonitor();
+	iInter=setInterval("GetBrushCardData();",1000);
+	$("#DataGrid_btnStopMonitor").removeClass("ui-state-disabled");
+	$("#DataGrid_btnMonitor").addClass("ui-state-disabled");
+	$("#DataGrid_btnMonitorAll").addClass("ui-state-disabled");
+}
+function StopMonitor(){
+	clearInterval(iInter);
+	iInter = 0;
+	$("#DataGrid_btnStopMonitor").addClass("ui-state-disabled");
+	$("#DataGrid_btnMonitor").removeClass("ui-state-disabled");
+	$("#DataGrid_btnMonitorAll").removeClass("ui-state-disabled");
+}
+function launchFullscreen(element) {
+	if(element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if(element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if(element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if(element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+  }
+}
+function exitFullscreen() {
+	if(document.exitFullscreen) {
+		document.exitFullscreen();
+	} else if(document.mozCancelFullScreen) {
+		document.mozCancelFullScreen();
+	} else if(document.webkitExitFullscreen) {
+		document.webkitExitFullscreen();
+	}else if (document.msExitFullscreen) { 
+		document.msExitFullscreen(); 
+	}
+}
+
+function ShowMsg(strMsg){
+	$("#pager_left").html(strMsg);
+}
+
+function PlaySound(Property){
+	var fileName = "";
+	if(Property > 0){
+		fileName="01.wav";
+	}
+	if(fileName != ""){
+		if(navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0 || navigator.userAgent.indexOf("MSIE 8.0")>0){
+			//本来这里用的是<bgsound src="system.wav"/>,结果IE8不播放声音,于是换成了embed
+			//alert("iE8")
+			$('#newMessageDIV').html('<embed src='+fileName+'/>');
+		}else{
+		//IE9+,Firefox,Chrome均支持<audio/>
+			//alert("ie1");
+			$('#newMessageDIV').html('<audio autoplay="autoplay"><source src='+fileName+' type="audio/wav"/></audio>');
+		}
+	}
+	else{
+		if(navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0 || navigator.userAgent.indexOf("MSIE 8.0")>0){
+			//本来这里用的是<bgsound src="system.wav"/>,结果IE8不播放声音,于是换成了embed
+			//alert("iE8")
+			$('#newMessageDIV').html('');
+		}else{
+		//IE9+,Firefox,Chrome均支持<audio/>
+			//alert("ie1");
+			$('#newMessageDIV').html('');
+		}
+	}	
+}
+
+
+function ReSize(){
+	var iWidth = $(window).width()-40;
+	var iHeight = $(window).height()-40;
+	//var iHeight = $(document).height();; //这里是获取整个页面高度
+	//alert(iWidth+","+iHeight);
+	if (iWidth <= 970)
+		iWidth = 970;
+
+	$("#gview_DataGrid").css("height",'auto');
+	$("#gbox_DataGrid").width(iWidth);
+	
+	if($("#gview_DataGrid").height() < 500)
+		$("#gview_DataGrid").css("height",525);
+}
+
+$(window).resize(function(){
+   ReSize();
+});
+
+function mouseOver(obj){
+	 obj.className="css2";
+}
+function mouseOut(obj){
+  if(obj.className="css2")
+	 obj.className="";
+}
+function mouseClick(obj){
+	if($(obj).parent().children().eq(0).find('input[type=checkbox]').prop("disabled"))
+		return;
+	if($(obj).parent().children().eq(0).find('input[type=checkbox]').prop("checked") ){
+		$(obj).parent().children().eq(0).find('input[type=checkbox]').prop("checked", false);
+	}
+	else{
+		$(obj).parent().children().eq(0).find('input[type=checkbox]').prop("checked", true);
+	}
+}  
+$("#chkAll").click(function(){
+	if($(this).prop("checked")){
+		$("[name='ConID']").each(function(){
+			if($(this).prop("disabled") == false)
+				$(this).prop("checked", true);
+		})
+		//$("#ControllerList").find('input[type=checkbox]').prop("checked", true);
+	}
+	else{
+		$("#ControllerList").find('input[type=checkbox]').prop("checked", false);
+	}
+	
+}); 
+$("#btn_showOutput").click(function(){
+	$("#tdShowOutput").show();
+});
+</script>

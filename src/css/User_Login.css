@@ -1,0 +1,130 @@
+﻿#userlogin_body {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; BACKGROUND: url(../Images/user_all_bg.gif) #226cc5 repeat-x 50% top; PADDING-BOTTOM: 0px; MARGIN: 130px 0px 0px; FONT: 12px/150% Arial, "宋体" ,Helvetica,sans-serif; PADDING-TOP: 0px; TEXT-DECORATION: none
+}
+#user_login {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; MARGIN: 0px auto; WIDTH: 590px
+}
+#user_top {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; CLEAR: both
+}
+#user_bottom {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; CLEAR: both
+}
+#user_login DL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#user_login DD {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#user_main {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; CLEAR: both
+}
+#user_top UL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#user_main UL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#user_bottom UL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#user_top LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px;
+	FLOAT: left; LIST-STYLE-TYPE: none
+}
+#user_main LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px;
+	FLOAT: left; LIST-STYLE-TYPE: none
+}
+#user_bottom LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px;
+	FLOAT: left; LIST-STYLE-TYPE: none
+}
+FORM {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+.user_top {
+	BACKGROUND: url(../Images/user_top.gif) no-repeat 50% top;
+	FLOAT: left; WIDTH: 460px;
+	HEIGHT: 110px
+}
+.user_main {
+	BACKGROUND: url(../Images/user_main.gif) #bec5cc no-repeat 50% top;
+	FLOAT: left; WIDTH: 460px; 
+	HEIGHT: 130px;LINE-HEIGHT: 130px
+}
+.user_bottom_LI {
+	BACKGROUND: url(../Images/user_botton11.gif) #bec5cc no-repeat 50% top;
+	FLOAT: left; WIDTH: 460px; 
+	HEIGHT: 117px;LINE-HEIGHT: 117px
+}
+.user_bottom_c A {
+	COLOR: yellow; TEXT-DECORATION: underline
+}
+.user_bottom_c A:hover {
+	COLOR: #c00
+}
+.user_main_box {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+.user_main_box UL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; CLEAR: both
+}
+.user_main_box LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; 
+	FLOAT: left; LIST-STYLE-TYPE: none
+}
+.user_main_box .user_main_text {
+	LINE-HEIGHT: 40px; HEIGHT: 40px; 
+	WIDTH: 60px; COLOR: #000
+}
+.user_main_box .user_main_input {
+	LINE-HEIGHT: 40px; HEIGHT: 40px
+}
+.user_main_box .user_main_input IMG {
+	MARGIN-BOTTOM: -2px; MARGIN-LEFT: -25px
+}
+.TxtUserNameCssClass {
+	BORDER-TOP-WIDTH: 0px; PADDING-LEFT: 25px; BORDER-LEFT-WIDTH: 0px; BACKGROUND: url(../Images/user_login_name.png) no-repeat; BORDER-BOTTOM-WIDTH: 0px; WIDTH: 165px; LINE-HEIGHT: 26px; HEIGHT: 27px; BORDER-RIGHT-WIDTH: 0px
+}
+.TxtPasswordCssClass {
+	BORDER-TOP-WIDTH: 0px; PADDING-LEFT: 25px; BORDER-LEFT-WIDTH: 0px; BACKGROUND: url(../Images/user_login_password.png) no-repeat; BORDER-BOTTOM-WIDTH: 0px; WIDTH: 165px; LINE-HEIGHT: 26px; HEIGHT: 27px; BORDER-RIGHT-WIDTH: 0px
+}
+.TxtValidateCodeCssClass {
+	BORDER-TOP-WIDTH: 0px; PADDING-LEFT: 25px; BORDER-LEFT-WIDTH: 0px; BACKGROUND: url(../Images/user_login_validatecode.gif) no-repeat; IME-MODE: disabled; BORDER-BOTTOM-WIDTH: 0px; WIDTH: 91px; LINE-HEIGHT: 20px; HEIGHT: 21px; BORDER-RIGHT-WIDTH: 0px
+}
+.IbtnEnterCssClass {
+	WIDTH: 111px; HEIGHT: 122px
+}
+
+.Button_submit {
+	border: medium none;
+	width: 130px;
+	background:url(../Images/submit.png) no-repeat 0px 0px;
+	height: 40px;
+}
+.Button_submit:hover {
+	background-position:0 -40px
+}
+.Logining {
+	position: absolute;
+	z-index: 999;
+	position:relative;
+	left: -15px;
+	top: -120px;
+}
+.User_main_text_left {
+	LINE-HEIGHT: 40px; HEIGHT: 40px;
+	FLOAT: left; WIDTH: 100px;
+}
+.user_manin_submit_l {
+	LINE-HEIGHT: 38px; HEIGHT: 38px;
+	FLOAT: left; WIDTH: 100px;
+}
+.user_manin_submit_c {
+	LINE-HEIGHT: 38px; HEIGHT: 38px;
+	WIDTH: 60px; COLOR: #000
+}
+.user_manin_submit_r {
+	LINE-HEIGHT: 38px; HEIGHT: 38px;
+}

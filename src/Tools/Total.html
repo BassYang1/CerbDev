@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Attend Total</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
+<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.core.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
+
+<script src="../js/ui/jquery.ui.mouse.js"></script>
+<script src="../js/ui/jquery.ui.button.js"></script>
+<script src="../js/ui/jquery.ui.draggable.js"></script>
+<script src="../js/ui/jquery.ui.position.js"></script>
+<script src="../js/ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../css/demos.css">
+<style>
+.ui-border {
+	border-top:1px solid #a6c9e2;
+	border-left:1px solid #a6c9e2;
+	padding: 6px;
+}
+.ui-border-LB {
+	border-bottom:1px solid #a6c9e2;
+	border-left:1px solid #a6c9e2;
+	padding: 6px;
+}
+.ui-border-R {
+	border-right:1px solid #a6c9e2;
+	padding: 6px;
+}
+.ui-NoneRightBorder {
+}
+</style>	
+</head>
+<body>
+<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all " id="editmodDataGrid" dir="ltr" style="width: 550px; height: auto; " >
+  <div class="ui-jqgrid-view" id="gview_DataGrid"  style="width: 550px;">
+    <div class="ui-jqgrid-titlebar ui-jqgrid-caption ui-widget-header ui-corner-top ui-helper-clearfix" ><span class="ui-jqgrid-title" id="AttendTotal">考勤统计</span></div>
+    <div id="DataGrid_toppager" class="ui-state-default ui-jqgrid-toppager" dir="ltr">
+      <div role="group" class="ui-pager-control" id="pg_DataGrid_toppager">
+        <table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table">
+          <tbody>
+            <tr>
+              <td align="left" id="DataGrid_toppager_left" style="width: 99%;"><table cellspacing="0" cellpadding="0" border="0" style="float:left;table-layout:auto;" class="ui-pg-table navtable">
+                <tbody>
+                  <tr id="trOper"> </tr>
+                </tbody>
+              </table></td>
+              <td align="right" id="DataGrid_toppager_right" style="width: 1%;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="editcntDataGrid" class="ui-jqdialog-content ui-widget-content">
+      <form name="FrmGrid_DataGrid" id="FrmGrid_DataGrid" >
+        <table id="TblGrid_DataGrid" class="EditTable" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr style="display: none;" id="FormError">
+              <td colspan="4" class="ui-state-error"></td>
+              <td colspan="2" class="i-state-error"></td>
+            </tr>
+			<tr class="tinfo" style="display:none" id="FormSuccess"><td colspan="6" class="topinfo"><div class="ui-state-highlight ui-corner-all"><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span></div></td></tr>
+            <tr rowpos="2" class="FormData" id="trShiftName">
+              <td style="width: 40%;" align="center" class="ui-border ui-NoneRightBorder" id="TotalMonth">统计月份</td>
+              <td class="ui-border ui-NoneRightBorder ui-border-R" >&nbsp;
+                  <input name="startTime" type='text' class='FormElement ui-widget-content ui-corner-all' id='startTime' style='height:16px;width:95px;font-size:12px'/></td>
+            </tr>
+            <tr id="trNight" class="FormData " rowpos="3" >
+              <td align="center"  class="ui-border ui-NoneRightBorder ui-border-LB" id="TotalDimission">仅统计离职人员</td>
+              <td class="ui-border ui-NoneRightBorder ui-border-LB ui-border-R"  >&nbsp;
+                  <input class="FormElement " role="checkbox" name="blnTotalDimission" id="blnTotalDimission" value="1" type="checkbox" /></td>
+            </tr>
+            <tr style="display:none" class="FormData">
+              <td class="ui-border-LB"></td>
+              <td class="ui-border-LB" colspan="1"></td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  <div style="text-align: center; width: 550px;" class="scroll ui-state-default ui-jqgrid-pager ui-corner-bottom" id="pager" dir="ltr">
+    <div role="group" class="ui-pager-control" id="pg_pager">
+      <table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table">
+        <tbody>
+          <tr>
+            <td align="left" id="pager_left"></td>
+            <td align="center" style="white-space: pre; width: 240px;" id="pager_center">&nbsp;</td>
+            <td align="right" id="pager_right">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="dialog-confirm" title="考勤统计" style="display: none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id="TotalDialogPrompt"><B>[立即执行统计]</B>立即执行统计，执行过程中不能离开页面，适用于数据量较小、统计能在短时间内完成（约2分钟内）；<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;<B>[服务执行统计]</B>通过服务执行统计，执行过程中可以离开页面，适用于数据量较大或需花较多时间完成统计。
+</span></p>
+</div>
+
+</body>
+</html>
+<script language="javascript">
+$(document).ready(function(){  
+	$("#AttendTotal").html(getlbl("tool.spanNavTotal"));
+	$("#TotalMonth").html(getlbl("tool.TotalMonth"));
+	$("#TotalDimission").html(getlbl("tool.TotalDimission"));
+	$("#TotalDialogPrompt").html(getlbl("tool.TotalDialogPrompt"));
+	$("#dialog-confirm").attr("title",getlbl("tool.spanNavTotal"));	//考勤统计
+});
+</script>
+<script type="text/javascript" src="Total.js"></script>

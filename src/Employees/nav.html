@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,p{margin:10;padding:10;list-style-type:none;}
+a,img{border:0;text-decoration:none;}
+body{font:12px/180% "宋体",Lucida Grande,Lucida Sans,Arial,sans-serif;}
+</style>
+<link rel="stylesheet" type="text/css" href="../js/leftMenu/css/sdmenu.css" />
+<script type="text/javascript" src="../js/leftMenu/js/sdmenu.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js?id=11"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript">
+var myMenu;
+window.onload = function() {
+	myMenu = new SDMenu("my_menu");
+	myMenu.init();
+	
+	var my_menu = document.getElementById("my_menu");
+	var myDiv = my_menu.getElementsByTagName("div");
+	if(myDiv.length >= 2 && myDiv[1] != undefined && myDiv[1].className == "collapsed"){
+		var span=myDiv[1].getElementsByTagName("span")[0];
+		span.click();//当只有一个大菜单时，自动展开
+	}
+	$("#spanNavEmp").click(function(){  
+		try{
+			if($("#divNavEmp").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="Employees.html";
+			}
+		}catch(exception){
+		}
+	});  
+	try{
+		myDiv = my_menu.getElementsByTagName("div");
+		if(myDiv.length >= 2){
+			var j=1;
+			for(j=1; j<myDiv.length; j++){
+				//查找是否有展开的菜单 
+				if( myDiv[j] != undefined && myDiv[j].className != "collapsed"){
+					var a=myDiv[j].getElementsByTagName("a")[0];
+					//window.parent.mainFrame.location.href=a.href;
+					window.parent.mainFrame.location.href="Employees.html";
+					break;
+				}
+			}//如果都没有展开，则选择一个将其展开
+			if(j >= myDiv.length){
+				$("#spanNavEmp").click();
+			}
+		}
+	}catch(Exception){
+	}
+	
+	$("#spanNavAtt").click(function(){  
+		try{
+			if($("#divNavAtt").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="ShiftsView.asp";
+			}
+		}catch(exception){}
+	}); 
+	$("#hrefAttShift").attr("href","ShiftsView.asp?nd="+getRandom() );
+};
+</script>
+</head>
+<body>
+<div class="line"></div>
+<div id="my_menu" class="sdmenu" style="top:10px;">
+	<div class="collapsed " style="color:#FFFFFF; font-weight:bold;overflow:hidden; text-align:center " id="divEmp">Employees</div>
+	<div id="divNavEmp" class=" collapsed">
+		<span id="spanNavEmp">Employees Data</span>
+		<a id="hrefDept" href="Department.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Department list</a>
+		<a id="hrefEmp" href="Employees.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Employees list</a>
+	</div>
+    <div id="divNavAtt" class=" collapsed">
+		<span id="spanNavAtt">Attend</span>
+		<a id="hrefAttShift" href="ShiftsView.asp" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts</a>
+	</div>
+</div>
+</body>
+</html>
+<script>
+$(document).ready(function(){  
+	$("#divEmp").html(getlbl("hr.divEmp"));
+	$("#spanNavEmp").html(getlbl("hr.spanNavEmp"));
+	$("#hrefDept").html(getlbl("hr.hrefDept"));
+	$("#hrefEmp").html(getlbl("hr.hrefEmp"));
+	$("#spanNavAtt").html(getlbl("hr.spanNavAtt"));
+	$("#hrefAttShift").html(getlbl("hr.hrefAttShift"));
+	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*";
+	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*";
+});
+</script>

@@ -1,0 +1,13 @@
+﻿/* CSS Document 
+Custom  by mike 
+
+*/
+
+.ui-c-boarder-top-left {border-top-width: 1px; border-top-color: #A6C9E2; border-top-style: solid; border-left-width: 1px; border-left-color: #A6C9E2; border-left-style: solid; }
+
+.ui-jqGrid-form_Editint {font-size:10pt}
+
+.ui-jqGrid-cellEditing {background-color:#E3FBEB}
+
+.ui-jqGrid-linkbuttion {text-decoration:none; /*CSS下划线效果：无下划线*/
+ /*border-bottom: 1px #0099CC dottedCSS加一个只有下边的框 边框为虚线*/}

@@ -1,0 +1,25 @@
+﻿body { background:#fff;font:12px "\5B8B\4F53",san-serif;}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,p{padding:0; margin:0;} 
+img { border:0; vertical-align:top; }
+a {text-decoration:underline; }
+a:hover { text-decoration:none; }
+ul,ol { list-style:none; }
+/* Layout ================================================================================ */
+.wrapper { min-width:980px; }
+.main { width:100px; margin:0 auto; padding:0;text-align:left; float:left;}
+.col-left { float:left; width:140px; }
+/********** Navigation > */
+.navhead { background: url(images/bg77.gif) no-repeat scroll 0 0;background-repeat:no-repeat;background-position: 0px -52px;height: 26px; width: 140px; cursor: pointer; line-height: 26px; padding-left:16px;font-size: 1em; color:#1D5987; position:relative; z-index:801;}
+.navhead a { color: #148490; text-decoration: none; padding: 0px 0px 0px 0px;font-size: 14px; color:#1D5987;}
+.navhead:hover {background-position: 0px -26px;}
+.navcontent { width: 138px;font-size: 12px;position:relative;z-index:800;border:1px solid #79B7E7; border-top:none;}
+.navcontent ul li {background:#FFFFFF;width: 138px;}
+.navcontent ul li a{display:block;height: 24px;	width: 124px;line-height:24px;padding-left:16px;}
+.navcontent ul li:hover {background:#DDECF7;cursor:auto;color:#000000;}
+.navcontent ul li:last-child {height:30px;}
+.navcontent a {color: #000;text-decoration: none;}
+.navcontent a:hover {color: #1D5987;}
+.line{   
+width:0px; height:800px; border:1px solid #A9CBE3;position:absolute;left:155px;
+}
+.ui-widget-header { border: 0px solid #4297d7; background: #5c9ccc url(images/ui-bg_gloss-wave_55_5c9ccc_500x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold;width:140px; height:26px; }

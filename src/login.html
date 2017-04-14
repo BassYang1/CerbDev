@@ -1,0 +1,260 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>Cerberus iSCS Login</TITLE>
+<link rel="stylesheet" type="text/css" href="css/User_Login.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="css/ui.jqgrid.css"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='js/lang/"+getLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="js/custom/system.js"></script>
+<META http-equiv=Content-Type content="text/html; charset=utf-8">
+<link rel="shortcut icon" href="images/logo.ico" />
+</HEAD>
+<BODY id=userlogin_body>
+<style>
+a:link {
+ color: #FFFFFF;
+ text-decoration: none;
+ font-size: 13px;
+}
+</style>
+<form >
+<DIV></DIV>
+<DIV id=user_login>
+<DL>
+	<DD id=user_top>
+		<UL>
+			<LI id="usertop" class=user_top></LI>
+		</UL>
+	</DD>
+	<DD id=user_main>
+		<UL>
+			<LI class=user_main>
+				<DIV class=user_main_box>
+					<UL>
+					  <LI class=User_main_text_left></LI>
+					  <LI class=user_main_text id="LoginUserName">User： </LI>
+					  <LI class=user_main_input><INPUT class=TxtUserNameCssClass id="txtUserName" maxLength="20" > </LI>
+					</UL>
+					<UL>
+					  <LI class=User_main_text_left></LI>
+					  <LI class=user_main_text id="LoginPwd">Password： </LI>
+					  <LI class=user_main_input><INPUT class=TxtPasswordCssClass id="txtPassword" type="password" maxlength="20"> </LI>
+					</UL>
+					<UL>
+						<LI class=user_manin_submit_l></LI>
+						<LI class=user_manin_submit_c></LI>
+						<LI class=user_manin_submit_r>
+					    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="Button_submit" type="button" id="btnSubmit"></button>
+                        <div id="Login" class="Logining"><img src="images/12.gif" width="300"  height="225"></div>
+                        </LI>
+					</UL>
+				</DIV>
+			</LI>
+		</UL>
+	</DD>
+	<DD id=user_bottom>
+		<UL>
+			<LI class=user_bottom_LI>
+				<span id="BrowseMsg" style="color:Red; font-size:12px; text-align:center; display:none;line-height:20px; padding-top:45px;">&nbsp;&nbsp;&nbsp;&nbsp;Your browser version is too low, it is recommended<a href='http://www.firefox.com.cn/download/'>Firefox</a>、<a href='https://www.google.com.hk/chrome/'>Google Chrome</a>、IE９ Or above</span>
+			</LI>
+		</UL>
+	</DD>
+	
+	<DD id=user_bottom>
+		<UL>
+			<LI >
+				<span id="BrowseMsg" style="color:Red; font-size:12px; text-align:center;"><img id="imgBottom" src="images/user_bottom3.gif"></span>
+			</LI>
+		</UL>
+	</DD>
+</DL></DIV>
+
+<DIV></DIV>
+</FORM></BODY>
+<script>
+$("#Login").hide();
+$(document).ready(function(){
+
+	//先判断浏览器是否开户Cookie
+	if(!(document.cookie || navigator.cookieEnabled))
+	{
+		try{
+			$.ajax({
+				type: 'Post',
+				url: 'Init.asp',
+				success: function(data) {
+					if(data == "1")
+						alert('浏览器未启用Cookie，请先开启！');
+					else if(data == "2")
+						alert('流覽器未啟用Cookie，請先開啟！');
+					else if(data == "3")
+						alert('Browser Cookie is not enabled, please open!');
+					else if(data == "4")
+						alert('Browser Cookie is not enabled, please open!');
+					else
+						alert('Browser Cookie is not enabled, please open!');
+				},
+				error:function(XmlHttpRequest,textStatus, errorThrown){
+					alert('Browser Cookie is not enabled, please open!');
+					//LanTemp = getCookie("CerbLan");
+					//alert(textStatus+":CheckLogin.asp,"+XmlHttpRequest.responseText);
+				}
+			});	
+		}
+		catch(exception) {
+			alert('Browser Cookie is not enabled, please open!');
+		}	
+	}
+	
+	var LanTemp = getCookie("CerbLan");
+	if(LanTemp == ""){
+		try{
+			$.ajax({
+				type: 'Post',
+				url: 'Init.asp',
+				success: function(data) {
+					//LanTemp = getCookie("CerbLan");
+					location.reload();
+				},
+				error:function(XmlHttpRequest,textStatus, errorThrown){
+					//LanTemp = getCookie("CerbLan");
+					//alert(textStatus+":CheckLogin.asp,"+XmlHttpRequest.responseText);
+				}
+			});	
+		}
+		catch(exception) {
+		}		
+	}
+	
+	$(document).attr("title",getlbl("login.Title"));
+	$("#LoginUserName").html(getlbl("login.LoginUserName"));
+	$("#LoginPwd").html(getlbl("login.LoginPwd"));
+	$("#BrowseMsg").html(getlbl("login.BrowseMsg1"));
+	$("#usertop").css("background-image",getlbl("login.UserTopImg"));
+	$("#btnSubmit").css("background-image",getlbl("login.SubmitImg"));
+	$("#imgBottom").attr("src",getlbl("login.imgBottom"));
+/*
+//20141019 由于IE下有问题，先将下面代码屏蔽
+	//先查检是否已经登录，若是，直接跳转。
+try{
+	$.ajax({
+		type: 'Post',
+		url: 'CheckLogin.asp',
+		data:{},
+		success: function(data) {
+			try  {
+				var responseMsg = $.parseJSON(data);
+				if(responseMsg.success == true){
+					//成功
+					 window.location.href = "index.html";
+				}
+			}
+			catch(exception) {
+				alert(exception+"," + data);
+			}
+		},
+		error:function(XmlHttpRequest,textStatus, errorThrown){
+			alert(textStatus+":CheckLogin.asp,"+XmlHttpRequest.responseText);
+			//window.location.href = "error.html";
+		}
+	});
+}
+catch(exception){
+	alert(exception);
+}
+*/
+	if(navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0 || navigator.userAgent.indexOf("MSIE 8.0")>0){
+		$('#BrowseMsg').css('display','block');
+		//alert($('#BrowseMsg').html());
+	}
+	else if(isIE())
+	{
+		//IE
+		$('#BrowseMsg').html(getlbl("login.BrowseMsg2"));
+		$('#BrowseMsg').css('display','block');
+	}
+		
+	$('#txtUserName').focus();
+	$('#txtUserName').bind('keydown', function (e) {
+		var key = e.which;
+		if (key == 13) {
+			$("#btnSubmit").click();
+		}
+	});
+	$('#txtPassword').bind('keydown', function (e) {
+		var key = e.which;
+		if (key == 13) {
+			$("#btnSubmit").click();
+		}
+	});
+	$("#btnSubmit").click(function(){
+		var txtUserName=$("#txtUserName").val(),
+			txtPassword=$("#txtPassword").val();
+		if (txtUserName.length==0){
+			alert(getlbl("login.EnterUserName"));
+			$('#txtUserName').focus();
+			return false;
+		}
+		if(txtPassword.length > 0){
+			var patrn=/^(\w){1,20}$/;
+				if (!patrn.exec(txtPassword)){
+					alert(getlbl("login.PwdIllegal"));
+					$('#txtPassword').focus();
+					return false;
+				}
+		}
+
+$("#Login").show();
+$('#txtUserName').addClass('ui-state-disabled'); 
+$('#txtPassword').addClass('ui-state-disabled'); 
+$('#btnSubmit').addClass('ui-state-disabled'); 
+	try{
+		$.ajax({
+			type: 'Post',
+			url: 'CheckLogin.asp',
+			data:{"strUserName":txtUserName,"strPwd":txtPassword},
+			success: function(data) {
+				$('#txtUserName').removeClass('ui-state-disabled'); 
+				$('#txtPassword').removeClass('ui-state-disabled'); 
+				$('#btnSubmit').removeClass('ui-state-disabled'); 
+				$("#Login").hide();
+				try  {
+					var responseMsg = $.parseJSON(data);
+					if(responseMsg.success == false){
+						alert(responseMsg.message);
+					}else if(responseMsg.success == true){
+						//成功
+						//alert(responseMsg.message);
+						 window.location.href = "index.html";
+					}else{
+						alert(getlbl("login.LoginEx"));
+					}
+				}
+				catch(exception) {
+					alert(exception+"," + data);
+				}
+			},
+			error:function(XmlHttpRequest,textStatus, errorThrown){
+				$('#txtUserName').removeClass('ui-state-disabled'); 
+				$('#txtPassword').removeClass('ui-state-disabled'); 
+				$('#btnSubmit').removeClass('ui-state-disabled'); 
+				$("#Login").hide();
+				alert(textStatus+":CheckLogin.asp,"+XmlHttpRequest.responseText);
+			}
+		});
+	}
+	catch(exception){
+		$('#txtUserName').removeClass('ui-state-disabled'); 
+		$('#txtPassword').removeClass('ui-state-disabled'); 
+		$('#btnSubmit').removeClass('ui-state-disabled'); 
+		$("#Login").hide();
+		alert(exception);
+	}
+	
+	})
+})
+</script>
+</HTML>

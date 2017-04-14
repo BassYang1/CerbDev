@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title> </title>
+<link rel="stylesheet" type="text/css" media="all" href="css/ui.ddaccordion.base.css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/custom/system.js"></script>
+<script type="text/javascript" src="js/ddaccordion.js"></script>
+<script type="text/javascript" src="js/lang/lang.js"></script>
+<script type="text/javascript">
+//CheckLoginStatusForRoot();
+	ddaccordion.init({
+		headerclass: "navhead", 
+		contentclass: "navcontent", 
+		revealtype: "click", 		
+		mouseoverdelay: 400, 
+		collapseprev: true, 	
+		defaultexpanded: [], 	
+		onemustopen: false, 	
+		animatedefault: true, 		
+		persiststate: true, 		
+		toggleclass: ["", ""], 	
+		togglehtml: ["none", "", ""], 
+		animatespeed: "normal", 	
+		oninit:function(expandedindices){ },
+		onopenclose:function(header, index, state, isuseractivated){ }
+	})
+</script>
+</head>
+<body >
+<div class="line"></div>
+<div class="ui-widget-header"></div>
+<div class="wrapper">
+<div class="main">
+<div class="col-left">
+
+<div id="menu"> 
+<div class="navhead"><a href="Employees/Employees.html" target="mainFrame" id="Employees">人事资料</a></div>                        
+<div class="navcontent">
+  <ul>
+<li class="menusub"><a href="Employees/Employees.html" target="mainFrame"  >人事列表</a></li>
+<li class="menusub"><a href="Employees/Department.html" target="mainFrame" >部门列表</a></li>
+ </ul>
+</div>       
+			
+<div class="navhead">报表</div>                        
+<div class="navcontent">
+<ul>
+<li class="menusub"><a href="Report/AcsDetailReport.html" target="mainFrame"  >进出明细</a></li>
+<li class="menusub"><a href="Report/AcsIllegalReport.html" target="mainFrame"  >非法进出</a></li>
+<li class="menusub"><a href="Report/AttendOriginalReport.html" target="mainFrame"  >考勤原始刷卡</a></li>
+<li class="menusub"><a href="Report/AttendDetailReport.html" target="mainFrame"  >原始刷卡明细</a></li>
+
+</ul>
+</div>	
+			
+<div class="navhead">设备设置</div>                        
+<div class="navcontent">
+<ul>
+<li class="menusub"><a href="Equipment/BasicData.html" target="mainFrame">设备基本资料</a></li>
+<li class="menusub"><a href="Equipment/HolidayTemplate.html" target="mainFrame">假期表模板</a></li>
+<li class="menusub"><a href="Equipment/HolidayController.html" target="mainFrame">假期表设备</a></li>
+<li class="menusub"><a href="Equipment/ScheduleTemplate.html" target="mainFrame">时间表模板</a></li>
+<li class="menusub"><a href="Equipment/ScheduleController.html" target="mainFrame">时间表设备</a></li>
+<li class="menusub"><a href="Equipment/InOutTemplate.html" target="mainFrame">输入输出模板</a></li>
+<li class="menusub"><a href="Equipment/InOutController.html" target="mainFrame">输入输出设备</a></li>
+<li class="menusub"><a href="Equipment/RegCardTemplate.html" target="mainFrame">注册卡号模板</a></li>
+<li class="menusub"><a href="Equipment/RegCardController.html" target="mainFrame">注册卡号设备</a></li>
+</ul>
+</div>
+			                                  
+<div class="navhead">考勤设置</div>                        
+<div class="navcontent">
+ <ul>
+<li class="menusub"><a href="Attendance/AttendShifts.html" target="mainFrame">班次</a></li>
+ </ul>
+</div>
+			                                  
+<div class="navhead">用户设置</div>                        
+<div class="navcontent">
+<ul>
+<li class="menusub"><a href="Users/Users.html" target="mainFrame">用户列表</a></li>
+</ul>
+</div>
+			                                  
+<div class="navhead">系统设置</div>                        
+<div class="navcontent">
+ <ul>
+<li class="menusub"><a href="Equipment/Bell.html" target="mainFrame">铃响</a></li>
+<li class="menusub"><a href="#">选项</a></li>
+<li class="menusub"><a href="Equipment/SysDateTime.html" target="mainFrame">时间</a></li>
+</ul>
+</div>
+	
+<div class="navhead">工具</div>                        
+<div class="navcontent">
+ <ul>
+<li class="menusub"><a href="Tools/LogEvent.html" target="mainFrame">日志</a></li>
+<li class="menusub"><a href="Tools/RestartSafe.html" target="mainFrame">重启设备</a></li>
+<li class="menusub"><a href="Tools/Restore.html" target="mainFrame">恢复出厂</a></li>
+<li class="menusub"><a href="Tools/DbBackup.html" target="mainFrame">备份数据库</a></li>
+<li class="menusub"><a href="Tools/DbRestore.html" target="mainFrame">还原数据库</a></li>
+<li class="menusub"><a href="#">系统信息</a></li>
+</ul>
+</div>
+			                                  
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+</body>
+</html>

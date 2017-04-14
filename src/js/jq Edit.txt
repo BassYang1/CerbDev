@@ -1,0 +1,24 @@
+js:
+1、jqery-1.9.1.js 
+7336行修改  原因：提交编辑数据时，中文乱码问题
+//20130517 mike . add getType/isString/encodeURL function. 
+//Edit jQuery.param function,use encodeURL.
+
+2、jqery-1.11.0.js 
+7336行修改  原因：提交编辑数据时，中文乱码问题
+//20130517 mike . add getType/isString/encodeURL function. 
+//Edit jQuery.param function,use encodeURL.
+
+
+3、jquery-1.11.1.js
+因所有文件改为utf-8编码，代码中不需要增加getType/isString/encodeURL function. 
+
+CSS：
+1、ui.jqgrid.css
+94行，99行 增加font-size:12px。用于设置弹出增加/修改/查看对话框的字体大小 。
+
+2、jquery-ui-1.10.2.redmond.css
+788行，798行，增加宋体。 
+
+20150722
+1、My97DatePicker 下所有文件改为UTF-8编码

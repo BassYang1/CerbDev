@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,p{margin:10;padding:10;list-style-type:none;}
+a,img{border:0;text-decoration:none;}
+body{font:12px/180% "宋体",Lucida Grande,Lucida Sans,Arial,sans-serif;}
+</style>
+<link rel="stylesheet" type="text/css" href="../js/leftMenu/css/sdmenu.css" />
+<script type="text/javascript" src="../js/leftMenu/js/sdmenu.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript">
+var myMenu;
+window.onload = function() {
+	myMenu = new SDMenu("my_menu_User");
+	myMenu.init();
+	
+	var my_menu = document.getElementById("my_menu_User");
+	var myDiv = my_menu.getElementsByTagName("div");
+	if(myDiv.length == 2 && myDiv[1] != undefined && myDiv[1].className == "collapsed"){
+		var span=myDiv[1].getElementsByTagName("span")[0];
+		span.click();//当只有一个大菜单时，自动展开
+	}
+	$("#spanNavUser").click(function(){  
+		try{
+			if($("#divNavUser").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="Users.html";
+			}
+		}catch(exception){}
+	}); 
+	$("#spanNavImport").click(function(){  
+		try{
+			if($("#divNavImport").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="Import.asp";
+			}
+		}catch(exception){}
+	});  
+	$("#spanNavLogEvent").click(function(){  
+		try{
+			if($("#divNavLogEvent").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="LogEvent.html";
+			}
+		}catch(exception){}
+	});  
+	$("#spanNavSetCode").click(function(){  
+		try{
+			if($("#divNavSetCode").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="SetCode.html";
+			}
+		}catch(exception){}
+	});  
+	$("#spanNavTotal").click(function(){  
+		try{
+			if($("#divNavTotal").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="Total.html";
+			}
+		}catch(exception){}
+	});  
+
+	try{
+		myDiv = my_menu.getElementsByTagName("div");
+		if(myDiv.length >= 2){
+			var j=1;
+			for(j=1; j<myDiv.length; j++){
+				//查找是否有展开的菜单 
+				if( myDiv[j] != undefined && myDiv[j].className != "collapsed"){
+					var a=myDiv[j].getElementsByTagName("a")[0];
+					window.parent.mainFrame.location.href=a.href;
+					break;
+				}
+			}//如果都没有展开，则选择一个将其展开
+			if(j >= myDiv.length){
+				$("#spanNavUser").click();
+			}
+		}
+	}catch(Exception){
+	}
+	$("#hrefTotal").attr("href","Total.html?nd="+getRandom() );
+};
+</script>
+</head>
+<body>
+<div class="line"></div>
+<div id="my_menu_User" class="sdmenu" style="top:10px;">
+	<div class="collapsed " style="color:#FFFFFF; font-weight:bold;overflow:hidden; text-align:center " id="tool">Tool</div>
+	<div id="divNavUser" class="collapsed">
+		<span id="spanNavUser">Users</span>
+		<a href="Users.html" target="mainFrame" id="aUsers" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Users</a>
+	</div>
+    <div id="divNavImport" class="collapsed">
+		<span id="spanNavImport">Import</span>
+		<a href="Import.asp" target="mainFrame" id="aImport" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Import</a>
+	</div>
+	<div id="divNavLogEvent" class="collapsed">
+		<span id="spanNavLogEvent">Log</span>
+		<a href="LogEvent.html" target="mainFrame" id="aLogEvent" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Log</a>
+	</div>
+    <div id="divNavSetCode" class="collapsed">
+		<span id="spanNavSetCode">Set Code</span>
+		<a href="SetCode.html" target="mainFrame" id="aSetCode" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set Code</a>
+	</div>
+	<div id="divNavTotal" class="collapsed">
+		<span id="spanNavTotal">Attendance statistics</span>
+		<a id="hrefTotal" href="Total.html" target="mainFrame">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Statistics</a>
+	</div>
+</div>
+</body>
+</html>
+<script language="javascript">
+$(document).ready(function(){  
+	$("#tool").html(getlbl("tool.tool"));
+	$("#spanNavUser").html(getlbl("tool.spanNavUser"));
+	$("#aUsers").html(getlbl("tool.aUsers"));
+	$("#spanNavImport").html(getlbl("tool.spanNavImport"));
+	$("#aImport").html(getlbl("tool.aImport"));
+	$("#spanNavLogEvent").html(getlbl("tool.spanNavLogEvent"));
+	$("#aLogEvent").html(getlbl("tool.aLogEvent"));
+	$("#spanNavSetCode").html(getlbl("tool.spanNavSetCode"));
+	$("#aSetCode").html(getlbl("tool.aSetCode"));
+	$("#spanNavTotal").html(getlbl("tool.spanNavTotal"));
+	$("#hrefTotal").html(getlbl("tool.aTotal"));
+	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*";
+	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*";
+});
+</script>

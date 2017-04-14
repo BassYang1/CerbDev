@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Acs Detail Report</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
+<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.core.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
+
+<script src="../js/ui/jquery.ui.mouse.js"></script>
+<script src="../js/ui/jquery.ui.button.js"></script>
+<script src="../js/ui/jquery.ui.draggable.js"></script>
+<script src="../js/ui/jquery.ui.position.js"></script>
+<script src="../js/ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../css/demos.css">
+</head>
+<body>
+<table id="DataGrid" class="scroll" ></table>
+<div id="pager" class="scroll" style="text-align:center;"></div>
+<div hidden="true" id="myDiv"></div>
+<table id='table_DataGrid_top_right' class='ui-pg-table navtable' cellspacing='0' cellpadding='0' border='0' style='float:left;table-layout:auto; '><tbody><tr><td><select id="selCon" class='FormElement ui-widget-content ui-corner-all' style='width:100px;font-size:12px'></select></td><td id="tdDept"><select id="selDept" class='FormElement ui-widget-content ui-corner-all' style='width:140px; font-size:12px'></select></td><td ><select id="selProperty" class='FormElement ui-widget-content ui-corner-all' style='width:100px; font-size:12px'><option value='-1'>99 - All Status</option><option value='0'>0 - 合法卡</option><option value='1'>1 - 非法卡</option><option value='2'>2 - 非法时段</option><option value='3'>3 - 非法门</option><option value='4'>4 - 防遣返</option><option value='5'>5 - 非法指纹</option><option value='6'>6 - 密码错误</option><option value='7'>7 - 未采集指纹</option><option value='8'>8 - 验证方式错</option><option value='9'>9 - 指纹模块故障</option></select></td><td id='startTime_DataGrid_top' title='Start time'>&nbsp;&nbsp;<input type='text' id='startTime' class='FormElement ui-widget-content ui-corner-all' style='height:16px;width:135px;font-size:12px'/>~</td><td id='endTime_DataGrid_top' title='End time'> <input type='text' id='endTime' class='FormElement ui-widget-content ui-corner-all' style='height:16px;width:135px;font-size:12px'/></td></tr></tbody></table>
+<div id="divSearch"></div>
+<div id="divExport"></div>
+</body>
+</html>
+<script language="javascript">
+$(document).ready(function(){  
+	$("#selProperty").find('option').remove();
+	$("#selProperty").append($("<option></option>").attr("value", "-1").text(getlbl("rep.StatusVal99")));	//99 - 所有状态
+	$("#selProperty").append($("<option></option>").attr("value", "0").text(getlbl("rep.StatusVal0")));	//0 - 合法卡
+	$("#selProperty").append($("<option></option>").attr("value", "1").text(getlbl("rep.StatusVal1")));	//1 - 非法卡
+	$("#selProperty").append($("<option></option>").attr("value", "2").text(getlbl("rep.StatusVal2")));	//2 - 非法时段
+	$("#selProperty").append($("<option></option>").attr("value", "3").text(getlbl("rep.StatusVal3")));	//3 - 非法门
+	$("#selProperty").append($("<option></option>").attr("value", "4").text(getlbl("rep.StatusVal4")));	//4 - 防遣返
+	$("#selProperty").append($("<option></option>").attr("value", "5").text(getlbl("rep.StatusVal5")));	//5 - 非法指纹
+	$("#selProperty").append($("<option></option>").attr("value", "6").text(getlbl("rep.StatusVal6")));	//6 - 密码错误
+	$("#selProperty").append($("<option></option>").attr("value", "7").text(getlbl("rep.StatusVal7")));	//7 - 未采集指纹
+	$("#selProperty").append($("<option></option>").attr("value", "8").text(getlbl("rep.StatusVal8")));	//8 - 验证方式错
+	$("#selProperty").append($("<option></option>").attr("value", "9").text(getlbl("rep.StatusVal9")));	//9 - 指纹模块故障
+	$("#selProperty").val(-1);//选择value为0的项
+	
+	$("#startTime_DataGrid_top").attr("title",getlbl("rep.selstartTime"));	//
+	$("#endTime_DataGrid_top").attr("title",getlbl("rep.selendTime"));	//
+});
+</script>
+<script type="text/javascript" src="AcsDetailReport.js"></script>

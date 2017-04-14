@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,p{margin:10;padding:10;list-style-type:none;}
+a,img{border:0;text-decoration:none;}
+body{font:12px/180% "宋体",Lucida Grande,Lucida Sans,Arial,sans-serif;}
+</style>
+<link rel="stylesheet" type="text/css" href="../js/leftMenu/css/sdmenu.css" />
+<script type="text/javascript" src="../js/leftMenu/js/sdmenu.js"></script>
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+</script>
+<script type="text/javascript">
+var myMenu;
+window.onload = function() {
+	myMenu = new SDMenu("my_menu_Controller");
+	myMenu.init();
+	
+	var my_menu = document.getElementById("my_menu_Controller");
+	var myDiv = my_menu.getElementsByTagName("div");
+	if(myDiv.length == 2 && myDiv[1] != undefined && myDiv[1].className == "collapsed"){
+		var span=myDiv[1].getElementsByTagName("span")[0];
+		span.click();//当只有一个大菜单时，自动展开
+	}
+	$("#spanNavBasicData").click(function(){  
+		try{
+			if($("#divNavBasicData").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="BasicData.html";
+			}
+		}catch(exception){}
+	}); 
+	$("#spanNavHoliday").click(function(){  
+		try{
+			if($("#divNavHoliday").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="HolidayController.html";
+			}
+		}catch(exception){}
+	});  
+	$("#spanNavSchedule").click(function(){  
+		try{
+			if($("#divNavSchedule").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="ScheduleController.html";
+			}
+		}catch(exception){}
+	});  
+	$("#spanNavInOut").click(function(){  
+		try{
+			if($("#divNavInOut").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="InOutController.html";
+			}
+		}catch(exception){}
+	});  
+	$("#spanNavRegCard").click(function(){  
+		try{
+			if($("#divNavRegCard").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="RegCardController.html";
+			}
+		}catch(exception){}
+	});  
+	try{
+		myDiv = my_menu.getElementsByTagName("div");
+		if(myDiv.length >= 2){
+			var j=1;
+			for(j=1; j<myDiv.length; j++){
+				//查找是否有展开的菜单 
+				if( myDiv[j] != undefined && myDiv[j].className != "collapsed"){
+					var a=myDiv[j].getElementsByTagName("a")[0];
+					window.parent.mainFrame.location.href=a.href;
+					break;
+				}
+			}//如果都没有展开，则选择一个将其展开
+			if(j >= myDiv.length){
+				$("#spanNavBasicData").click();
+			}
+		}
+	}catch(Exception){
+	}
+};
+</script>
+</head>
+<body>
+<div class="line"></div>
+<div id="my_menu_Controller" class="sdmenu" style="top:10px;">
+	<div class="collapsed " style="color:#FFFFFF; font-weight:bold;overflow:hidden; text-align:center " id="ConManager">设备管理</div>
+	<div id="divNavBasicData" class="collapsed">
+		<span id="spanNavBasicData">基本资料</span>
+		<a href="BasicData.html" target="mainFrame" id="aBasicData" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;基本资料</a>
+	</div>
+	<div id="divNavHoliday" class="collapsed">
+		<span id="spanNavHoliday">假期表</span>
+		<a href="HolidayController.html" target="mainFrame" id="aHolidayController" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备方式</a>
+		<a href="HolidayTemplate.html" target="mainFrame" id="aHolidayTemplate" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;模板方式</a>
+	</div>
+	<div id="divNavSchedule" class="collapsed">
+		<span id="spanNavSchedule">时间表</span>
+		<a href="ScheduleController.html" target="mainFrame" id="aScheduleController" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备方式</a>
+		<a href="ScheduleTemplate.html" target="mainFrame" id="aScheduleTemplate" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;模板方式</a>
+	</div>
+	<div id="divNavInOut" class="collapsed">
+		<span id="spanNavInOut">输入输出表</span>
+		<a href="InOutController.html" target="mainFrame" id="aInOutController" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备方式</a>
+		<a href="InOutTemplate.html" target="mainFrame" id="aInOutTemplate" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;模板方式</a>
+	</div>
+	<div id="divNavRegCard" class="collapsed">
+		<span id="spanNavRegCard">注册卡号表</span>
+		<a href="RegCardController.html" target="mainFrame" id="aRegCardController" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备方式</a>
+		<a href="RegCardTemplate.html" target="mainFrame" id="aRegCardTemplate" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;模板方式</a>
+	</div>
+</div>
+</body>
+</html>
+<script language="javascript">
+$(document).ready(function(){  
+	$("#ConManager").html(getlbl("con.ConManager"));
+	$("#spanNavBasicData").html(getlbl("con.spanNavBasicData"));
+	$("#aBasicData").html(getlbl("con.aBasicData"));
+	$("#spanNavHoliday").html(getlbl("con.spanNavHoliday"));
+	$("#aHolidayController").html(getlbl("con.aHolidayController"));
+	$("#aHolidayTemplate").html(getlbl("con.aHolidayTemplate"));
+	$("#spanNavSchedule").html(getlbl("con.spanNavSchedule"));
+	$("#spanNavInOut").html(getlbl("con.spanNavInOut"));
+	$("#spanNavRegCard").html(getlbl("con.spanNavRegCard"));
+	$("#aScheduleController").html(getlbl("con.aHolidayController"));
+	$("#aScheduleTemplate").html(getlbl("con.aHolidayTemplate"));
+	$("#aInOutController").html(getlbl("con.aHolidayController"));
+	$("#aInOutTemplate").html(getlbl("con.aHolidayTemplate"));
+	$("#aRegCardController").html(getlbl("con.aHolidayController"));
+	$("#aRegCardTemplate").html(getlbl("con.aHolidayTemplate"));
+	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*";
+	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*";
+});
+</script>

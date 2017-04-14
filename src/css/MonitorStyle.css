@@ -1,0 +1,20 @@
+@charset "utf-8";
+
+.li:hover {background-image:url('../images/doorstatus.png')}
+.ui-door {
+	width: 60px;
+	height: 76px;
+	display:block;
+	margin: 0 auto;
+}
+.ui-door,
+.ui-doorStyle .ui-door{background-image: url(../images/doorstatus.png)}
+.ui-DoorClose {background-position:-3px 0}
+.ui-DoorOpen {background-position:-78px 0}
+.ui-DoorAlarm{background-position:-164px 0}
+.ui-DoorDisConn{background-position:-242px 0}
+.ui-DoorConn{background-position:-312px 0}
+.li .text{height:20px;display:block;{font-family:Arial,Helvetica,sans-serif;font-size:9pt;color:#1b3d49;}
+.separate{margin:0;height:48px;width:2px;background:#2A2B2D}
+.pulldown-nav{position:relative}
+
