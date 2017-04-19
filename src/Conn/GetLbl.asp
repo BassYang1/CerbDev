@@ -41,7 +41,7 @@ Function GetEmpLbl(strLblId)  'Employees 目录
 	NEXT
 End Function
 
-Function GetEquLbl(strLblId)  'Employees 目录
+Function GetEquLbl(strLblId)  'Equipment 目录
     Dim Equ
     Equ = Application("Equipment")
     

@@ -1,4 +1,4 @@
-﻿CheckLoginStatus();
+CheckLoginStatus();
 //获取操作权限
 var role = GetOperRole("RegCardTemplate");
 var iedit=false,iadd=false,idel=false,iview=false,irefresh=false,isearch=false;
@@ -18,25 +18,29 @@ $("#DataGrid").jqGrid({
 	url:'RegCardTemplateList.asp',
 	editurl:"RegCardTemplateEdit.asp",
 	datatype: "json",
-	//colNames:['模板ID','模板名称','职员','EmployeeCode','设备','选择设备','时间表','EmployeeScheID','进出门','验证方式'],
-	colNames:[getlbl("con.TempID"),getlbl("con.TempName"),getlbl("con.Emp"),'EmployeeCode',getlbl("con.Controller"),getlbl("con.SelController"),getlbl("con.Schedule"),'EmployeeScheID',getlbl("con.InOutDoor"),getlbl("con.ValidateMode")],
+	//colNames:['模板ID','模板名称','职员','EmployeeCode','DepartmentCode','部门列表',OtherCode',设备','选择设备','时间表','EmployeeScheID','进出门','验证方式', 'OnlyByCondition'],
+	colNames:[getlbl("con.TempID"),getlbl("con.TempName"),getlbl("con.ByDept"),getlbl("con.DeptList"),getlbl("con.ByEmp"),getlbl("con.EmpList"),'OtherCode',getlbl("con.Controller"),getlbl("con.SelController"),getlbl("con.Schedule"),'EmployeeScheID',getlbl("con.InOutDoor"),getlbl("con.ValidateMode"),getlbl("con.OnlyByCond")],
 	colModel :[
 		{name:'TemplateId',index:'TemplateId',align:'center',width:100,hidden:false,editrules:{edithidden:false},search:false},
 		{name:'TemplateName',index:'TemplateName',align:'center',editable:true,editrules:{required:true},
 			searchoptions:{sopt:["eq","ne",'cn','nc']},
 			formoptions:{elmsuffix:"<font color=#FF0000>*</font>"}},
-		{name:'EmployeeDesc',index:'EmployeeDesc',align:'center',editable:true,editrules:{required:true,size:60,maxlengh:60},search:false,
-			formoptions:{elmsuffix:"&nbsp;<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='btnSearchEmployee'  onclick='fSearchEmployee()'>"+getlbl("con.Sel")+"<span class='ui-icon ui-icon-search'></span></a>"}},
-		{name:'EmployeeCode',index:'EmployeeCode',align:'center',hidden:true,editable:true,editrules:{required:false},search:false},
+		{name:'DepartmentCode',index:'DepartmentCode',align:'center',hidden:true,editable:true,editrules:{edithidden:true,required:false},edittype:'checkbox',search:false},
+		{name:'DepartmentList',index:'DepartmentList',edittype:'none',hidden:true,align:'center',editable:true,editrules:{edithidden:true,required:true},search:false},
+		{name:'EmployeeCode',index:'EmployeeCode',align:'center',hidden:true,editable:true,editrules:{edithidden:true,required:false},edittype:'checkbox',search:false},
+		{name:'EmployeeList',index:'EmployeeList',edittype:'none',hidden:true,align:'center',editable:true,editrules:{edithidden:true,required:true},search:false},
+		{name:'OtherCode',index:'OtherCode',align:'center',hidden:true,editable:true,editrules:{edithidden:false,required:false},search:false},
 		{name:'EmployeeController',index:'EmployeeController',align:'center',editable:true,editrules:{required:true},search:false},
 		{name:'ControllerID',index:'ControllerID',hidden:true,align:'center',editable:true,editrules:{required:true},search:false},
 		{name:'EmployeeScheName',index:'EmployeeScheName',align:'center',editable:true,editrules:{required:false},search:false,
 			edittype:'select',},
 		{name:'EmployeeScheID',index:'EmployeeScheID',hidden:true,editrules:{edithidden:false},search:false},
-		{name:'EmployeeDoor',index:'EmployeeDoor',align:'center',editable:true,editrules:{required:false},search:false,
+		{name:'EmployeeDoor',index:'EmployeeDoor', align:'center',editable:true,editrules:{required:false},search:false,
 			edittype:'select', editoptions:{value:getlbl("con.InOutDoorVal1")+":"+getlbl("con.InOutDoorVal1")+";"+getlbl("con.InOutDoorVal2")+":"+getlbl("con.InOutDoorVal2")+";"+getlbl("con.InOutDoorVal3")+":"+getlbl("con.InOutDoorVal3")},},	//"1 - 门1:1 - 门1;2 - 门2:2 - 门2;3 - 双门:3 - 双门"
 		{name:'ValidateMode',index:'ValidateMode',align:'center',editable:true,editrules:{required:false},search:false,
 			edittype:'select', editoptions:{value:getlbl("con.ValidateModeVal0")+":"+getlbl("con.ValidateModeVal0")+";"+getlbl("con.ValidateModeVal1")+":"+getlbl("con.ValidateModeVal1")+";"+getlbl("con.ValidateModeVal2")+":"+getlbl("con.ValidateModeVal2")+";"+getlbl("con.ValidateModeVal3")+":"+getlbl("con.ValidateModeVal3")},},//"0 - 卡:0 - 卡;1 - 指纹:1 - 指纹;2 - 卡＋指纹:2 - 卡＋指纹;3 - 卡＋密码:3 - 卡＋密码"
+		{name:"OnlyByCondition",index:"OnlyByCondition",align:'center',hidden:true,editable:true,editrules:{edithidden:true,required:false}, search:false,
+			edittype:"checkbox",formoptions:{elmsuffix:"&nbsp;<label class=''>" + getlbl('con.OnlyByCondDesc') + "</label>"}},
 		], 
 	caption:getlbl("con.RegCardTemp"),//"注册卡号模板",
 	imgpath:'/images',
@@ -125,7 +129,10 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		afterSubmit:getAddafterSubmit,
 		afterShowForm:function(formid){
 			InitEditForm();
-			$("#tr_EmployeeDesc").children("td.DataTD").children("input").val(getlbl("con.AllEmp0"));	//"0 - 所有职员"
+
+			$("#tr_EmployeeDesc").children("td.DataTD").children("input").val(getlbl("con.AllEmp0"));	//"0 - 所有职员"			
+			$("#tr_DepartmentCode").children("td.DataTD").children("input").attr("checked", 'true');  //[按部门]默认选中			
+			$("#tr_OnlyByCondition").children("td.DataTD").children("input").attr("checked", 'true');  //[仅按此条件]默认选中
 		},
 		onclickSubmit: function(params) {
 			var strEmployeeScheID = $("#EmployeeScheID").val();
@@ -169,6 +176,10 @@ if(iadd){
 }
 
 function InitEditForm(){
+	InitDepartments(); //初使化部门列表
+	InitEmployees(); //初使化员工列表
+
+	//员工
 	var $tr = $("#tr_EmployeeDesc"), 
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
@@ -177,22 +188,144 @@ function InitEditForm(){
 	
 	$tr = $("#tr_EmployeeController"), 
 		$label = $tr.children("td.CaptionTD"),
-		$data = $tr.children("td.DataTD");
+		$data = $tr.children("td.DataTD");	
+
 	
-	
-	$data.html("<div align='left' class='ui-jqdialog-content ui-widget-content'><input type='radio' name='ControllerSel' checked value='0' id='Sel1'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;<label for='Sel1'>"+getlbl("con.AllCon")+"</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='ControllerSel' value='1' id='Sel2'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;<label for='Sel2'>"+getlbl("con.PartCon")+"</label></div>");//部分设备
+	//部分设备
+	var ctrlOptionHtml = "<div align='left' class='ui-jqdialog-content ui-widget-content'>" +
+				"<input type='radio' name='ControllerSel' checked value='0' id='Sel1'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;" +
+				"<label for='Sel1'>"+getlbl("con.AllCon")+"</label>&nbsp;&nbsp;&nbsp;&nbsp;" +
+				"<input type='radio' name='ControllerSel' value='1' id='Sel2'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;" +
+				"<label for='Sel2'>"+getlbl("con.PartCon")+"</label></div>";
+
+	$data.html(ctrlOptionHtml);
 	
 	$tr = $("#tr_ControllerID"), 
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
-	$data.html("<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0><TBODY><TR><TD width='30%' valign='top'><div onDblClick='fInsertCon()' class='ui-jqdialog-content ui-widget-content'><select id='selConSrc' name='selConSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'></select></div></TD><TD width='18%'align=middle valign='middle'><div align='center'><a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='conadd' onclick='fInsertCon()'><span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span><span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span></a><p><a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='condel' onclick='fDelCon()'><span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span><span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span></a></div></TD><TD width='52%' valign='top'><div onDblClick='fDelCon()' class='ui-jqdialog-content ui-widget-content'><select id='selConDesc' name='selConDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 ></select></div></TD></TR></TBODY></TABLE>");
+
+    //设备列表
+	var ctrlListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
+			"<TBODY><TR>" + 
+			"<TD width='30%' valign='top'><div onDblClick='fInsertCon()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selConSrc' name='selConSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'></select>" + 
+			"</div></TD>" + 
+			"<TD width='18%'align=middle valign='middle'>" + 
+			"<div align='center'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='conadd' onclick='fInsertCon()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a><p>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='condel' onclick='fDelCon()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a></div></TD>" + 
+			"<TD width='52%' valign='top'><div onDblClick='fDelCon()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selConDesc' name='selConDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 ></select>" + 
+			"</div></TD></TR></TBODY></TABLE>";
+
+	$data.html(ctrlListHtml);
 	
 	GetSchedule();
 	$("#tr_TemplateName").children("td.DataTD").children("input").css("width", "40%");
 	$("#tr_EmployeeScheName").children("td.DataTD").children("select").css("width", "40%");
 	$("#tr_EmployeeDoor").children("td.DataTD").children("select").css("width", "40%");
-	$("#tr_ValidateMode").children("td.DataTD").children("select").css("width", "40%");
+	//$("#tr_ValidateMode").children("td.DataTD").children("select").css("width", "40%");
 }
+
+//初使化部门
+function InitDepartments(){
+	var $tr = $("#tr_DepartmentList"), 
+		$label = $tr.children("td.CaptionTD"),
+		$data = $tr.children("td.DataTD");
+
+	var result = $.ajax({url:'../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&userId=',async:false});
+	var arrDepts = $.parseJSON(result.responseText) || [];
+
+	var deptListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
+			"<TBODY><TR>" + 
+			"<TD width='30%' valign='top'><div onDblClick='fInsertDept()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selDeptSrc' name='selDeptSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'>";
+
+	deptListHtml += "<option value='0'>0 - " + getlbl("hr.AllDept") + "</option>";
+
+	var id, pid, name, code, sBlank, len;
+
+	for(var i in arrDepts){
+		id = arrDepts[i].id;
+		pid = arrDepts[i].pId;
+		name = arrDepts[i].name;
+		code = arrDepts[i].code;
+		sBlank = "";
+		len = code.length / 5;
+
+		if(len == 1){
+			deptListHtml += "<option value='" + id + "' pid='" + pid + "'>" + name + "</option>";			
+		}
+		else{
+			for(var i = 0; i < len; i ++){
+				sBlank += "&nbsp;";
+			}
+
+			deptListHtml += "<option value='" + id + "' pid='" + pid + "'>" + sBlank + "|-" + name + "</option>";
+		}
+	}
+
+	deptListHtml += "</select></div></TD>" + 
+			"<TD width='18%'align=middle valign='middle'>" + 
+			"<div align='center'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd' onclick='fInsertDept()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a><p>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel' onclick='fDelDept()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a></div></TD>" + 
+			"<TD width='52%' valign='top'><div onDblClick='fDelDept()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selDeptDesc' name='selDeptDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 >" + 
+			"</select></div></TD></TR></TBODY></TABLE>";
+
+	$data.html(deptListHtml);
+}
+
+function InitEmployees(){
+	var $tr = $("#tr_EmployeeList"), 
+		$label = $tr.children("td.CaptionTD"),
+		$data = $tr.children("td.DataTD");
+
+	var result = $.ajax({url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),async:false});
+	var arrEmps = $.parseJSON(result.responseText) || [];
+
+	var empListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
+			"<TBODY><TR>" + 
+			"<TD width='30%' valign='top'><div onDblClick='fInsertEmp()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selEmpSrc' name='selEmpSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'>";
+
+	empListHtml += "<option value='0'>" + getlbl("con.AllEmp0") + "</option>";
+
+	for(var i in arrEmps){
+		empListHtml += "<option value='" + arrEmps[i].id + "'>" + arrEmps[i].name + "(" + arrEmps[i].number + ")" + "</option>";
+	}
+
+	empListHtml += "</select></div></TD>" + 
+			"<TD width='18%'align=middle valign='middle'>" + 
+			"<div align='center'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd' onclick='fInsertEmp()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a><p>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel' onclick='fDelEmp()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a></div></TD>" + 
+			"<TD width='52%' valign='top'><div onDblClick='fDelEmp()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selEmpDesc' name='selEmpDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 >" + 
+			"</select></div></TD></TR></TBODY></TABLE>";
+
+	$data.html(empListHtml);
+}
+
 function fCheckController()
 {
 	var con = $("input[name='ControllerSel']:checked").val();
@@ -211,6 +344,7 @@ function fCheckController()
 		GetController();
 	}
 }
+
 function GetController()
 {
 	var seloptions;
@@ -255,6 +389,7 @@ function GetSchedule()
 		}
 	});
 }
+
 function fInsertCon()
 {
 	var i,j, k;
@@ -295,10 +430,91 @@ function fDelCon()
 	}
 }
 
+function fInsertDept()
+{
+	var i,j, k;
+	var bExist;
+	var selobject = document.getElementById("selDeptDesc").options;
+	var strSrcValue, strSrcText;
+	for(i=document.getElementById("selDeptSrc").options.length-1; i>=0; i--)
+	{
+		bExist = false;
+		if(document.getElementById("selDeptSrc").options[i].selected == true)
+		{
+			strSrcValue = document.getElementById("selDeptSrc").options[i].value;
+			strSrcText  = document.getElementById("selDeptSrc").options[i].text;
+			j = selobject.length;
+			for(k=0; k<j; k++)
+			{
+				if(selobject[k].value == strSrcValue)
+				{
+					bExist = true;
+					break;
+				}
+			}
+			if(!bExist)
+			{
+				selobject[j] = new Option(strSrcText, strSrcValue);
+			}
+		}
+	}
+}
+
+function fDelDept()
+{
+	var i;
+	for(i=document.getElementById("selDeptDesc").options.length-1; i>=0; i--)
+	{
+		if(document.getElementById("selDeptDesc").options[i].selected == true)
+			document.getElementById("selDeptDesc").remove(i);
+	}
+}
+
+function fInsertEmp()
+{
+	var i,j, k;
+	var bExist;
+	var selobject = document.getElementById("selEmpDesc").options;
+	var strSrcValue, strSrcText;
+	for(i=document.getElementById("selEmpSrc").options.length-1; i>=0; i--)
+	{
+		bExist = false;
+		if(document.getElementById("selEmpSrc").options[i].selected == true)
+		{
+			strSrcValue = document.getElementById("selEmpSrc").options[i].value;
+			strSrcText  = document.getElementById("selEmpSrc").options[i].text;
+			j = selobject.length;
+			for(k=0; k<j; k++)
+			{
+				if(selobject[k].value == strSrcValue)
+				{
+					bExist = true;
+					break;
+				}
+			}
+			if(!bExist)
+			{
+				selobject[j] = new Option(strSrcText, strSrcValue);
+			}
+		}
+	}
+}
+
+function fDelEmp()
+{
+	var i;
+	for(i=document.getElementById("selEmpDesc").options.length-1; i>=0; i--)
+	{
+		if(document.getElementById("selEmpDesc").options[i].selected == true)
+			document.getElementById("selEmpDesc").remove(i);
+	}
+}
+
 function fSearchEmployee(){
 	$("#divSearch").load("search.asp?submitfun=fSearchEmployeeSubmit()");
 	$("#divSearch").show();
 }
+
 function fSearchEmployeeSubmit(){
 	//$("#divSearch").load("search.asp?submitfun=fSearchEmployeeSubmit()");
 	//$("#divSearch").show();

@@ -271,7 +271,13 @@ var con={
 	Schedule024 : "0 - 24H進出",
 	ConnStatus : '連接狀態',
 	IN_button : '0-按鈕',
-	IN_MenCi : '1-門磁' 
+	IN_MenCi : '1-門磁',
+	ByDept: '按部門'
+	DeptList: '部門列表',
+	ByEmp: '按職員',
+	EmpList: '職員列表',
+	OnlyByCond:'僅按此條件', 
+	OnlyByCondDesc:'勾選後設備只主冊上述條件人園，不符合上述條件的人園將刪除；否則追主冊'
 }
 
 var rep={

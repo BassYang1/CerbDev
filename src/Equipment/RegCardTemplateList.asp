@@ -1,6 +1,11 @@
 ﻿<!--#include file="..\Conn\conn.asp" -->
 <!--#include file="..\Conn\json.asp" -->
+<!--#include file="..\Conn\GetLbl.asp" -->
 <%
+dim lblYes, lblNo
+lblYes = GetEquLbl("Yes")
+lblNo = GetEquLbl("No")
+
 dim page,rows,sidx,sord
 page = request.QueryString("page") 'page
 rows = request.QueryString("rows") 'pagesize
@@ -75,7 +80,7 @@ End If
 fConnectADODB()
 dim a
 set a=new JSONClass
-a.Sqlstring="select CT.TemplateId,CT.TemplateName,CT.EmployeeDesc,CT.EmployeeCode,CT.EmployeeController,'',CST.TemplateName as  EmployeeScheName,CT.EmployeeScheID,CT.EmployeeDoor,CT.ValidateMode from ControllerTemplates CT left join  ControllerTemplates CST on CT.EmployeeScheID=CST.TemplateId where   CT.TemplateType='4' "&strWhere&" "&"order by "& sidx & " " & sord
+a.Sqlstring="select CT.TemplateId,CT.TemplateName, CT.DepartmentCode, '' AS DepartmentList, CT.EmployeeCode, '' AS EmployeeList, CT.OtherCode,CT.EmployeeController,'',CST.TemplateName as  EmployeeScheName,CT.EmployeeScheID,CT.EmployeeDoor,CT.ValidateMode, ISNULL(CT.OnlyByCondition, 0) AS OnlyByCondition from ControllerTemplates CT left join  ControllerTemplates CST on CT.EmployeeScheID=CST.TemplateId where   CT.TemplateType='4' "&strWhere&" "&"order by "& sidx & " " & sord
 set a.dbconnection=conn
 response.Write(a.GetJSon())
 'conn.close()

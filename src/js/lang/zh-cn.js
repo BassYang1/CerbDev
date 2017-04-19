@@ -271,7 +271,13 @@ var con={
 	Schedule024 : "0 - 24H进出",
 	ConnStatus : '连接状态',
 	IN_button : '0-按钮',
-	IN_MenCi : '1-门磁'
+	IN_MenCi : '1-门磁',
+	ByDept: '按部门',
+	DeptList: '部门列表',
+	ByEmp: '按职员',
+	EmpList: '职员列表',
+	OnlyByCond:'仅按此条件', 
+	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追注册'
 }
 
 var rep={

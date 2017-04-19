@@ -271,7 +271,13 @@ var con={
 	Schedule024 : "0 - 24H In & Out",
 	ConnStatus : 'Conn Status',	//连接状态
 	IN_button : '0-Button',
-	IN_MenCi : '1-Magnetic Contact' 
+	IN_MenCi : '1-Magnetic Contact',
+	ByDept: '按部門',
+	DeptList: '部門列表',
+	ByEmp: '按職員',
+	EmpList: '職員列表',
+	OnlyByCond:'仅按此条件', 
+	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追注册' 
 }
 
 var rep={

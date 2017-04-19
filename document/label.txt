@@ -1,0 +1,6 @@
+con.ByDept: By Department 按部門
+con.OnlyByCond:'仅按此条件', 
+con.OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追注册'
+con.DeptList: '部門列表',
+con.ByEmp: '按職員',
+con.EmpList: '職員列表',
