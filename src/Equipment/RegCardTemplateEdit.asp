@@ -7,17 +7,20 @@
 Call CheckLoginStatus("parent.location.href='../login.html'")
 Call CheckOperPermissions()
 
-Dim strSQL,strOper, strRecordID, strTemplateName,strEmployeeDesc,strEmployeeCode,strEmployeeController,strEmployeeScheID,strEmployeeDoor,strValidateMode,strActions
+Dim strSQL,strOper, strRecordID, strTemplateName,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strEmployeeController,strEmployeeScheID,strEmployeeDoor,strValidateMode,strActions, strOnlyByCondition
 Dim isEditEmpCode,arr
+Dim strConditionSql
 strOper = Request.Form("oper")
 strRecordID = Replace(Request.Form("id"),"'","''")
 strTemplateName = Replace(Request.Form("TemplateName"),"'","''")
 strEmployeeDesc = Replace(Request.Form("EmployeeDesc"),"'","''")
 strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
+strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
 strEmployeeController = Replace(Request.Form("EmployeeController"),"'","''")
 strEmployeeScheID = Replace(Request.Form("EmployeeScheID"),"'","''")
 strEmployeeDoor = Replace(Request.Form("EmployeeDoor"),"'","''")
 strValidateMode = Replace(Request.Form("ValidateMode"),"'","''")
+strOnlyByCondition = Replace(Request.Form("OnlyByCondition"),"'","''")
 
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
@@ -25,6 +28,11 @@ if strOper<>"add" and strOper<>"edit" and strOper<>"del" then
 end if 
 if GetOperRole("RegCardTemplate",strOper) <> true then 
 	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
+	response.End()
+end if
+
+if strEmployeeCode = "" or strDepartmentCode = "" then	
+	Call ReturnMsg("false",GetEquLbl("RegEmpCondition"),0)'您无权操作！
 	response.End()
 end if
 

@@ -241,7 +241,9 @@ var con={
 	RegCardTemp : "Card Registration Template",//注册卡号模板
 	AllEmp0 : "0 - All Employees",//0 - 所有职员
 	RegToCon : "Registration to controller",//注册到设备
-	RegToConTitle : "Template to controller",//将模板注册到设备
+	RegToConTitle : "Template to controller",//将模板注册到设备	
+	AllEmp : "All Employees",
+	AllDept : "All Departments",
 	AllCon : "All Controllers",//所有设备
 	PartCon : "Part Controllers",//部分设备
 	CoverReg : "Covering Registration",//覆盖注册
