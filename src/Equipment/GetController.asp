@@ -21,7 +21,7 @@ Rs.open strSQL, Conn, 1, 1
 if Rs.eof=false and Rs.Bof=false then
 	while not Rs.eof 
 		strJS = strJS + "ConArray[0][" + cstr(i) + "] = " + trim(Rs.fields("ControllerId").value) + ";"
-		strJS = strJS + "ConArray[1][" + cstr(i) + "] = '" + trim(Rs.fields("ControllerNumber").value) + "-"+trim(Rs.fields("Location").value)+"';"
+		strJS = strJS + "ConArray[1][" + cstr(i) + "] = '" + trim(Rs.fields("ControllerId").value) + "-" + trim(Rs.fields("ControllerNumber").value) + "-"+trim(Rs.fields("Location").value)+"';"
 		i = i + 1	
 		Rs.MoveNext
 	Wend

@@ -27,7 +27,8 @@ $("#DataGrid").jqGrid({
 			formoptions:{elmsuffix:"<font color=#FF0000>*</font>"}},
 		{name:'DepartmentCode',index:'DepartmentCode',align:'center',hidden:true,editable:true,editrules:{edithidden:true,required:false},edittype:'checkbox',search:false},
 		{name:'DepartmentList',index:'DepartmentList',edittype:'none',hidden:true,align:'center',editable:true,editrules:{edithidden:true,required:true},search:false},
-		{name:'EmployeeCode',index:'EmployeeCode',align:'center',hidden:true,editable:true,editrules:{edithidden:true,required:false},edittype:'checkbox',search:false},
+		{name:'EmployeeCode',index:'EmployeeCode',align:'center',hidden:true,editable:true,editrules:{edithidden:true,required:false},edittype:'checkbox',search:false,
+			formoptions:{elmsuffix:"&nbsp;<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='btnSearchEmployee'  onclick='fSearchEmployee()'>"+getlbl("hr.Search")+"<span class='ui-icon ui-icon-search'></span></a>"}},
 		{name:'EmployeeList',index:'EmployeeList',edittype:'none',hidden:true,align:'center',editable:true,editrules:{edithidden:true,required:true},search:false},
 		{name:'OtherCode',index:'OtherCode',align:'center',hidden:true,editable:true,editrules:{edithidden:false,required:false},search:false},
 		{name:'EmployeeController',index:'EmployeeController',align:'center',editable:true,editrules:{required:true},search:false},
@@ -131,6 +132,7 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 	},  //  default settings for edit
 	{
 		top:0,width:600,
+		closeAfterAdd: true,
 		reloadAfterSubmit :true,
 		afterSubmit:getAddafterSubmit,
 		afterShowForm:function(formid){
@@ -229,6 +231,7 @@ function InitEditForm(){
 	$("#tr_EmployeeScheName").children("td.DataTD").children("select").css("width", "40%");
 	$("#tr_EmployeeDoor").children("td.DataTD").children("select").css("width", "40%");
 	//$("#tr_ValidateMode").children("td.DataTD").children("select").css("width", "40%");
+	$("#tr_OnlyByCondition").after("<tr class='FormData'><td class='CaptionTD' colspan='2' style='color:red'>" + getlbl('con.TempNotice') + "</td></tr>");
 }
 
 //初使化部门
@@ -238,7 +241,8 @@ function InitDepartments(){
 		$data = $tr.children("td.DataTD");
 
 	var result = $.ajax({url:'../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&userId=',async:false});
-	var arrDepts = $.parseJSON(result.responseText) || [];
+	var data = result.responseText;
+	var arrDepts = data ? ($.parseJSON(data) || []) : [];
 
 	var deptListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
@@ -307,36 +311,45 @@ function LoadDept(deptIds){
 	else{
 		$.each(arrIds, function(i, value){
 			$srcOption = $srcObj.find("option[value='" + value + "']");
-			srcValue = $srcOption.val();
-			srcText = $srcOption.text();
-			srcCode = $srcOption.attr("code");
 
-			if(srcText.indexOf("|-") >= 0){
-				srcText = srcText.substr(srcText.indexOf("|-") + 2);
+			if($srcOption.size() > 0){
+				srcValue = $srcOption.val();
+				srcText = $srcOption.text();
+				srcCode = $srcOption.attr("code");
+
+				if(srcText.indexOf("|-") >= 0){
+					srcText = srcText.substr(srcText.indexOf("|-") + 2);
+				}
+
+				$selObj.append("<option value='" + srcValue + "' code='" + srcCode + "'>" + srcText + "</option>");
 			}
-
-			$selObj.append("<option value='" + srcValue + "' code='" + srcCode + "'>" + srcText + "</option>");
 		});
 	}
 }
 
 function InitEmployees(){
+	var condition = "";
+	if(arguments.length > 0) {
+		condition = arguments[0];
+	}
+
 	var $tr = $("#tr_EmployeeList"), 
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
 
-	var result = $.ajax({url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),async:false});
-	var arrEmps = $.parseJSON(result.responseText) || [];
+	var result = $.ajax({type:'post',url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),data:{condition: condition},async:false});
+	var data = result.responseText;
+	var arrEmps = data? ($.parseJSON(data) || []) : [];
 
 	var empListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
 			"<TD width='30%' valign='top'><div onDblClick='fInsertEmp()' class='ui-jqdialog-content ui-widget-content'>" + 
 			"<select id='selEmpSrc' name='selEmpSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'>";
 
-	empListHtml += "<option value='0'>" + getlbl("con.AllEmp") + "</option>";
+	// empListHtml += "<option value='0'>" + getlbl("con.AllEmp") + "</option>";
 
 	for(var i in arrEmps){
-		empListHtml += "<option value='" + arrEmps[i].id + "'>" + arrEmps[i].name + "(" + arrEmps[i].number + ")" + "</option>";
+		empListHtml += "<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>";
 	}
 
 	empListHtml += "</select></div></TD>" + 
@@ -371,17 +384,20 @@ function LoadEmp(empIds){
 	var $selObj = $("#selEmpDesc");
 	var arrIds = empIds.split(",");	
 
-	if($.inArray("0", arrIds) >= 0){
+	if($.inArray("0", arrIds) >= 0){ //是否选择所有员工
 		$selObj.empty();
 		$selObj.append("<option value='0' >" + getlbl("con.AllEmp") + "</option>");
 	}
 	else{
 		$.each(arrIds, function(i, value){
 			$srcOption = $srcObj.find("option[value='" + value + "']");
-			srcValue = $srcOption.val();
-			srcText = $srcOption.text();
 
-			$selObj.append("<option value='" + srcValue + "'>" + srcText + "</option>");
+			if($srcOption.size() > 0){
+				srcValue = $srcOption.val();
+				srcText = $srcOption.text();
+
+				$selObj.append("<option value='" + srcValue + "'>" + srcText + "</option>");
+			}
 		});
 	}
 }
@@ -563,7 +579,7 @@ function fInsertEmp(){
 	var $selObj = $("#selEmpDesc");
 
 	//是否选择所有职员
-	if($selObj.find("option[value='0']").length <= 0){
+	if($selObj.find("option[value='0']").length <= 0){ //未选择所有员工，则继续添加
 		if($selOptions.filter("option[value='0']").length > 0){
 			$selObj.empty();
 			$selObj.append("<option value='0'>" + getlbl("con.AllEmp") + "</option>");
@@ -598,22 +614,12 @@ function fSearchEmployee(){
 }
 
 function fSearchEmployeeSubmit(){
-	//$("#divSearch").load("search.asp?submitfun=fSearchEmployeeSubmit()");
-	//$("#divSearch").show();
 	var strsearchField=$("#searRetColVal").html();
 	var strsearchOper=$("#searRetOperVal").html();
 	var strsearchString=$("#searRetDataVal").html();
-	var strsearchFieldText=$("#searRetColText").html();
-	var strsearchOperText=$("#searRetOperText").html();
-	var strsearchStringText=$("#searRetDataText").html();
-	strsearchStringText = strsearchStringText.trim();
-	strsearchStringText = strsearchStringText.replace(/&nbsp;/g, "");
-	strsearchStringText = strsearchStringText.replace("|-","");
 	
-	strsearchOperText = strsearchOperText.replace(/&nbsp;/g, "");
-	//strsearchOperText = strsearchOperText.trim();  英语版需要，不去掉前后空格
-	$("#EmployeeDesc").val(strsearchFieldText + strsearchOperText + strsearchStringText);
-	$("#EmployeeCode").val("edit"+ "|," + strsearchField + "|," + strsearchOper + "|," + encodeURI(strsearchString));//前面加个edit,表示该字段有修改，需要更新
+	condition = strsearchField + "|," + strsearchOper + "|," + encodeURI(strsearchString);
+	InitEmployees(condition);	
 }
 
 function fCheckDept(){
@@ -647,7 +653,7 @@ function fCheckEmp(){
 }
 
 function fGetFormData(){	
-	var data = {};
+	var data = {EmployeeScheID:"",EmployeeController:"",DepartmentCode:"",DepartmentName:"",EmployeeCode:"",EmployeeName: ""};
 
 	//时间表
 	data.EmployeeScheID = $("#EmployeeScheID").val();
@@ -669,22 +675,26 @@ function fGetFormData(){
 
 	//选择部门
 	if($("#tr_DepartmentCode").children("td.DataTD").children("input").is(":checked")){
-		var deptIds = "";
+		var deptIds = "", deptNames = "";
 		$("#selDeptDesc").find("option").each(function(){
 			deptIds += "," + $(this).val();
+			deptNames += "," + $(this).text();
 		});
 
 		data.DepartmentCode = deptIds.substr(1);
+		data.DepartmentName = deptNames.substr(1);
 	}
 
 	//选择职员
 	if($("#tr_EmployeeCode").children("td.DataTD").children("input").is(":checked")){
-		var empIds = "";
+		var empIds = "", empNames = "";
 		$("#selEmpDesc").find("option").each(function(){
 			empIds += "," + $(this).val();
+			empNames += "," + $(this).text();
 		});
 
 		data.EmployeeCode = empIds.substr(1);
+		data.EmployeeName = empNames.substr(1);
 	}
 
 	//只使用此条件
@@ -710,30 +720,29 @@ function RegController(){
 	
 	var obj = {
 		resizable: false,
-		height:240,
-		width:520,
+		height:200,
+		width:480,
 		modal: true,
 		buttons : {},
 	};
-	var CoverReg = getlbl("con.CoverReg");	//"覆盖注册"
-	var AdditionalReg = getlbl("con.AdditionalReg"); //"追加注册"
-	obj.buttons[CoverReg] = function(){
-		$( this ).dialog( "close" );	//"覆盖注册"
-		RegCard("1",rowids);
+	var confirmReg = getlbl("comm.Confirm");	//"确定注册"
+	var cancelReg = getlbl("comm.Cancel"); 		//"取消注册"
+	obj.buttons[confirmReg] = function(){
+		$(this).dialog("close");	//"确定注册"
+		RegCard(rowids);
 	}
-	obj.buttons[AdditionalReg] = function(){
-		$( this ).dialog( "close" );	//"追加注册"
-		RegCard("0",rowids);
+	obj.buttons[cancelReg] = function(){
+		$(this).dialog("close");	//"取消注册"
 	}
-	$( "#dialog-confirm" ).dialog(obj);
-	
+
+	$("#dialog-confirm").dialog(obj);	
 };
 
-function RegCard(isClearOld,templateId){
+function RegCard(templateId){
 	$.ajax({
 		type: 'Post',
 		url: 'RegCardTemplateToControllerEdit.asp',
-		data:{"isClearOld":isClearOld,"TemplateId":templateId},
+		data:{"TemplateId":templateId},
 		success: function(data) {
 			try  {
 				var responseMsg = $.parseJSON(data);

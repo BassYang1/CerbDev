@@ -8,6 +8,11 @@ var strrefreshtext="刷新";
 var stralerttext = "請選擇需要操作的資料行!";
 var strsearchcaption ="查找";
 
+var comm = {
+	Confirm: "確定",
+	Cancel: "取消"
+}
+
 var login={
 	Title : "Cerberus iSCS 用戶登錄",
 	LoginUserName : "用戶名： ",
@@ -225,6 +230,7 @@ var con={
 	RegCardDetail : "註冊卡號明細",
 	TempRegToCon : "範本註冊到設備",
 	RegTempExplan : "<br /><B>[覆蓋註冊]</B>表示用範本資料覆蓋原註冊卡號，即先全部清空原註冊卡號，再註冊（注意：清空僅清空伺服器設備資料，不清空硬體上的資料）；<br /><br />&nbsp;&nbsp;&nbsp;<B>[追加註冊]</B>表示將範本資料追加到設備上（注意：不會產生重復資料，已註冊的卡號，不做任何修改）",
+		RegNotice : "<br/>如果模板勾選<B>[僅按此條件]</B>，則只註冊上述條件人員，不符合上述條件的人員將刪除；否則追加註冊",
 	TempID : "範本ID",
 	TempName : "範本名稱",
 	Emp : "職員",
@@ -279,7 +285,8 @@ var con={
 	ByEmp: '按職員',
 	EmpList: '職員列表',
 	OnlyByCond:'僅按此條件', 
-	OnlyByCondDesc:'勾選後設備只主冊上述條件人園，不符合上述條件的人園將刪除；否則追主冊'
+	OnlyByCondDesc:'勾選後設備只註冊上述條件人員，不符合上述條件的人員將刪除；否則追加註冊',
+	TempNotice: '註:部門列表或職員列表為“或”的關系'
 }
 
 var rep={

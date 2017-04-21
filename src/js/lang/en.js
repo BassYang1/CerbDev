@@ -8,6 +8,11 @@ var strrefreshtext="Refresh";
 var stralerttext = "Please select the data rows need to operate!";
 var strsearchcaption ="Search";
 
+var comm = {
+	Confirm: "Ok",
+	Cancel: "Concel"
+}
+
 var login={
 	Title : "Cerberus iSCS user login",
 	LoginUserName : "User: ",
@@ -225,6 +230,7 @@ var con={
 	RegCardDetail : "Card registration details",//注册卡号明细
 	TempRegToCon : "Template to controller",//模板注册到设备
 	RegTempExplan : "<B> [Covering Registration] </B> template data overwrite the original card registration , which is to clear all the original card registration, and new add (Note: Empty server controller data only, not empty hardware data );<br />&nbsp;&nbsp;&nbsp;<B> [Additional Registration] </B> templates that will append data to the controller (note: on't make duplicate data, the cards has been registered, without any modification)",
+		RegNotice : "<br/>If the template<B>[Only Based on the Condition]</B> is checked，the employees based on the condition will be registered and the old registration data will be cleared. Or the employees will only be appended and registered.",
 	TempID : "Template ID",//模板ID
 	TempName : "Template Name",//模板名称
 	Emp : "Employees",//职员
@@ -274,12 +280,13 @@ var con={
 	ConnStatus : 'Conn Status',	//连接状态
 	IN_button : '0-Button',
 	IN_MenCi : '1-Magnetic Contact',
-	ByDept: '按部門',
-	DeptList: '部門列表',
-	ByEmp: '按職員',
-	EmpList: '職員列表',
-	OnlyByCond:'仅按此条件', 
-	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追注册' 
+	ByDept: 'Via Departments',
+	DeptList: 'Department List',
+	ByEmp: 'Via Employees',
+	EmpList: 'Employee List',
+	OnlyByCond:'Unique Condition', 
+	OnlyByCondDesc:'If the option is checked, the employees based on the condition will be registered and the old registration data will be cleared. Or the employees will only be appended and registered.' ,
+	TempNotice: 'NOTE:the conditions Department List and Employee List are the OR relationship.'
 }
 
 var rep={

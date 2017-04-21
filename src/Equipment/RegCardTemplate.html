@@ -33,7 +33,7 @@
 <table id="DataGrid" class="scroll"></table>
 <div id="pager" class="scroll" style="text-align:center;"></div>
 <div id="dialog-confirm" title="Template Reg" style="display: none;">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id="RegTempExplan"</span>
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id="RegTempTotice"</span>
 </p>
 </div>
 <div id="divSearch"></div>
@@ -42,8 +42,7 @@
 <script language="javascript">
 $(document).ready(function(){  
 	$("#dialog-confirm").attr("title",getlbl("con.TempRegToCon"));	//模板注册到设备
-	$("#RegTempExplan").html(getlbl("con.RegTempExplan"));	//<B>[覆盖注册]</B>表示用模板数据覆盖原注册卡号，即先全部清空原注册卡号，再注册（注意：清空仅清空服务器设备数据，不清空硬件上的数据）；<br />&nbsp;&nbsp;&nbsp;<B>[追加注册]</B>表示将模板数据追加到设备上（注意：不会产生重复数据，已注册的卡号，不做任何修改）
-
+	$("#RegTempTotice").html(getlbl("con.RegNotice"));	//"<br/>如果模板勾选<B>[仅按此条件]</B>，则只注册上述条件人员，不符合上述条件的人员将删除；否则追加注册"
 });
 </script>
 <!-- <script type="text/javascript" src="RegCardTemplate.js"></script> -->

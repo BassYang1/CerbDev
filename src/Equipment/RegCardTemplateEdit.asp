@@ -7,20 +7,24 @@
 Call CheckLoginStatus("parent.location.href='../login.html'")
 Call CheckOperPermissions()
 
-Dim strSQL,strOper, strRecordID, strTemplateName,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strEmployeeController,strEmployeeScheID,strEmployeeDoor,strValidateMode,strActions, strOnlyByCondition
+Dim strSQL,strOper, strRecordID, strTemplateName,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strEmployeeController,strEmployeeScheID,strEmployeeDoor,strValidateMode,strActions, strOnlyByCondition
+Dim strDepartmentName, strEmployeeName
 Dim isEditEmpCode,arr
 Dim strConditionSql
 strOper = Request.Form("oper")
 strRecordID = Replace(Request.Form("id"),"'","''")
 strTemplateName = Replace(Request.Form("TemplateName"),"'","''")
-strEmployeeDesc = Replace(Request.Form("EmployeeDesc"),"'","''")
 strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
 strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
+strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
 strEmployeeController = Replace(Request.Form("EmployeeController"),"'","''")
 strEmployeeScheID = Replace(Request.Form("EmployeeScheID"),"'","''")
 strEmployeeDoor = Replace(Request.Form("EmployeeDoor"),"'","''")
 strValidateMode = Replace(Request.Form("ValidateMode"),"'","''")
 strOnlyByCondition = Replace(Request.Form("OnlyByCondition"),"'","''")
+strEmployeeDesc = ""
+strDepartmentName = Replace(Request.Form("DepartmentName"),"'","''")
+strEmployeeName = Replace(Request.Form("EmployeeName"),"'","''")
 
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
@@ -31,26 +35,21 @@ if GetOperRole("RegCardTemplate",strOper) <> true then
 	response.End()
 end if
 
-if strEmployeeCode = "" or strDepartmentCode = "" then	
-	Call ReturnMsg("false",GetEquLbl("RegEmpCondition"),0)'您无权操作！
+if strDepartmentName <> "" then
+	strEmployeeDesc = strEmployeeDesc & "," & strDepartmentName
+end if
+
+if strEmployeeName <> "" then
+	strEmployeeDesc = strEmployeeDesc & "," & strEmployeeName
+end if
+
+if strOper<>"del" and strEmployeeCode = "" and strDepartmentCode = "" and strEmployeeDesc = "" then	
+	Call ReturnMsg("false",GetEquLbl("RegEmpCondition"),0)'未设置注册员工条件
 	response.End()
 end if
 
-isEditEmpCode = "0"
-if strEmployeeCode <> "" then 
-	arr = split(strEmployeeCode,"|,")
-	if IsArray(arr) and UBound(arr) >= 3 and arr(0) = "edit" then 
-		isEditEmpCode = "1"
-		strEmployeeCode = GetSearchSQLWhere(arr(1),arr(2),arr(3))
-		'strEmployeeCode = "select Employeeid from Employees E Left join Departments D on E.DepartmentID=D.DepartmentID where " & strEmployeeCode
-		'20140512 前台选择某个部门时，将子部门的ID一起返回
-		strEmployeeCode = "select Employeeid from Employees E where " & strEmployeeCode
-		strEmployeeCode = Replace(strEmployeeCode,"'","''")
-	end if
-end if
-if strEmployeeDesc <> "" and left(strEmployeeDesc,1) = "0" then
-	isEditEmpCode = "1"
-	strEmployeeCode = ""
+if strEmployeeDesc <> "" then
+	strEmployeeDesc = right(strEmployeeDesc, len(strEmployeeDesc) - 1)  '注册员工描述
 end if
 
 if strEmployeeController = "0" then 
@@ -77,14 +76,15 @@ end if
 
 Select Case strOper
 	Case "add": 'Add Record
-		strSQL = "INSERT INTO ControllerTemplates (TemplateType,TemplateName,EmployeeDesc,EmployeeCode,EmployeeController,EmployeeScheID,EmployeeDoor,ValidateMode) values('4'"&",'"&strTemplateName&"','"&strEmployeeDesc&"','"&strEmployeeCode&"','"&strEmployeeController&"','"&strEmployeeScheID&"','"&strEmployeeDoor&"','"&strValidateMode&"') "
+		strSQL = "INSERT INTO ControllerTemplates (TemplateType,TemplateName,EmployeeDesc,EmployeeCode,DepartmentCode,OtherCode,EmployeeController,EmployeeScheID,EmployeeDoor,ValidateMode, OnlyByCondition) values('4'"&",'"&strTemplateName&"','"&strEmployeeDesc&"','"&strEmployeeCode&"','"&strDepartmentCode&"','"&strOtherCode&"','"&strEmployeeController&"','"&strEmployeeScheID&"','"&strEmployeeDoor&"','"&strValidateMode&"',"&strOnlyByCondition&") "
 	Case "edit": 'Edit Record
 		strSQL = "Update ControllerTemplates Set TemplateName ='"&strTemplateName&"' "
 		strSQL = strSQL & " ,EmployeeDesc='"&strEmployeeDesc&"' "
-		if isEditEmpCode = "1" then 
-			strSQL = strSQL & " ,EmployeeCode='"&strEmployeeCode&"' "
-		end if
+		strSQL = strSQL & " ,EmployeeCode='"&strEmployeeCode&"' "
+		strSQL = strSQL & " ,DepartmentCode='"&strDepartmentCode&"' "
+		strSQL = strSQL & " ,OtherCode='"&strOtherCode&"' "
 		strSQL = strSQL & " ,EmployeeController='"&strEmployeeController&"',EmployeeScheID='"&strEmployeeScheID&"',EmployeeDoor='"&strEmployeeDoor&"',ValidateMode='"&strValidateMode&"' "
+		strSQL = strSQL & " ,OnlyByCondition="&strOnlyByCondition&" "
 		strSQL = strSQL & " Where TemplateId = "&strRecordID
 
 	Case "del": 'Delete Record

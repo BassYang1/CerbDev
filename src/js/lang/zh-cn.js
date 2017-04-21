@@ -8,6 +8,11 @@ var strrefreshtext="刷新";
 var stralerttext = "请选择需要操作的数据行!";
 var strsearchcaption ="查找";
 
+var comm = {
+	Confirm: "确定",
+	Cancel: "取消"
+}
+
 var login={
 	Title : "Cerberus iSCS 用户登录",
 	LoginUserName : "用户名： ",
@@ -225,6 +230,7 @@ var con={
 	RegCardDetail : "注册卡号明细",
 	TempRegToCon : "模板注册到设备",
 	RegTempExplan : "<br/><B>[覆盖注册]</B>表示用模板数据覆盖原注册卡号，即先全部清空原注册卡号，再注册（注意：清空仅清空服务器设备数据，不清空硬件上的数据）；<br /><br />&nbsp;&nbsp;&nbsp;<B>[追加注册]</B>表示将模板数据追加到设备上（注意：不会产生重复数据，已注册的卡号，不做任何修改）",
+	RegNotice : "<br/>如果模板勾选<B>[仅按此条件]</B>，则只注册上述条件人员，不符合上述条件的人员将删除；否则追加注册",
 	TempID : "模板ID",
 	TempName : "模板名称",
 	Emp : "职员",
@@ -279,7 +285,8 @@ var con={
 	ByEmp: '按职员',
 	EmpList: '职员列表',
 	OnlyByCond:'仅按此条件', 
-	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追注册'
+	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追加注册',
+	TempNotice: '注:部门列表或职员列表为“或”的关系'
 }
 
 var rep={

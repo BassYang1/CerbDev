@@ -7,19 +7,17 @@ CheckLoginStatus("parent.location.href='../login.html'")
 CheckOperPermissions()
 
 dim strSQL,strActions
-dim strTemplateId,isClearOld,arrTemplateId
-dim strEmpWhere,strConWhere,strTemplateName
+dim strTemplateId,arrTemplateId
+dim isClearOld,strEmpWhere,strConWhere,strTemplateName
 dim i,j,n
 
 response.Charset="utf-8"
 strTemplateId = Replace(request.Form("TemplateId"),"'","''")
-isClearOld = Replace(request.Form("isClearOld"),"'","''")
 
 arrTemplateId = Split(strTemplateId, ",")
 dim strUserId
 strUserId = session("UserId")
 if strUserId = "" then strUserId = "0" end if
-if isClearOld = "" then isClearOld = "0" end if
 
 if GetOperRole("RegCardTemplate","edit") <> true then 
 	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
@@ -30,10 +28,15 @@ fConnectADODB()
 
 '先注册时间表
 For i = 0 To UBound(arrTemplateId)
-	iSQL = "select * from ControllerTemplates where TemplateId="+cstr(arrTemplateId(i))
+	isClearOld = "0"
+	iSQL = "select TemplateName, ISNULL(OnlyByCondition, 0) AS OnlyByCondition from ControllerTemplates where TemplateId="+cstr(arrTemplateId(i))
 	Rs.Open iSQL, Conn, 1, 1
 	If Not Rs.eof Then
 		strTemplateName = Trim(Rs.fields("TemplateName").value)
+
+		if Rs.fields("OnlyByCondition").value = true then
+			isClearOld = "1"
+		end if
 	End If
 	Rs.close
 	
