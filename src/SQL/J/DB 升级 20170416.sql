@@ -86,16 +86,27 @@ BEGIN
 	SELECT @strEmCode=EmployeeCode,@strDeptCode=DepartmentCode,@strOtherCode=OtherCode,@strEmController=ISNULL(EmployeeController,''),
 			@strEmployeeScheID=ISNULL(EmployeeScheID,''),@strEmployeeDoor=ISNULL(EmployeeDoor,''),@strValidateMode=ValidateMode
 			FROM ControllerTemplates where TemplateType=4 and TemplateId=+@TemplateId
-
-	Set @strEmCode = 'select EmployeeId from Employees where Left(IncumbencyStatus,1) != ''1'''
-	IF @WhereEmployee <> '' 
-		Set @strEmCode = ' and EmployeeId IN (' + @WhereEmployee+')'
-
-	if ISNULL(@strEmCode,'') != '' 
-		Set @strEmCode = @strEmCode + ' and EmployeeId In(' + @strEmCode + ')'
+				
+	if ISNULL(@strEmCode,'') != ''
+	begin
+		Set @strEmCode = '( EmployeeId in ('+ @strEmCode + '))'
 		
-	if ISNULL(@strDeptCode,'') != '' 
-		Set @strEmCode = @strEmCode + ' and Departmentid In(' + @strDeptCode + ')'		
+		if ISNULL(@strDeptCode,'') != '' 
+			Set @strEmCode = '(' + @strEmCode + ' or (Departmentid In(' + @strDeptCode + ')))'	
+	end
+	else
+	begin
+		if ISNULL(@strDeptCode,'') != '' 
+			Set @strEmCode = '(Departmentid In(' + @strDeptCode + '))'	
+	end		
+	
+	if ISNULL(@strEmCode,'') != '' 
+		Set @strEmCode = 'select EmployeeId from Employees where Left(IncumbencyStatus,1) != ''1'' and '+ @strEmCode
+	else 
+		Set @strEmCode = 'select EmployeeId from Employees where Left(IncumbencyStatus,1) != ''1'''		
+	
+	IF @WhereEmployee <> '' 
+		Set @strEmCode = @strEmCode + ' and EmployeeId IN (' + @WhereEmployee+')'	
 		
 	--获取需要注册的设备，并将设备ID保存于#TempConId中
 	IF object_id('tempdb.dbo.#TempConId') IS not null
@@ -116,7 +127,8 @@ BEGIN
 	----注册时间表。当前时间表ID没在设备时间表中，则找一个ScheduleCode最小且没有未注册的时间表的记录来保存当前时间表ID
 	IF @strEmployeeScheID <> ''
 	BEGIN
-		Set @strSQL = 'update CS set TemplateId='+@strEmployeeScheID+',TemplateName=(select top 1 TemplateName from ControllerTemplates where TemplateId='+@strEmployeeScheID+' ),Status=0 From ControllerSchedule CS 
+		Set @strSQL = 'update CS set TemplateId='+@strEmployeeScheID+',TemplateName=(select top 1 TemplateName from ControllerTemplates where TemplateId='+@strEmployeeScheID+' ),Status=0 
+						From ControllerSchedule CS 
 						where CS.ScheduleCode=(select MIN(ScheduleCode) From ControllerSchedule CS2 
 									where CS.Controllerid=CS2.Controllerid and (ISNULL(CS2.TemplateId,0)=0 or ISNULL(CS2.TemplateId,'''')='''')  ) 
 							and CS.Controllerid in (Select Controllerid from #TempConId ) 
@@ -125,10 +137,13 @@ BEGIN
 	EXEC(@strSQL)
 
 	--覆盖注册，先删除，再注册
+	Set @strSQL = 'delete from ControllerEmployee where ControllerId in (select ControllerId from #TempConId) 
+						and EmployeeId in (select EmployeeId from ('+@strEmCode+') A ); ' --删除后重新注册
+
 	if @RegMode=1 
 	Begin
-		Set @strSQL = 'delete from ControllerEmployee where ControllerId in (select ControllerId from #TempConId) 
-						and EmployeeId in (select EmployeeId from ('+@strEmCode+') A ); '
+		Set @strSQL = @strSQL+'update ControllerEmployee set deleteflag = 1, status = 0 where ControllerId in (select ControllerId from #TempConId) 
+						and EmployeeId not in (select EmployeeId from ('+@strEmCode+') A ); ' --软件删除当前未注册在该设备上的员工卡号
 		Set @strSQL = @strSQL+'insert into ControllerEmployee(ControllerId,Employeeid,UserPassword,ScheduleCode,EmployeeDoor,DeleteFlag,Status, ValidateMode) 
 						select C.ControllerId, Emp.Employeeid, U.Userpassword,'''+@strEmployeeScheID+''','''+@strEmployeeDoor+''',0,0, '''+@strValidateMode+''' 
 						from Controllers C,Employees Emp left join Users U on  Emp.Employeeid=U.Employeeid 
@@ -136,21 +151,23 @@ BEGIN
 						and C.ControllerID in (select ControllerId from #TempConId) 
 						and NOT EXISTS(SELECT 1 FROM ControllerEmployee AS CE 
 							WHERE CE.Employeeid=Emp.Employeeid and CE.Controllerid = C.Controllerid 
-							and CE.ControllerID in (select ControllerId from #TempConId) ) '
+							and CE.ControllerID in (select ControllerId from #TempConId) 
+							and ISNULL(CE.deleteflag, 0) = 0 ) '
 		Exec(@strSQL)	
 	End
 	Else
 	Begin
-		Set @strSQL = 'insert into ControllerEmployee(ControllerId,Employeeid,UserPassword,ScheduleCode,EmployeeDoor,DeleteFlag,Status, ValidateMode) 
+		Set @strSQL = @strSQL+'insert into ControllerEmployee(ControllerId,Employeeid,UserPassword,ScheduleCode,EmployeeDoor,DeleteFlag,Status, ValidateMode) 
 						select C.ControllerId, Emp.Employeeid, U.Userpassword,'''+@strEmployeeScheID+''','''+@strEmployeeDoor+''',0,0, '''+@strValidateMode+''' 
 						from Controllers C,Employees Emp left join Users U on  Emp.Employeeid=U.Employeeid 
 						where  Emp.EmployeeId in (select EmployeeId from ('+@strEmCode+') A ) and Left(Emp.IncumbencyStatus,1)!=''1'' and Emp.Card>0 
 						and C.ControllerID in (select ControllerId from #TempConId) 
 						and NOT EXISTS(SELECT 1 FROM ControllerEmployee AS CE 
 							WHERE CE.Employeeid=Emp.Employeeid and CE.Controllerid = C.Controllerid 
-							and CE.ControllerID in (select ControllerId from #TempConId) ) '
+							and CE.ControllerID in (select ControllerId from #TempConId) 
+							and ISNULL(CE.deleteflag, 0) = 0 ) '
 		Exec(@strSQL)	
-	End
+	End	
 
 	UPDATE ControllerDataSync set SyncStatus=0 where Controllerid in (select ControllerId from #TempConId) and SyncType='register'
 		

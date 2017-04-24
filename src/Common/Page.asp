@@ -402,4 +402,31 @@ Function GetSearchSQLConidtion(strField,strSearchOper,strFieldData)
 	GetSearchSQLConidtion = strWhere				
 End Function
 
+
+'tempId 模板Id
+'isClearOld 清除设备注册历史数据
+sub RegCard(tempId, isClearOld)
+	On Error Resume Next		
+	set recom = server.createobject("adodb.command")
+	recom.activeconnection = Conn
+	recom.commandtype = 4
+	recom.CommandTimeout = 0
+	recom.Prepared = true
+	recom.Commandtext = "pRegCardTemplateRegister"
+	recom.Parameters(1) = tempId
+	recom.Parameters(2) = isClearOld
+	recom.Parameters(3) = strEmpWhere
+	recom.Parameters(4) = strConWhere
+	
+	On Error Resume Next	
+	recom.execute()
+	if err.number <> 0 then
+		Call fCloseADO()
+		'Call ReturnMsg("false","模板:["+CStr(strTemplateName)+"]注册到设备时失败！"+Err.Description,0)
+		Call ReturnMsg("false",GetEquLbl("Template")+"["+CStr(strTemplateName)+"]"+GetEquLbl("RegConFail")+Err.Description,0)
+		On Error GoTo 0
+		response.End()
+	end if
+end sub
+
 %>

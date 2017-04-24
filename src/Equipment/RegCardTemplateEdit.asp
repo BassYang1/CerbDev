@@ -1,5 +1,6 @@
 ﻿<!--#include file="..\Conn\conn.asp"-->
 <!--#include file="..\Common\Page.asp"-->
+<!--#include file="..\Common\Controller.asp"-->
 <!--#include file="..\CheckLoginStatus.asp"-->
 <!--#include file="SearchExec.asp" -->
 <!--#include file="..\Conn\GetLbl.asp"-->
@@ -25,6 +26,9 @@ strOnlyByCondition = Replace(Request.Form("OnlyByCondition"),"'","''")
 strEmployeeDesc = ""
 strDepartmentName = Replace(Request.Form("DepartmentName"),"'","''")
 strEmployeeName = Replace(Request.Form("EmployeeName"),"'","''")
+
+dim strUserId
+strUserId = session("UserId")
 
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
@@ -74,9 +78,14 @@ if	strSQL<>"" then
 	end if
 end if
 
+Dim ctrlObj
+set ctrlObj = new Controller
+ctrlObj.DBConnection = Conn
+ctrlObj.UserId = strUserId
+
 Select Case strOper
 	Case "add": 'Add Record
-		strSQL = "INSERT INTO ControllerTemplates (TemplateType,TemplateName,EmployeeDesc,EmployeeCode,DepartmentCode,OtherCode,EmployeeController,EmployeeScheID,EmployeeDoor,ValidateMode, OnlyByCondition) values('4'"&",'"&strTemplateName&"','"&strEmployeeDesc&"','"&strEmployeeCode&"','"&strDepartmentCode&"','"&strOtherCode&"','"&strEmployeeController&"','"&strEmployeeScheID&"','"&strEmployeeDoor&"','"&strValidateMode&"',"&strOnlyByCondition&") "
+		strSQL = "INSERT INTO ControllerTemplates (TemplateType,TemplateName,EmployeeDesc,EmployeeCode,DepartmentCode,OtherCode,EmployeeController,EmployeeScheID,EmployeeDoor,ValidateMode, OnlyByCondition) values('4'"&",'"&strTemplateName&"','"&strEmployeeDesc&"','"&strEmployeeCode&"','"&strDepartmentCode&"','"&strOtherCode&"','"&strEmployeeController&"','"&strEmployeeScheID&"','"&strEmployeeDoor&"','"&strValidateMode&"',"&strOnlyByCondition&")"
 	Case "edit": 'Edit Record
 		strSQL = "Update ControllerTemplates Set TemplateName ='"&strTemplateName&"' "
 		strSQL = strSQL & " ,EmployeeDesc='"&strEmployeeDesc&"' "
@@ -86,7 +95,6 @@ Select Case strOper
 		strSQL = strSQL & " ,EmployeeController='"&strEmployeeController&"',EmployeeScheID='"&strEmployeeScheID&"',EmployeeDoor='"&strEmployeeDoor&"',ValidateMode='"&strValidateMode&"' "
 		strSQL = strSQL & " ,OnlyByCondition="&strOnlyByCondition&" "
 		strSQL = strSQL & " Where TemplateId = "&strRecordID
-
 	Case "del": 'Delete Record
 		strSQL = " Delete From ControllerTemplates where TemplateId in ("&strRecordID&") "
 End Select
@@ -103,10 +111,33 @@ if	strSQL<>"" then
 	
 	Select Case strOper
 		Case "add": 'Add Record
+			On Error Resume Next
+			strSQL = "SELECT @@IDENTITY AS  Id"
+			Rs.Open strSQL, Conn, 1, 1
+			If Not Rs.eof Then
+				strRecordID = cstr(Rs.fields("Id").value)
+			End If
+			Rs.close
+
+			if err.number <> 0 then
+				Call fCloseADO()
+				Call ReturnMsg("false",Err.Description,0)
+				On Error GoTo 0
+				response.End()
+			end if
+
+			if strRecordID <> "" then
+				ctrlObj.RegTemplateCard strRecordID, "" //注册卡号
+			end if
+
 			strActions = GetCerbLbl("strLogAdd")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,模板名称["&strTemplateName&"]")
 			Call AddLogEvent(GetEquLbl("ConManage")&"-"&GetEquLbl("RegCard")&"-"&GetEquLbl("TempMode"),cstr(strActions),cstr(strActions)&GetEquLbl("RegCardTemp")&","&GetEquLbl("TempName")&"["&strTemplateName&"]")
 		Case "edit": 'Edit Record
+			if strRecordID <> "" then
+				ctrlObj.RegTemplateCard strRecordID, "" //注册卡号
+			end if
+
 			strActions = GetCerbLbl("strLogEdit")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"],修改后模板名称["&strTemplateName&"]")
 			Call AddLogEvent(GetEquLbl("ConManage")&"-"&GetEquLbl("RegCard")&"-"&GetEquLbl("TempMode"),cstr(strActions),cstr(strActions)&GetEquLbl("RegCardTemp")&",ID["&strRecordID&"],"&GetEquLbl("EditRegTempName")&"["&strTemplateName&"]")
@@ -121,5 +152,4 @@ if	strSQL<>"" then
 else
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
 end if
-
 %>

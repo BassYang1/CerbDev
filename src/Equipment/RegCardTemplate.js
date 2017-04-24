@@ -65,7 +65,6 @@ $("#DataGrid").jqGrid({
 		if(data == null || data.records==0){ 
 			$("#DataGrid").jqGrid('clearGridData');
 	}},
-
 });
 
 $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager', 
@@ -74,7 +73,7 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		alerttext : stralerttext ,
 	}, 
 	{
-		top:0,width:600,
+		top:0,width:600,height:"auto",dataheight:"auto",
 		reloadAfterSubmit :true,
 		closeAfterEdit: true,
 		afterSubmit:getEditafterSubmit,
@@ -86,14 +85,14 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 			var EmployeeController = ret.EmployeeController; //获取设备ID
 
 			//加载部门
-			LoadDept(ret.DepartmentCode);
+			LoadSelDept(ret.DepartmentCode);
 
 			if(ret.DepartmentCode){
 				$("#tr_DepartmentCode").children("td.DataTD").children("input").attr("checked", true);
 			}
 
 			//加载职员列表
-			LoadEmp(ret.EmployeeCode); 
+			LoadSelEmp(ret.EmployeeCode); 
 
 			if(ret.EmployeeCode){
 				$("#tr_EmployeeCode").children("td.DataTD").children("input").attr("checked", true);
@@ -131,7 +130,7 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		//selarrrow
 	},  //  default settings for edit
 	{
-		top:0,width:600,
+		top:0,width:600,height:"auto",dataheight:"auto",
 		closeAfterAdd: true,
 		reloadAfterSubmit :true,
 		afterSubmit:getAddafterSubmit,
@@ -240,10 +239,7 @@ function InitDepartments(){
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
 
-	var result = $.ajax({url:'../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&userId=',async:false});
-	var data = result.responseText;
-	var arrDepts = data ? ($.parseJSON(data) || []) : [];
-
+	var arrDepts = GetDeptJSON();
 	var deptListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
 			"<TD width='30%' valign='top'><div onDblClick='fInsertDept()' class='ui-jqdialog-content ui-widget-content'>" + 
@@ -275,11 +271,11 @@ function InitDepartments(){
 	deptListHtml += "</select></div></TD>" + 
 			"<TD width='18%'align=middle valign='middle'>" + 
 			"<div align='center'>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd' onclick='fInsertDept()'>" + 
 			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
 			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
 			"</a><p>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel' onclick='fDelDept()'>" + 
 			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
 			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
 			"</a></div></TD>" + 
@@ -290,40 +286,42 @@ function InitDepartments(){
 	$data.html(deptListHtml);
 }
 
-function LoadDept(deptIds){
+function LoadSelDept(deptIds){
 	if(deptIds == undefined || typeof deptIds != "string" || deptIds == ""){
 		return;
 	}
-
-	//部门列表
-	var $srcObj = $("#selDeptSrc");
-	var $srcOption;
-	var srcValue, srcText, srcCode;
 
 	//所选部门列表
 	var $selObj = $("#selDeptDesc");
 	var arrIds = deptIds.split(",");	
 
+	$selObj.empty();
+
 	if($.inArray("0", arrIds) >= 0){
-		$selObj.empty();
 		$selObj.append("<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>");
 	}
 	else{
-		$.each(arrIds, function(i, value){
-			$srcOption = $srcObj.find("option[value='" + value + "']");
+		var arrDepts = GetDeptJSON(null, deptIds); //获取部门数据
+		var id, name, code, pcode, sBlank;
 
-			if($srcOption.size() > 0){
-				srcValue = $srcOption.val();
-				srcText = $srcOption.text();
-				srcCode = $srcOption.attr("code");
+		for(var i in arrDepts){
+			id = arrDepts[i].id;
+			name = arrDepts[i].name;
+			code = arrDepts[i].code;
+			pcode = code.substr(0, code.length - 5);
+			sBlank = "";
 
-				if(srcText.indexOf("|-") >= 0){
-					srcText = srcText.substr(srcText.indexOf("|-") + 2);
+			if(pcode && pcode.length >= 5 && $selObj.find("option[code='" + pcode + "']").size() > 0){
+				for(var i = 0; i <  code.length / 5; i ++){
+					sBlank += "&nbsp;";
 				}
 
-				$selObj.append("<option value='" + srcValue + "' code='" + srcCode + "'>" + srcText + "</option>");
+				$selObj.append("<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>");		
 			}
-		});
+			else{
+				$selObj.append("<option value='" + id + "' code='" + code + "'>" + name + "</option>");	
+			}
+		}
 	}
 }
 
@@ -337,29 +335,19 @@ function InitEmployees(){
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
 
-	var result = $.ajax({type:'post',url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),data:{condition: condition},async:false});
-	var data = result.responseText;
-	var arrEmps = data? ($.parseJSON(data) || []) : [];
-
 	var empListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
 			"<TD width='30%' valign='top'><div onDblClick='fInsertEmp()' class='ui-jqdialog-content ui-widget-content'>" + 
 			"<select id='selEmpSrc' name='selEmpSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'>";
 
-	// empListHtml += "<option value='0'>" + getlbl("con.AllEmp") + "</option>";
-
-	for(var i in arrEmps){
-		empListHtml += "<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>";
-	}
-
 	empListHtml += "</select></div></TD>" + 
 			"<TD width='18%'align=middle valign='middle'>" + 
 			"<div align='center'>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='empadd'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='empadd' onclick='fInsertEmp()'>" + 
 			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
 			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
 			"</a><p>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='empdel'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='empdel' onclick='fDelEmp()'>" + 
 			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
 			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
 			"</a></div></TD>" + 
@@ -370,35 +358,57 @@ function InitEmployees(){
 	$data.html(empListHtml);
 }
 
-function LoadEmp(empIds){
+//获取员工JSON数据
+function GetEmpJSON(){
+	var condition = "";
+	if(arguments.length > 0){
+		condition = arguments[0];
+	}
+
+	var empIds = "";
+	if(arguments.length > 1){
+		empIds = arguments[1];
+	}
+
+	var result = $.ajax({type:'post',url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),data:{condition: condition, empIds: empIds},async:false});
+	var data = result.responseText;
+	var arrEmps = data ? ($.parseJSON(data) || []) : [];
+
+	return arrEmps;
+}
+
+//获取员工JSON数据
+function GetDeptJSON(){
+	var condition = "";
+	if(arguments.length > 0){
+		condition = arguments[0];
+	}
+
+	var deptIds = "";
+	if(arguments.length > 1){
+		deptIds = arguments[1];
+	}
+
+	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&userId=',data:{deptIds: deptIds},async:false});
+	var data = result.responseText;
+	var arrDepts = data ? ($.parseJSON(data) || []) : [];
+
+	return arrDepts;
+}
+
+
+function LoadSelEmp(empIds){
 	if(empIds == undefined || typeof empIds != "string" || empIds == ""){
 		return;
 	}
 
-	//职员列表
-	var $srcObj = $("#selEmpSrc");
-	var $srcOption;
-	var srcValue, srcText;
+	var arrEmps = GetEmpJSON(null, empIds); //获取员工JSON数据
 
 	//所选职员列表
 	var $selObj = $("#selEmpDesc");
-	var arrIds = empIds.split(",");	
 
-	if($.inArray("0", arrIds) >= 0){ //是否选择所有员工
-		$selObj.empty();
-		$selObj.append("<option value='0' >" + getlbl("con.AllEmp") + "</option>");
-	}
-	else{
-		$.each(arrIds, function(i, value){
-			$srcOption = $srcObj.find("option[value='" + value + "']");
-
-			if($srcOption.size() > 0){
-				srcValue = $srcOption.val();
-				srcText = $srcOption.text();
-
-				$selObj.append("<option value='" + srcValue + "'>" + srcText + "</option>");
-			}
-		});
+	for(var i in arrEmps){
+		$selObj.append("<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>");
 	}
 }
 
@@ -504,17 +514,12 @@ function fDelCon(){
 
 function fInsertDept(){
 	//部门列表
-	var srcValue, srcText, srcCode;
+	var srcCode;
 	var $srcObj = $("#selDeptSrc");
-	var $selOptions = $srcObj.find("option:selected"); //选中部门
-	var $selOption, $allOptions; //包括子部门
+	var $selOptions = $srcObj.find("option:selected")
 
 	//所选部门列表
 	var $selObj = $("#selDeptDesc");
-
-	//遍历所选部门
-	var $option;
-	var optValue, optText, optCode;
 
 	//是否选择所有部门
 	if($selObj.find("option[value='0']").length <= 0){
@@ -523,30 +528,24 @@ function fInsertDept(){
 			$selObj.append("<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>");
 		}
 		else{
+			var deptIds = "";
+			var optCode;
+
 			$selOptions.each(function(i){
-				$selOption = $(this);
-				srcValue = $selOption.val();
-				srcText = $selOption.text();
-				srcCode = $selOption.attr("code");
+				srcCode = $(this).attr("code");
 
-				if($selObj.find("option[value='" + srcValue + "']").length <= 0){
-					$allOptions = $srcObj.find("option[code^='" +  srcCode + "']");
-
-					$allOptions.each(function(j){
-						$option = $(this);
-						optValue = $option.val();
-						optText = $option.text();
-						optCode = $option.attr("code");
-
-						if(optText.indexOf("|-") >= 0){
-							optText = optText.substr(optText.indexOf("|-") + 2);
-						}
-
-						$selObj.remove("option[code='" + optCode + "'");
-						$selObj.append("<option value='" + optValue + "' code='" + optCode + "'>" + optText + "</option>");
-					});
-				}
+				$srcObj.find("option[code^='" +  srcCode + "']").each(function(j){
+					deptIds += "," + $(this).val();
+				});
 			});
+
+			$selObj.find("option").each(function(i){
+				deptIds += "," + $(this).val();
+			});
+
+			if(deptIds != ""){
+				LoadSelDept(deptIds.substr(1));
+			}
 		}
 	}
 }
@@ -619,36 +618,42 @@ function fSearchEmployeeSubmit(){
 	var strsearchString=$("#searRetDataVal").html();
 	
 	condition = strsearchField + "|," + strsearchOper + "|," + encodeURI(strsearchString);
-	InitEmployees(condition);	
+	
+	var arrEmps = GetEmpJSON(condition);
+
+	//所选职员列表
+	var $srcObj = $("#selEmpSrc");
+
+	for(var i in arrEmps){
+		$srcObj.append("<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>");
+	}
 }
 
 function fCheckDept(){
 	if($("#tr_DepartmentCode").children("td.DataTD").children("input").is(":checked")){
-		$("#selDeptSrc").removeAttr("disabled");
-		$("#selDeptDesc").removeAttr("disabled");
-		$("#deptadd").bind("click", fInsertDept);
-		$("#deptdel").bind("click", fDelDept);
+		$("#tr_DepartmentList").show();
 	}
 	else{
-		$("#selDeptSrc").attr("disabled", "disabled");
-		$("#selDeptDesc").attr("disabled", "disabled");
-		$("#deptadd").unbind("click");
-		$("#deptdel").unbind("click");
+		$("#selDeptDesc>option").each(function(){
+			$(this).remove();
+		});
+
+		$("#tr_DepartmentList").hide();
 	}
 }
 
 function fCheckEmp(){
 	if($("#tr_EmployeeCode").children("td.DataTD").children("input").is(":checked")){
-		$("#selEmpSrc").removeAttr("disabled");
-		$("#selEmpDesc").removeAttr("disabled");
-		$("#empadd").bind("click", fInsertEmp);
-		$("#empdel").bind("click", fDelEmp);
+		$("#tr_EmployeeList").show();
+		$("#btnSearchEmployee").show();
 	}
 	else{
-		$("#selEmpSrc").attr("disabled", "disabled");
-		$("#selEmpDesc").attr("disabled", "disabled");
-		$("#empadd").unbind("click");
-		$("#empdel").unbind("click");
+		$("#selEmpDesc>option").each(function(){
+			$(this).remove();
+		});
+
+		$("#tr_EmployeeList").hide();
+		$("#btnSearchEmployee").hide();
 	}
 }
 

@@ -6,3 +6,6 @@ con.ByEmp: '按職員',
 con.EmpList: '職員列表',
 con.AllEmp : "所有职员",
 con.AllDept : "所有部门",
+con.RegNotice : "<br/>如果模板勾選<B>[僅按此條件]</B>，則只註冊上述條件人員，不符合上述條件的人員將刪除；否則追加註冊",
+comm.Confirm: "Ok",
+comm.Concel: "Concel"

@@ -4,8 +4,9 @@
 <%
 response.Charset="utf-8"
 
-dim conidtionStr, sqlStr, sqlCondition
+dim conidtionStr, empIds, sqlStr, sqlCondition
 conidtionStr = Replace(Request.Form("condition"),"'","''")
+empIds = Replace(Request.Form("empIds"),"'","''")
 sqlStr = "SELECT EmployeeId as id, name, number FROM Employees E WHERE LEFT(IncumbencyStatus,1)<>'1'"
 
 if conidtionStr <> "" then 
@@ -18,6 +19,10 @@ if conidtionStr <> "" then
 			sqlStr = sqlStr & " and " & sqlCondition
 		end if
 	end if
+end if
+
+if empIds <> "" then
+	sqlStr = sqlStr & " and EmployeeId IN (" & empIds & ")"
 end if
 
 fConnectADODB()
