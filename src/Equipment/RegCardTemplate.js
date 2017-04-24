@@ -85,16 +85,12 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 			var EmployeeController = ret.EmployeeController; //获取设备ID
 
 			//加载部门
-			LoadSelDept(ret.DepartmentCode);
-
-			if(ret.DepartmentCode){
+			if(LoadSelDept(ret.DepartmentCode)){
 				$("#tr_DepartmentCode").children("td.DataTD").children("input").attr("checked", true);
 			}
 
 			//加载职员列表
-			LoadSelEmp(ret.EmployeeCode); 
-
-			if(ret.EmployeeCode){
+			if(LoadSelEmp(ret.EmployeeCode)){
 				$("#tr_EmployeeCode").children("td.DataTD").children("input").attr("checked", true);
 			}
 
@@ -287,8 +283,8 @@ function InitDepartments(){
 }
 
 function LoadSelDept(deptIds){
-	if(deptIds == undefined || typeof deptIds != "string" || deptIds == ""){
-		return;
+	if(deptIds == undefined || typeof deptIds != "string" || deptIds == ""|| deptIds.search(/[a-zA-Z]+/g) >= 0){
+		return false;
 	}
 
 	//所选部门列表
@@ -323,6 +319,8 @@ function LoadSelDept(deptIds){
 			}
 		}
 	}
+
+	return true;
 }
 
 function InitEmployees(){
@@ -398,8 +396,8 @@ function GetDeptJSON(){
 
 
 function LoadSelEmp(empIds){
-	if(empIds == undefined || typeof empIds != "string" || empIds == ""){
-		return;
+	if(empIds == undefined || typeof empIds != "string" || empIds == "" || empIds.search(/[a-zA-Z]+/g) >= 0){
+		return false;
 	}
 
 	var arrEmps = GetEmpJSON(null, empIds); //获取员工JSON数据
@@ -410,6 +408,8 @@ function LoadSelEmp(empIds){
 	for(var i in arrEmps){
 		$selObj.append("<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>");
 	}
+
+	return true;
 }
 
 function fCheckController(){

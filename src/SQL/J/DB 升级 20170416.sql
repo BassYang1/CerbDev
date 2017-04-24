@@ -67,10 +67,10 @@ create PROC [dbo].[pRegCardTemplateRegister]
 )
 AS
 BEGIN	
-	--DECLARE @TemplateId VARCHAR(50) = 51,
-	--		@RegMode		bit = 0,  
-	--		@WhereEmployee VARCHAR(2000) = '',     
-	--		@WhereControllerid VARCHAR(2000) = ''
+	--DECLARE @TemplateId VARCHAR(50) = 51,	DECLARE @TemplateId VARCHAR(50) = 73,
+			--@RegMode		bit = 1,  
+			--@WhereEmployee VARCHAR(2000) = 'Select Employeeid from Employees where DepartmentID in (select DepartmentID from RoleDepartment where UserId in (5) and Permission=1) and Left(IncumbencyStatus,1)<>''1''',     
+			--@WhereControllerid VARCHAR(2000) = 'select ControllerID from RoleController where UserId in (5) and Permission=1'
 
 	DECLARE @strSQL nvarchar(max)
 	DECLARE @strEmController VARCHAR(1000)
@@ -87,16 +87,16 @@ BEGIN
 			@strEmployeeScheID=ISNULL(EmployeeScheID,''),@strEmployeeDoor=ISNULL(EmployeeDoor,''),@strValidateMode=ValidateMode
 			FROM ControllerTemplates where TemplateType=4 and TemplateId=+@TemplateId
 				
-	if ISNULL(@strEmCode,'') != ''
+	if ISNULL(@strEmCode,'') != '' and left(rtrim(ltrim(@strEmCode)), 1) <> '0'
 	begin
 		Set @strEmCode = '( EmployeeId in ('+ @strEmCode + '))'
-		
-		if ISNULL(@strDeptCode,'') != '' 
+
+		if ISNULL(@strDeptCode,'') != '' and left(rtrim(ltrim(@strDeptCode)), 1) <> '0'
 			Set @strEmCode = '(' + @strEmCode + ' or (Departmentid In(' + @strDeptCode + ')))'	
 	end
 	else
 	begin
-		if ISNULL(@strDeptCode,'') != '' 
+		if ISNULL(@strDeptCode,'') != '' and left(rtrim(ltrim(@strDeptCode)), 1) <> '0'
 			Set @strEmCode = '(Departmentid In(' + @strDeptCode + '))'	
 	end		
 	
