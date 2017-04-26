@@ -1,5 +1,6 @@
 ﻿<!--#include file="..\Conn\conn.asp" -->
 <!--#include file="..\Conn\json.asp" -->
+<!--#include file="..\Common\Page.asp"-->
 <!--#include file="..\Conn\GetLbl.asp" -->
 <%
 dim lblYes, lblNo
@@ -16,6 +17,15 @@ if rows = "" then rows = 10 end if
 if sidx = "" then sidx = "TemplateId" end if
 if sord = "" then sord ="asc" end if
 sidx = "CT."&sidx
+
+dim strUserId
+strUserId = session("UserId")
+
+if strUserId = "" then 
+	Call ReturnMsg("false",GetCerbLbl("ReLoginSystem"),0) '重新登录系统
+	response.End()
+end if
+
 Dim strSearchOn, strField, strFieldData, strSearchOper, strWhere
 strSearchOn = request.QueryString("_search")
 'response.Write("strSearchOn:"&strSearchOn&",strField:"&request.QueryString("searchField")&",strFieldData:"&request.QueryString("searchString")&",strSearchOper:"&request.QueryString("searchOper")
@@ -77,6 +87,11 @@ If (strSearchOn = "true") Then
 	End if
 End If
 'server.ScriptTimeout=9000
+
+if strUserId <> "1" then
+	strWhere = strWhere & " AND EXISTS (select 1 from Controllers where (left(CT.EmployeeController, 1) = '0' OR CHARINDEX(CAST(ControllerId AS VARCHAR) + ',', CT.EmployeeController + ',') >= 1 ) and ControllerId IN (select ControllerID from RoleController where UserId in (" & strUserId & ") and Permission=1))"
+end if
+
 fConnectADODB()
 dim a
 set a=new JSONClass

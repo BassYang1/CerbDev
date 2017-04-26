@@ -15,19 +15,20 @@ Class Controller
 	Public Function RegTemplateCard(strTempId, isClearOld)
 		Dim strConWhere, strEmpWhere, strSQL, strErrorMsg
 		Dim strTemplateName, strActions
+		isClearOld = 0 '页面同步默认都传0，因为存储过程会通过接口(Job)执行，数据会不停删除并重新同步
 
 		strSQL = "select TemplateName, ISNULL(OnlyByCondition, 0) AS OnlyByCondition from ControllerTemplates where TemplateId="+strTempId
 		Rs.Open strSQL, Conn, 1, 1
 		If Not Rs.eof Then
 			strTemplateName = Trim(Rs.fields("TemplateName").value)
 
-			If isClearOld = "" then
-				isClearOld = "0"
+			'If isClearOld = "" then
+				'isClearOld = "0"
 
-				if Rs.fields("OnlyByCondition").value = true then
-					isClearOld = "1"
-				end if
-			end if			
+				'if Rs.fields("OnlyByCondition").value = true then
+					'isClearOld = "1"
+				'end if
+			'end if	
 		End If
 		Rs.close
 		

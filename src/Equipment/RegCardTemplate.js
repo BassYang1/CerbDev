@@ -62,6 +62,10 @@ $("#DataGrid").jqGrid({
 	loadtext:strloadtext,
 	toppager:true,
 	loadComplete:function(data){ //完成服务器请求后，回调函数 
+		if(data && data.message){
+			parent.location.href = "../login.html";
+		}
+
 		if(data == null || data.records==0){ 
 			$("#DataGrid").jqGrid('clearGridData');
 	}},
@@ -387,7 +391,7 @@ function GetDeptJSON(){
 		deptIds = arguments[1];
 	}
 
-	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&userId=',data:{deptIds: deptIds},async:false});
+	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom(),data:{deptIds: deptIds, oper:"filter"},async:false});
 	var data = result.responseText;
 	var arrDepts = data ? ($.parseJSON(data) || []) : [];
 

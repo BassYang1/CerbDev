@@ -33,7 +33,7 @@ For i = 0 To UBound(arrTemplateId)
 	ctrlObj.DBConnection = Conn
 	ctrlObj.UserId = strUserId
 
-	strReturnMsg = ctrlObj.RegTemplateCard(arrTemplateId(i), "")
+	strReturnMsg = ctrlObj.RegTemplateCard(arrTemplateId(i), "0")
 
 	if strReturnMsg <> "" then
 		Call ReturnMsg("false",GetEquLbl("Template")+"["+CStr(strTemplateName)+"]"+GetEquLbl("RegConFail")+strReturnMsg,0)

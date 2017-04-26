@@ -127,7 +127,7 @@ if	strSQL<>"" then
 			end if
 
 			if strRecordID <> "" then
-				ctrlObj.RegTemplateCard strRecordID, "" //注册卡号
+				ctrlObj.RegTemplateCard strRecordID, "0" //注册卡号
 			end if
 
 			strActions = GetCerbLbl("strLogAdd")
@@ -135,7 +135,7 @@ if	strSQL<>"" then
 			Call AddLogEvent(GetEquLbl("ConManage")&"-"&GetEquLbl("RegCard")&"-"&GetEquLbl("TempMode"),cstr(strActions),cstr(strActions)&GetEquLbl("RegCardTemp")&","&GetEquLbl("TempName")&"["&strTemplateName&"]")
 		Case "edit": 'Edit Record
 			if strRecordID <> "" then
-				ctrlObj.RegTemplateCard strRecordID, "" //注册卡号
+				ctrlObj.RegTemplateCard strRecordID, "0" //注册卡号
 			end if
 
 			strActions = GetCerbLbl("strLogEdit")

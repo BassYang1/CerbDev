@@ -80,11 +80,12 @@ BEGIN
 	DECLARE @strEmployeeScheID VARCHAR(100)
 	DECLARE @strEmployeeDoor VARCHAR(100)
 	DECLARE @strValidateMode VARCHAR(100)
+	DECLARE @OnlyByCondition bit
 
 	SET NOCOUNT ON
 	--从模板表获取相关字段
 	SELECT @strEmCode=EmployeeCode,@strDeptCode=DepartmentCode,@strOtherCode=OtherCode,@strEmController=ISNULL(EmployeeController,''),
-			@strEmployeeScheID=ISNULL(EmployeeScheID,''),@strEmployeeDoor=ISNULL(EmployeeDoor,''),@strValidateMode=ValidateMode
+			@strEmployeeScheID=ISNULL(EmployeeScheID,''),@strEmployeeDoor=ISNULL(EmployeeDoor,''),@strValidateMode=ValidateMode,@OnlyByCondition=isnull(OnlyByCondition,0)
 			FROM ControllerTemplates where TemplateType=4 and TemplateId=+@TemplateId
 				
 	if ISNULL(@strEmCode,'') != '' and left(rtrim(ltrim(@strEmCode)), 1) <> '0'
@@ -103,10 +104,13 @@ BEGIN
 	if ISNULL(@strEmCode,'') != '' 
 		Set @strEmCode = 'select EmployeeId from Employees where Left(IncumbencyStatus,1) != ''1'' and '+ @strEmCode
 	else 
+	Begin
 		Set @strEmCode = 'select EmployeeId from Employees where Left(IncumbencyStatus,1) != ''1'''		
+	End
 	
-	IF @WhereEmployee <> '' 
-		Set @strEmCode = @strEmCode + ' and EmployeeId IN (' + @WhereEmployee+')'	
+	--WhereEmployee 条件不能直接并入到strEmCode中，因为如果选择【仅按此条件注册】要删除非条件中的人员。  WhereEmployee一般用于接口同步时，传入有变动的人员信息
+	--IF @WhereEmployee <> '' 
+	--	Set @strEmCode = @strEmCode + ' and EmployeeId IN (' + @WhereEmployee+')'	
 		
 	--获取需要注册的设备，并将设备ID保存于#TempConId中
 	IF object_id('tempdb.dbo.#TempConId') IS not null
@@ -119,8 +123,9 @@ BEGIN
 	Else
 		Set @strSQL = @strSQL + ' where ControllerId in ('+@strEmController+') '
 
-	IF @WhereControllerid <> '' 
-		Set @strSQL = @strSQL + ' and ControllerId in ('+@WhereControllerid+') '
+	--@WhereControllerid 条件不能直接并入到@strEmController中，同@WhereEmployee
+	--IF @WhereControllerid <> '' 
+	--	Set @strSQL = @strSQL + ' and ControllerId in ('+@WhereControllerid+') '
 
 	Exec(@strSQL)
 
@@ -136,14 +141,14 @@ BEGIN
 	End
 	EXEC(@strSQL)
 
-	--覆盖注册，先删除，再注册
-	Set @strSQL = 'delete from ControllerEmployee where ControllerId in (select ControllerId from #TempConId) 
-						and EmployeeId in (select EmployeeId from ('+@strEmCode+') A ); ' --删除后重新注册
-
+	--set @RegMode = 0
+	
 	if @RegMode=1 
 	Begin
-		Set @strSQL = @strSQL+'update ControllerEmployee set deleteflag = 1, status = 0 where ControllerId in (select ControllerId from #TempConId) 
-						and EmployeeId not in (select EmployeeId from ('+@strEmCode+') A ); ' --软件删除当前未注册在该设备上的员工卡号
+		--覆盖注册，先删除，再注册
+		Set @strSQL = 'delete from ControllerEmployee where ControllerId in (select ControllerId from #TempConId) 
+						and EmployeeId in (select EmployeeId from ('+@strEmCode+') A ); ' --删除后重新注册
+						
 		Set @strSQL = @strSQL+'insert into ControllerEmployee(ControllerId,Employeeid,UserPassword,ScheduleCode,EmployeeDoor,DeleteFlag,Status, ValidateMode) 
 						select C.ControllerId, Emp.Employeeid, U.Userpassword,'''+@strEmployeeScheID+''','''+@strEmployeeDoor+''',0,0, '''+@strValidateMode+''' 
 						from Controllers C,Employees Emp left join Users U on  Emp.Employeeid=U.Employeeid 
@@ -160,15 +165,31 @@ BEGIN
 		Set @strSQL = @strSQL+'insert into ControllerEmployee(ControllerId,Employeeid,UserPassword,ScheduleCode,EmployeeDoor,DeleteFlag,Status, ValidateMode) 
 						select C.ControllerId, Emp.Employeeid, U.Userpassword,'''+@strEmployeeScheID+''','''+@strEmployeeDoor+''',0,0, '''+@strValidateMode+''' 
 						from Controllers C,Employees Emp left join Users U on  Emp.Employeeid=U.Employeeid 
-						where  Emp.EmployeeId in (select EmployeeId from ('+@strEmCode+') A ) and Left(Emp.IncumbencyStatus,1)!=''1'' and Emp.Card>0 
-						and C.ControllerID in (select ControllerId from #TempConId) 
-						and NOT EXISTS(SELECT 1 FROM ControllerEmployee AS CE 
+						where  Emp.EmployeeId in (select EmployeeId from ('+@strEmCode+') A ) '
+		IF @WhereEmployee <> '' 
+			Set @strSQL = @strSQL+' and Emp.EmployeeId IN (' + @WhereEmployee+')'
+			
+		Set @strSQL = @strSQL+'and Left(Emp.IncumbencyStatus,1)!=''1'' and Emp.Card>0 
+						and C.ControllerID in (select ControllerId from #TempConId) '
+		IF @WhereControllerid <> '' 
+			Set @strSQL = @strSQL+' and C.ControllerID IN (' + @WhereControllerid+')'
+			
+		Set @strSQL = @strSQL+' and NOT EXISTS(SELECT 1 FROM ControllerEmployee AS CE 
 							WHERE CE.Employeeid=Emp.Employeeid and CE.Controllerid = C.Controllerid 
 							and CE.ControllerID in (select ControllerId from #TempConId) 
 							and ISNULL(CE.deleteflag, 0) = 0 ) '
+		--仅按此条件注册。删除非条件中的数据
+		if	@OnlyByCondition = 1
+		begin
+			set @strSQL = @strSQL+';update ControllerEmployee set deleteflag = 1, status = 0 where ControllerId in (select ControllerId from #TempConId) 
+							and EmployeeId not in (select EmployeeId from ('+@strEmCode+') A ); ' --软件删除当前未注册在该设备上的员工卡号
+		end
+		
 		Exec(@strSQL)	
 	End	
-
+	
+	
+	
 	UPDATE ControllerDataSync set SyncStatus=0 where Controllerid in (select ControllerId from #TempConId) and SyncType='register'
 		
 	IF object_id('tempdb.dbo.#TempConId') IS not null
