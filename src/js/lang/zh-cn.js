@@ -286,7 +286,7 @@ var con={
 	EmpList: '职员列表',
 	OnlyByCond:'仅按此条件', 
 	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追加注册',
-	TempNotice: '注:部门列表或职员列表为“或”的关系'
+	TempNotice: '部门列表或职员列表为“或”的关系'
 }
 
 var rep={

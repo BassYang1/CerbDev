@@ -6,7 +6,7 @@ dim strSQL,strJS,strid,strPid,strDepartmentCode,strName,strCheck
 
 strDeptIds = Cstr(Trim(Request.Form("deptIds")))
 strOper = Cstr(Trim(Request.Form("oper")))
-strUserId = session("UserId")
+strUserId = Cstr(Trim(Request.QueryString("userId")))
 if strUserId = "" then strUserId = "0" end if
 
 

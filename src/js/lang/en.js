@@ -286,7 +286,7 @@ var con={
 	EmpList: 'Employee List',
 	OnlyByCond:'Unique Condition', 
 	OnlyByCondDesc:'If the option is checked, the employees based on the condition will be registered and the old registration data will be cleared. Or the employees will only be appended and registered.' ,
-	TempNotice: 'NOTE:the conditions Department List and Employee List are the OR relationship.'
+	TempNotice: 'The conditions Department List and Employee List are the OR relationship.'
 }
 
 var rep={

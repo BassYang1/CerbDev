@@ -1,5 +1,7 @@
 ﻿// JavaScript Document
 
+var cookieUserId = "Cerb%5FUserId"; // 用户Id Cookie : Cerb_UserId
+
 //去除字符串首尾空格
 String.prototype.trim = function()
 {
@@ -110,6 +112,34 @@ function Request(strUrl,strName){
 	}  
 	return "";  
 }  
+
+//读取cookie
+function getCookie(name){
+	if(!(document.cookie || navigator.cookieEnabled)){
+		console.log("Browser Cookie is not enabled, please open!");
+		return "";
+	}
+
+	if(name == undefined || name == null || name == "" || typeof name != "string"){
+		return "";
+	}
+
+	try{
+		var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+		var arr = document.cookie.match(reg);
+
+		if(arr){
+			return unescape(arr[2]);
+		}
+		else{
+			return "";
+		}
+	}
+	catch(exception) {
+		console.log(exception);
+		return "";
+	}
+}
 
 function getRandom()
 {

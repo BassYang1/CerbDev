@@ -77,11 +77,13 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		alerttext : stralerttext ,
 	}, 
 	{
-		top:0,width:600,height:"auto",dataheight:"auto",
+		top:0,width:750,height:"auto",
+		dataheight:"auto",
 		reloadAfterSubmit :true,
 		closeAfterEdit: true,
 		afterSubmit:getEditafterSubmit,
 		afterShowForm:function(formid){
+			ShowLoading();		
 			InitEditForm();
 			
 			var rowid = $("#DataGrid").jqGrid('getGridParam', 'selrow');
@@ -120,9 +122,15 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 			}
 
 			$("#tr_EmployeeScheName").children("td.DataTD").children("select").val(ret.EmployeeScheID);//根据时间表ID，选择时间表
+			$(".navButton").hide();
 
 			fCheckDept();
 			fCheckEmp();
+
+			window.setTimeout(function(){
+				LoadInitDept();
+				$("#load_EditForm").hide();
+			}, 500);
 		},
 		onclickSubmit: function(params) {
 			return fGetFormData();
@@ -130,11 +138,13 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		//selarrrow
 	},  //  default settings for edit
 	{
-		top:0,width:600,height:"auto",dataheight:"auto",
+		top:0,width:750,height:"auto",
+		dataheight:"auto",
 		closeAfterAdd: true,
 		reloadAfterSubmit :true,
 		afterSubmit:getAddafterSubmit,
 		afterShowForm:function(formid){
+			ShowLoading();		
 			InitEditForm();
 
 			$("#tr_EmployeeDesc").children("td.DataTD").children("input").val(getlbl("con.AllEmp0"));	//"0 - 所有职员"			
@@ -143,6 +153,10 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 
 			fCheckDept();
 			fCheckEmp();
+			window.setTimeout(function(){
+				LoadInitDept();
+				$("#load_EditForm").hide();
+			}, 500);
 		},
 		onclickSubmit: function(params) {
 			return fGetFormData(); 
@@ -173,6 +187,43 @@ if(iadd){
 	});
 }
 
+function ShowLoading(){
+	var $div = $("#load_EditForm");
+	var $page = $div.parent();
+	var height = 0;
+	var width = 0;
+
+	// 获取窗口宽度
+	if (window.innerWidth){
+		width = window.innerWidth;
+	}
+	else if ((document.body) && (document.body.clientWidth)){
+		width = document.body.clientWidth;
+	}
+	// 获取窗口高度
+	if (window.innerHeight){
+		height = window.innerHeight;
+	}
+	else if ((document.body) && (document.body.clientHeight)){
+		height = document.body.clientHeight;
+	}
+	// 通过深入 Document 内部对 body 进行检测，获取窗口大小
+	if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth){
+		height = document.documentElement.clientHeight;
+		width = document.documentElement.clientWidth;
+	}
+
+	$div.width(width);
+	$div.height(height);
+
+	var $label = $div.find("label");
+	$label.css("margin-left", (width / 2) + "px");
+	$label.css("margin-top", (height / 3) + "px");
+	$label.html(strloadtext);
+
+	$div.show();
+}
+
 function InitEditForm(){
 	InitDepartments(); //初使化部门列表
 	InitEmployees(); //初使化员工列表
@@ -191,7 +242,7 @@ function InitEditForm(){
 		$data = $tr.children("td.DataTD");	
 	
 	//部分设备
-	var ctrlOptionHtml = "<div align='left' class='ui-jqdialog-content ui-widget-content'>" +
+	var ctrlOptionHtml = "<div align='left' style='padding-left:1em;' class='ui-jqdialog-content ui-widget-content'>" +
 				"<input type='radio' name='ControllerSel' checked value='0' id='Sel1'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;" +
 				"<label for='Sel1'>"+getlbl("con.AllCon")+"</label>&nbsp;&nbsp;&nbsp;&nbsp;" +
 				"<input type='radio' name='ControllerSel' value='1' id='Sel2'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;" +
@@ -206,8 +257,8 @@ function InitEditForm(){
     //设备列表
 	var ctrlListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
-			"<TD width='30%' valign='top'><div onDblClick='fInsertCon()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selConSrc' name='selConSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'></select>" + 
+			"<TD width='30%' valign='top'><div onDblClick='fInsertCon()'  style='padding-left:1em;' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selConSrc' name='selConSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 270px'></select>" + 
 			"</div></TD>" + 
 			"<TD width='18%'align=middle valign='middle'>" + 
 			"<div align='center'>" + 
@@ -220,12 +271,13 @@ function InitEditForm(){
 			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
 			"</a></div></TD>" + 
 			"<TD width='52%' valign='top'><div onDblClick='fDelCon()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selConDesc' name='selConDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 ></select>" + 
+			"<select id='selConDesc' name='selConDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 270px' multiple size=8 ></select>" + 
 			"</div></TD></TR></TBODY></TABLE>";
 
 	$data.html(ctrlListHtml);
 	
 	GetSchedule();
+	$("#tr_DepartmentCode").children("td.DataTD").children("input").css({"margin-top": "5px"});
 	$("#tr_TemplateName").children("td.DataTD").children("input").css("width", "40%");
 	$("#tr_EmployeeScheName").children("td.DataTD").children("select").css("width", "40%");
 	$("#tr_EmployeeDoor").children("td.DataTD").children("select").css("width", "40%");
@@ -239,13 +291,33 @@ function InitDepartments(){
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
 
-	var arrDepts = GetDeptJSON();
 	var deptListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
-			"<TD width='30%' valign='top'><div onDblClick='fInsertDept()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selDeptSrc' name='selDeptSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'>";
+			"<TD width='30%' valign='top' style='padding-left:1em;'><div onDblClick='fInsertDept()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selDeptSrc' name='selDeptSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 270px'>";
+	
+	deptListHtml += "</select></div></TD>" + 
+			"<TD width='18%'align=middle valign='middle'>" + 
+			"<div align='center'>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd' onclick='fInsertDept()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a><p>" + 
+			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel' onclick='fDelDept()'>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
+			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
+			"</a></div></TD>" + 
+			"<TD width='52%' valign='top'><div onDblClick='fDelDept()' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selDeptDesc' name='selDeptDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 270px' multiple size=8 >" + 
+			"</select></div></TD></TR></TBODY></TABLE>";
 
-	deptListHtml += "<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>";
+	$data.html(deptListHtml);
+}
+
+function LoadInitDept(){	
+	var arrDepts = GetDeptJSON();
+
+	var deptListHtml = "<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>";
 
 	var id, name, code, sBlank, len;
 
@@ -268,22 +340,7 @@ function InitDepartments(){
 		}
 	}
 
-	deptListHtml += "</select></div></TD>" + 
-			"<TD width='18%'align=middle valign='middle'>" + 
-			"<div align='center'>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd' onclick='fInsertDept()'>" + 
-			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
-			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
-			"</a><p>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel' onclick='fDelDept()'>" + 
-			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
-			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
-			"</a></div></TD>" + 
-			"<TD width='52%' valign='top'><div onDblClick='fDelDept()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selDeptDesc' name='selDeptDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 >" + 
-			"</select></div></TD></TR></TBODY></TABLE>";
-
-	$data.html(deptListHtml);
+	$("#selDeptSrc").html(deptListHtml);
 }
 
 function LoadSelDept(deptIds){
@@ -339,8 +396,8 @@ function InitEmployees(){
 
 	var empListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
 			"<TBODY><TR>" + 
-			"<TD width='30%' valign='top'><div onDblClick='fInsertEmp()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selEmpSrc' name='selEmpSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 180px'>";
+			"<TD width='30%' valign='top'><div onDblClick='fInsertEmp()' style='padding-left:1em;' class='ui-jqdialog-content ui-widget-content'>" + 
+			"<select id='selEmpSrc' name='selEmpSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 270px'>";
 
 	empListHtml += "</select></div></TD>" + 
 			"<TD width='18%'align=middle valign='middle'>" + 
@@ -354,7 +411,7 @@ function InitEmployees(){
 			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
 			"</a></div></TD>" + 
 			"<TD width='52%' valign='top'><div onDblClick='fDelEmp()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selEmpDesc' name='selEmpDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 180px' multiple size=8 >" + 
+			"<select id='selEmpDesc' name='selEmpDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 270px' multiple size=8 >" + 
 			"</select></div></TD></TR></TBODY></TABLE>";
 
 	$data.html(empListHtml);
@@ -391,7 +448,8 @@ function GetDeptJSON(){
 		deptIds = arguments[1];
 	}
 
-	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom(),data:{deptIds: deptIds, oper:"filter"},async:false});
+	var userId = getCookie(cookieUserId);
+	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom() + "&userId=" + userId,data:{deptIds: deptIds, oper:"filter"},async:false});
 	var data = result.responseText;
 	var arrDepts = data ? ($.parseJSON(data) || []) : [];
 
@@ -627,6 +685,7 @@ function fSearchEmployeeSubmit(){
 
 	//所选职员列表
 	var $srcObj = $("#selEmpSrc");
+	$srcObj.empty();
 
 	for(var i in arrEmps){
 		$srcObj.append("<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>");
