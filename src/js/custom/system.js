@@ -99,6 +99,45 @@ function CheckLoginStatusForRoot()
 	});
 }
 
+//获取员工JSON数据
+function getEmpJSON(){
+	var condition = "";
+	if(arguments.length > 0){
+		condition = arguments[0]; //id|,eq|,100
+	}
+
+	var empIds = "";
+	if(arguments.length > 1){
+		empIds = arguments[1];
+	}
+
+	var result = $.ajax({type:'post',url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),data:{condition: condition, empIds: empIds},async:false});
+	var data = result.responseText;
+	var arrEmps = data ? ($.parseJSON(data) || []) : [];
+
+	return arrEmps;
+}
+
+//获取员工JSON数据
+function getDeptJSON(){
+	var condition = "";
+	if(arguments.length > 0){
+		condition = arguments[0]; //id|,eq|,100
+	}
+
+	var deptIds = "";
+	if(arguments.length > 1){
+		deptIds = arguments[1];
+	}
+
+	var userId = getCookie(cookieUserId); 
+	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom() + "&userId=" + userId,data:{deptIds: deptIds, oper:"filter"},async:false});
+	var data = result.responseText;
+	var arrDepts = data ? ($.parseJSON(data) || []) : [];
+
+	return arrDepts;
+}
+
 //获取HTML地址栏参数
 function Request(strUrl,strName){  
 	//var strUrl = location.href;  

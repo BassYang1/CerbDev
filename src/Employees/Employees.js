@@ -8,7 +8,7 @@ function CardCheck(value, colname) {
 	else 
 	   return [true,""];
 }
-GetDepartments();
+InitDepartments();
 
 jQuery("#DataGrid").jqGrid({
 		url:'EmployeesList.asp',
@@ -320,6 +320,44 @@ function GetDepartments(){
 			gridReload();
 		});
 }
+
+//初使化部门
+function InitDepartments(selId){
+	var id, name, code, sBlank, len;
+	var arrDepts = getDeptJSON();
+
+	var deptListHtml = "";
+
+	for(var i in arrDepts){
+		id = arrDepts[i].id;
+		name = arrDepts[i].name;
+		code = arrDepts[i].code;
+		sBlank = "";
+		len = code.length / 5;
+
+		if(len == 1){
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
+		}
+		else{
+			for(var i = 0; i < len; i ++){
+				sBlank += "&nbsp;";
+			}
+
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
+		}
+	}
+
+	$("#selDept").html(deptListHtml);
+	$("#selDept").css('width','140');
+	$("#selDept").css('font-size','12px');
+	$("#selDept").prepend("<option value='-1'>"+getlbl("rep.AllDept1")+"</option>"); 	//1 - 所有部门
+	$("#selDept").prepend("<option value='0'>"+getlbl("rep.MyRecord0")+"</option>"); 	//0 - 我的记录
+	$("#selDept").val(0);	//选择value为0的项
+	$("#selDept").change(function(){
+		gridReload();
+	});
+}
+
 function gridReload(){
 	$("#DataGrid").jqGrid('setGridParam',{url:"EmployeesList.asp",page:1,}).trigger("reloadGrid");
 }

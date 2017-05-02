@@ -78,18 +78,13 @@ End If
 'server.ScriptTimeout=9000
 fConnectADODB()
 'fConnectADOCE()
-dim a
-set a=new JSONClass
-dim strChildDepartId
-strChildDepartId = GetChildDepart()
-if strChildDepartId = "" then 
-	strChildDepartId = "0"
-end if
+
 'evel_field  	节点的级别，默认最高级为0
 'parent_id_field 	该行数据父节点的id
 'leaf_field 	是否为叶节点，为true时表示该节点下面没有子节点了
 'expanded_field 	是否默认展开状态
-strSQL = "select D.DepartmentID,D.DepartmentID,D.ParentDepartmentID,D.DepartmentName,len(D.DepartmentCode)/5 as DepartmentLevel,len(D.DepartmentCode)/5-1 as level_field,ISNULL(D.ParentDepartmentID,0) as parent_id_field,(Case when C.DepartmentID is NULL then 'false' else 'true' end) as leaf_field,'false' as expanded_field  from Departments D left join  (select DepartmentID from Departments where DepartmentID in ("&strChildDepartId&")) C on D.DepartmentID = C.DepartmentID  "
+'DepartmentID, DepartmentID, ParentDepartmentID, DepartmentName, DepartmentLevel, level_field, parent_id_field, leaf_field, expanded_field
+strSQL = "select count(1), (select '{"&chr(34)&"id"&chr(34)&":"&chr(34)&"' + CAST(D.DepartmentID AS NVARCHAR(10)) + '"&chr(34)&",' + '"&chr(34)&"cell"&chr(34)&":["&chr(34)&"' + CAST(D.DepartmentID AS NVARCHAR(10)) + '"&chr(34)&","&chr(34)&"' + CAST(D.DepartmentID AS NVARCHAR(10)) + '"&chr(34)&","&chr(34)&"' + CAST(D.ParentDepartmentID AS NVARCHAR(10)) + '"&chr(34)&","&chr(34)&"' + D.DepartmentName + '"&chr(34)&","&chr(34)&"' + CAST(len(D.DepartmentCode)/5 as NVARCHAR(2)) + '"&chr(34)&","&chr(34)&"' + CAST(len(D.DepartmentCode)/5-1 AS NVARCHAR(2)) + '"&chr(34)&","&chr(34)&"' + CAST(ISNULL(D.ParentDepartmentID,0) AS NVARCHAR(10)) + '"&chr(34)&","&chr(34)&"' + (Case when C.DepartmentID is NULL then 'false' else 'true' end) + '"&chr(34)&","&chr(34)&"' + 'false' + '"&chr(34)&"]},'  from Departments D left join (SELECT DepartmentId FROM Departments D1 WHERE EXISTS(SELECT 1 FROM Departments WHERE D1.DepartmentCode != DepartmentCode and LEFT(DepartmentCode, len(D1.DepartmentCode)) = D1.DepartmentCode)) C ON C.DepartmentID = D.DepartmentID "
 strExportSql="select D.DepartmentID,D.DepartmentName,cast(D.DepartmentCode as Nvarchar(100))  from Departments D "
 '取有访问权限的部门
 if strUserId<>"1" then '1 为admin用户
@@ -107,13 +102,29 @@ else
 end if 
 
 
-strSQL = strSQL & " order by D.DepartmentCode  "
+strSQL = strSQL & " order by D.DepartmentCode for xml path('')) as JsonData from Departments  "
 strExportSql = strExportSql & " order by D.DepartmentCode  "
+
 Session("exportdata")=strExportSql
 
-a.Sqlstring=strSQL
-set a.dbconnection=conn
-response.Write(a.GetJSon())
+dim strJS, strJsonData
+strJS = "{ "&chr(34)&"total"&chr(34)&": 1, "&chr(34)&"page"&chr(34)&": 1, "
+
+Rs.open strSQL, Conn, 2, 1
+If Not Rs.eof Then
+	strJS = strJS & chr(34)&"records"&chr(34)&": " & Trim(Rs.fields(0).value) & ", "
+
+	strJsonData = Trim(Rs.fields(1).value)
+	'strJsonData = replace(strJsonData, "&amp;", "&")
+
+	if len(strJsonData) > 1 then
+		strJS = strJS & chr(34)&"rows"&chr(34)&":[" & left(strJsonData,len(strJsonData)-1) & "]}"
+	else
+		strJS = strJS & chr(34)&"rows"&chr(34)&":[]}"
+	end if
+End If
+
+response.Write(strJS)
 'conn.close()
 'set conn = nothing
 fCloseADO()

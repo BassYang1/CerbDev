@@ -18,7 +18,7 @@ jQuery("#DataGrid").jqGrid({
 				return "<input type='checkbox' class='itmchk' id='itmchk_"+options.rowId+"' value='"+options.rowId+"' >";
 			}
 			},  
-			{name:'ParentDepartmentID',index:'ParentDepartmentID',width:80,editable:true,hidden:true,editrules:{edithidden:true,required:true},sortable:false,},
+			{name:'ParentDepartmentID',index:'ParentDepartmentID',width:80,edittype:'none',editable:true,hidden:true,editrules:{edithidden:true,required:true},sortable:false,},
 			{name:'DepartmentName',index:'DepartmentName',width:500,editable:true,editrules:{required:true},sortable:false,
 				searchoptions:{sopt:["eq","ne",'cn']},
 				formoptions:{elmsuffix:"<font color=#FF0000>*</font>"}},
@@ -126,8 +126,12 @@ jQuery("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		closeAfterEdit: true,
 		afterSubmit:getEditafterSubmit,
 		afterShowForm:function(formid){
+			var rowid = $("#DataGrid").jqGrid('getGridParam', 'selrow');
+			var ret = $("#DataGrid").jqGrid('getRowData',rowid);
+			var parentId = ret.ParentDepartmentID;
+
 			//初始化窗体
-			InitEditForm("edit");
+			InitEditForm("edit", parentId);
 		},
 		beforeSubmit:function(postdata, formid){
 			//动态增加提交参数
@@ -210,22 +214,23 @@ if(iexport){
 	});
 }
 
-function InitEditForm(oper)
+function InitEditForm(oper, selId)
 {
 	$("#tr_ParentDepartmentID").children("td.CaptionTD").css("width", "10%"); //设置标签宽度
 	$("#tr_ParentDepartmentID").children("td.DataTD").css("width", "40%");
-	var htmlObj,DepartmentId,EmployeeId;
+	var DepartmentId,EmployeeId;
 	if(oper == "edit"){
 		$('#Act_Buttons').children().eq(0).html("<td class='navButton'></td>");  
 	}
-	var parentDeptId = $("#ParentDepartmentID").val();
-	if(parentDeptId == "")
-		parentDeptId = "0";
+
 	//获取所有部门列表
-	htmlObj = $.ajax({url:"../Common/GetDepartment.asp?selID=ParentDepartmentID&nd="+getRandom(),async:false});
-	$("#tr_ParentDepartmentID").children().eq(1).html("&nbsp;"+htmlObj.responseText);
-	$("#ParentDepartmentID").prepend("<option value=''></option>");
-	$("#ParentDepartmentID").css('width','260');
+	InitDepartments(selId);
+
+	var parentDeptId = $("#ParentDepartmentID").val();
+	if(parentDeptId == ""){
+		parentDeptId = "0";
+	}
+
 	$("#DepartmentName").css('width','250');
 	//绑定部门下拉框onChange事件
 	$("#ParentDepartmentID").change(function(){
@@ -245,11 +250,9 @@ function InitEditForm(oper)
 	if(oper == "edit"){
 		//修改记录时，上级部门下拉框选择该记录的上级部门
 		if(parentDeptId == "0"){
-			$("#ParentDepartmentID").val('');
 			$("#ParentDepartmentID").trigger("change");
 		}
 		else{
-			$("#ParentDepartmentID").val(parentDeptId);
 			$("#ParentDepartmentID").trigger("change");
 		}
 		//修改记录时，上级部门不可修改。主要考虑涉及其它表使用了部门ID
@@ -267,8 +270,47 @@ function InitEditForm(oper)
 			$("#ParentDepartmentID").trigger("change");
 		}
 		$("#ParentDepartmentID").attr("disabled",false).css({ "color":"#222"});
+	}	
+}
+
+//初使化部门
+function InitDepartments(selId){
+	var $tr = $("#tr_ParentDepartmentID"), 
+		$label = $tr.children("td.CaptionTD"),
+		$data = $tr.children("td.DataTD");
+
+	var id, name, code, sBlank, len;
+	var arrDepts = getDeptJSON();
+
+	var deptListHtml = "&nbsp;<select id='ParentDepartmentID' name='ParentDepartmentID' style='width:260px' class='FormElement ui-widget-content ui-corner-all'>";
+	deptListHtml += "<option value=''></option>";
+
+	for(var i in arrDepts){
+		id = arrDepts[i].id;
+		name = arrDepts[i].name;
+		code = arrDepts[i].code;
+		sBlank = "";
+		len = code.length / 5;
+
+		if(len == 1){
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
+		}
+		else{
+			for(var i = 0; i < len; i ++){
+				sBlank += "&nbsp;";
+			}
+
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
+		}
 	}
-	
+
+	deptListHtml += "</select>";
+
+	$data.html(deptListHtml);
+
+	if(selId){
+		$("#ParentDepartmentID>option[value='" + selId + "']").attr("selected", true);
+	}
 }
 
 function ExportData(){

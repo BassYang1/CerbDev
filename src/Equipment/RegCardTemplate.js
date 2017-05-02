@@ -315,7 +315,7 @@ function InitDepartments(){
 }
 
 function LoadInitDept(){	
-	var arrDepts = GetDeptJSON();
+	var arrDepts = getDeptJSON();
 
 	var deptListHtml = "<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>";
 
@@ -358,7 +358,7 @@ function LoadSelDept(deptIds){
 		$selObj.append("<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>");
 	}
 	else{
-		var arrDepts = GetDeptJSON(null, deptIds); //获取部门数据
+		var arrDepts = getDeptJSON(null, deptIds); //获取部门数据
 		var id, name, code, pcode, sBlank;
 
 		for(var i in arrDepts){
@@ -417,52 +417,12 @@ function InitEmployees(){
 	$data.html(empListHtml);
 }
 
-//获取员工JSON数据
-function GetEmpJSON(){
-	var condition = "";
-	if(arguments.length > 0){
-		condition = arguments[0];
-	}
-
-	var empIds = "";
-	if(arguments.length > 1){
-		empIds = arguments[1];
-	}
-
-	var result = $.ajax({type:'post',url:'../Common/GetEmployeeJSON.asp?nd='+getRandom(),data:{condition: condition, empIds: empIds},async:false});
-	var data = result.responseText;
-	var arrEmps = data ? ($.parseJSON(data) || []) : [];
-
-	return arrEmps;
-}
-
-//获取员工JSON数据
-function GetDeptJSON(){
-	var condition = "";
-	if(arguments.length > 0){
-		condition = arguments[0];
-	}
-
-	var deptIds = "";
-	if(arguments.length > 1){
-		deptIds = arguments[1];
-	}
-
-	var userId = getCookie(cookieUserId);
-	var result = $.ajax({type:"post",url:'../Common/GetDepartmentJSON.asp?nd='+getRandom() + "&userId=" + userId,data:{deptIds: deptIds, oper:"filter"},async:false});
-	var data = result.responseText;
-	var arrDepts = data ? ($.parseJSON(data) || []) : [];
-
-	return arrDepts;
-}
-
-
 function LoadSelEmp(empIds){
 	if(empIds == undefined || typeof empIds != "string" || empIds == "" || empIds.search(/[a-zA-Z]+/g) >= 0){
 		return false;
 	}
 
-	var arrEmps = GetEmpJSON(null, empIds); //获取员工JSON数据
+	var arrEmps = getEmpJSON(null, empIds); //获取员工JSON数据
 
 	//所选职员列表
 	var $selObj = $("#selEmpDesc");
@@ -681,7 +641,7 @@ function fSearchEmployeeSubmit(){
 	
 	condition = strsearchField + "|," + strsearchOper + "|," + encodeURI(strsearchString);
 	
-	var arrEmps = GetEmpJSON(condition);
+	var arrEmps = getEmpJSON(condition);
 
 	//所选职员列表
 	var $srcObj = $("#selEmpSrc");

@@ -13,7 +13,7 @@ Class Controller
 	'strTempId 模板Id
 	'isClearOld 清除设备注册历史数据
 	Public Function RegTemplateCard(strTempId, isClearOld)
-		Dim strConWhere, strEmpWhere, strSQL, strErrorMsg
+		Dim strConWhere, strEmpWhere, strSQL
 		Dim strTemplateName, strActions
 		isClearOld = 0 '页面同步默认都传0，因为存储过程会通过接口(Job)执行，数据会不停删除并重新同步
 
@@ -60,9 +60,9 @@ Class Controller
 		recom.execute()
 		if err.number <> 0 then
 			Call fCloseADO()
-			strErrorMsg = Err.Description
+			RegTemplateCard = Err.Description
 			On Error GoTo 0
-			RegTemplateCard = strErrorMsg
+			exit Function
 		end if
 
 		strActions = GetCerbLbl("strLogAdd")

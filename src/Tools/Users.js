@@ -1,4 +1,4 @@
-﻿var blnOperPermissions = false;
+var blnOperPermissions = false;
 $(document).ready(function(){  
 CheckLoginStatus();
 InitForm();
@@ -179,8 +179,9 @@ if(iexport){
 }
 
 function InitForm(){
-	 GetDepartments();
+	 InitDepartments();
 }
+
 function GetDepartments(){
 	var htmlObj = $.ajax({url:'../Common/GetDepartment.asp?nd='+getRandom()+'&selID=selDept&DeptId=',async:false});
 		$("#tdDept").html(htmlObj.responseText);
@@ -193,14 +194,55 @@ function GetDepartments(){
 			gridReload();
 		});
 }
+
 function gridReload(){
 	$("#DataGrid").jqGrid('setGridParam',{url:"UsersList.asp",page:1,}).trigger("reloadGrid");
+} 
+
+});
+
+//初使化部门
+function InitDepartments(selId){
+	var $tr = $("#tr_ParentDepartmentID"), 
+		$label = $tr.children("td.CaptionTD"),
+		$data = $tr.children("td.DataTD");
+
+	var id, name, code, sBlank, len;
+	var arrDepts = getDeptJSON();
+
+	var deptListHtml = "";
+
+	for(var i in arrDepts){
+		id = arrDepts[i].id;
+		name = arrDepts[i].name;
+		code = arrDepts[i].code;
+		sBlank = "";
+		len = code.length / 5;
+
+		if(len == 1){
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
+		}
+		else{
+			for(var i = 0; i < len; i ++){
+				sBlank += "&nbsp;";
+			}
+
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
+		}
+	}
+
+	$("#selDept").html(deptListHtml);
+	$("#selDept").css('width','140');
+	$("#selDept").css('font-size','12px');
+	$("#selDept").prepend("<option value='-1'>"+getlbl("rep.AllDept1")+"</option>"); 	//1 - 所有部门
+	$("#selDept").prepend("<option value='0'>"+getlbl("rep.MyRecord0")+"</option>"); 	//0 - 我的记录
+	$("#selDept").val(0);	//选择value为0的项
+	$("#selDept").change(function(){
+		gridReload();
+	});
 }
 
-}); 
-
-function InitEditForm(oper,userId)
-{
+function InitEditForm(oper,userId){
 	$("#tr_LoginName").children("td.CaptionTD").css("width", "10%"); //设置标签宽度
 	$("#tr_LoginName").children("td.DataTD").css("width", "40%");
 	var htmlObj,DepartmentId,EmployeeId;
@@ -271,17 +313,16 @@ function InitEditForm(oper,userId)
 	});
 	//$("#spanShowOperPermMsg").html("aa");
 }
-function GetRoleDeptIds()
-{
+
+function GetRoleDeptIds(){
 	return $("#depframe")[0].contentWindow.GetCheckIDs();
 }
-function GetRoleConIds()
-{
+
+function GetRoleConIds(){
 	return $("#conframe")[0].contentWindow.GetCheckIDs();
 }
 
-function InitViewForm(userId)
-{
+function InitViewForm(userId){
 	$("#trv_LoginName").children("td.CaptionTD").css("width", "10%"); //设置标签宽度
 	$("#trv_LoginName").children("td.DataTD").css("width", "40%");
 	$('#Act_Buttons').children().eq(0).html("<td class='navButton'></td>");  
@@ -294,6 +335,7 @@ function InitViewForm(userId)
 	
 	//$("#tr_RoleDept").children("td.DataTD").eq(0).load("GetUserEditDept.html");
 }
+
 function ExportData(){
 	$("#divExport").load("../Tools/ExportDataUI.asp?nd="+getRandom()+"&exportType=users");
 	$("#divExport").show();

@@ -118,9 +118,7 @@ function selColChange()
 	}
 	
 	if(selColVal == "DepartmentID" ){
-		var htmlObj = $.ajax({url:'../Common/GetDepartment.asp?nd='+getRandom()+'&selID=txtData&DeptId=',async:false});
-		$("#divtxtData").html(htmlObj.responseText);
-		$("#txtData").css('width','270');
+		InitDepartments();
 	}
 	else if(selColVal == "Name" ){
 		$("#divtxtData").html("<input type='text' id='txtData' style='width: 98%;' role='textbox' class='input-elm FormElement ui-widget-content ui-corner-all'>");
@@ -201,6 +199,36 @@ function selColChange()
 		$("#txtData").css('width','270');
 	}
 
+}
+
+//初使化部门
+function InitDepartments(){
+	var id, name, code, sBlank, len;
+	var arrDepts = getDeptJSON();
+
+	var deptListHtml = "<select id='txtData' name='txtData' style='width:270px' class='FormElement ui-widget-content ui-corner-all'>";
+	for(var i in arrDepts){
+		id = arrDepts[i].id;
+		name = arrDepts[i].name;
+		code = arrDepts[i].code;
+		sBlank = "";
+		len = code.length / 5;
+
+		if(len == 1){
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
+		}
+		else{
+			for(var i = 0; i < len; i ++){
+				sBlank += "&nbsp;";
+			}
+
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
+		}
+	}
+
+	deptListHtml += "</select>";
+
+	$("#divtxtData").html(deptListHtml);
 }
 
 //关闭对话框 
