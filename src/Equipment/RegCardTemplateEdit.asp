@@ -112,7 +112,7 @@ if	strSQL<>"" then
 	Select Case strOper
 		Case "add": 'Add Record
 			On Error Resume Next
-			strSQL = "SELECT @@IDENTITY AS  Id"
+			strSQL = "SELECT TemplateId AS Id FROM ControllerTemplates WHERE TemplateType='4' AND TemplateName='" & strTemplateName & "'"
 			Rs.Open strSQL, Conn, 1, 1
 			If Not Rs.eof Then
 				strRecordID = cstr(Rs.fields("Id").value)

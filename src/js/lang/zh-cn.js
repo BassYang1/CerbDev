@@ -1,4 +1,4 @@
-﻿var strloadtext= "正在获取，请稍后...";
+var strloadtext= "正在获取，请稍后...";
 var stredittext = "修改";
 var straddtext = "增加";
 var strviewtext = "查看";
@@ -93,7 +93,28 @@ var hr={
 	hrefDept : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;部门列表",
 	hrefEmp : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人事列表",
 	spanNavAtt : "考勤",
-	hrefAttShift : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班次"
+	hrefAttShift : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班次",
+	ShiftName: "班次名",
+	StretchShift: "弹性班次",
+	ShiftTime: "基本工时",
+	Degree: "上班次数",
+	Night: "是否过夜",
+	Yes : '是',
+	No : '否',
+	ShiftList : "班次列表",
+	OnThatDay : "0 - 当日",
+	FirstOnDuty: "第一次上班刷卡",
+	TimePeriod: "时段",
+	Clockin: "上班",
+	Clockout: "下班",
+	Other: "其它",
+	CanLateIn: "允许迟到时间(分)",
+	CanEarlyOut: "允许早退时间(分)",
+	CanRest: "中间休息(分)",
+	TheFirstClockin: "1",
+	Standard: "标准",
+	Start: "开始",
+	End: "截止",
 }
 
 

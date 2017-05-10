@@ -1,777 +1,839 @@
-﻿<%Session.CodePage=65001%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Shifts Edit</title>
-<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
-<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
-<link href="../css/ui.custom.css" media="screen" type="text/css" rel="stylesheet">
-<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
-
-<script type="text/javascript" src="../js/jquery.js"></script>
-<script type="text/javascript" src="../js/lang/lang.js"></script>
-<script type="text/javascript">
-	document.write("<scr"+"ipt type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
-	document.write("<scr"+"ipt type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
-	document.write("<scr"+"ipt type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"'><\/script>");
-</script>
-<script type="text/javascript">
-	$.jgrid.no_legacy_api = true;
-	$.jgrid.useJSON = true;
-</script>
-<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
-<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
-<script type="text/javascript" src="../js/custom/system.js"></script>
-<script type="text/javascript" src="../js/ui/jquery.ui.core.js"></script>
-<script type="text/javascript" src="../js/ui/jquery.ui.widget.js"></script>
-<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
-
-<script src="../js/ui/jquery.ui.mouse.js"></script>
-<script src="../js/ui/jquery.ui.button.js"></script>
-<script src="../js/ui/jquery.ui.draggable.js"></script>
-<script src="../js/ui/jquery.ui.position.js"></script>
-<script src="../js/ui/jquery.ui.dialog.js"></script>
-<link rel="stylesheet" href="../css/demos.css">
-<style>
-.ui-border {
-	border-top:1px solid #a6c9e2;
-	border-left:1px solid #a6c9e2;
-	padding: 6px;
-}
-.ui-border-LB {
-	border-bottom:1px solid #a6c9e2;
-	border-left:1px solid #a6c9e2;
-	padding: 6px;
-}
-.ui-border-R {
-	border-right:1px solid #a6c9e2;
-	padding: 6px;
-}
-.ui-NoneRightBorder {
-}
-</style>	
-
-</head>
+<%Session.CodePage=65001%>
 <!--#include file="..\Conn\conn.asp"-->
 <!--#include file="..\Common\Page.asp"-->
+<!--#include file="..\CheckLoginStatus.asp"-->
 <!--#include file="..\Conn\GetLbl.asp"-->
 <%
-dim strConId,strEmpId,iDoor,iSearch
-dim strId
-dim strFields
-dim strSQL
-dim strShiftName, strStretchShift, strDegree, strNight, strFirstOnDuty, strShiftTime
-dim strAonDuty,strAonDutyStart, strAonDutyEnd, strAoffDuty, strAoffDutyStart, strAoffDutyEnd,strAcalculateLate,strAcalculateEarly, strArestTime
-dim strBonDuty, strBonDutyStart,strBonDutyEnd, strBoffDuty, strBoffDutyStart, strBoffDutyEnd,strBcalculateLate,strBcalculateEarly, strBrestTime
-dim strConDuty, strConDutyStart, strConDutyEnd,strCoffDuty, strCoffDutyStart, strCoffDutyEnd,strCcalculateLate,strCcalculateEarly,strCrestTime
 
-strConId = Cstr(Trim(Request.QueryString("ControllerID")))
-strEmpId = Cstr(Trim(Request.QueryString("EmployeeID")))
 
-call fConnectADODB()
+'//*********************  Declare Values  **********************//
+dim strFields, strValues, strFieldsTemp, strValuesTemp
+dim strSQL, strOper
+dim strShiftName, strStretchShift, strDegree, strNight, strFirstOnDuty, strShiftTime, strAonDuty
+dim strAonDutyStart, strAonDutyEnd, strAoffDuty, strAoffDutyStart, strAoffDutyEnd, strArestTime, strBonDuty, strBonDutyStart
+dim strBonDutyEnd, strBoffDuty, strBoffDutyStart, strBoffDutyEnd, strBrestTime, strConDuty, strConDutyStart, strConDutyEnd
+dim strCoffDuty, strCoffDutyStart, strCoffDutyEnd, strCrestTime
+dim strAdjustcheck, strAdjustDate
+dim TempTime
+dim strRecordID
 
-strFields = "ShiftId, ShiftName, convert(Nvarchar(2),StretchShift) as StretchShift, Degree, convert(Nvarchar(2),Night) as Night, FirstOnDuty, ShiftTime, substring(convert(varchar(19), AonDuty, 121),12, 5) as AonDuty, substring(convert(varchar(19), AonDutyStart, 121),12, 5) as AonDutyStart, substring(convert(varchar(19), AonDutyEnd, 121),12, 5) as AonDutyEnd, substring(convert(varchar(19), AoffDuty, 121),12, 5) as AoffDuty, substring(convert(varchar(19), AoffDutyStart, 121),12, 5) as AoffDutyStart, substring(convert(varchar(19), AoffDutyEnd, 121),12, 5) as AoffDutyEnd,AcalculateLate,AcalculateEarly, ArestTime, substring(convert(varchar(19), BonDuty, 121),12, 5) as BonDuty, substring(convert(varchar(19), BonDutyStart, 121),12, 5) as BonDutyStart, substring(convert(varchar(19), BonDutyEnd, 121),12, 5) as BonDutyEnd, substring(convert(varchar(19), BoffDuty, 121),12, 5) as BoffDuty, substring(convert(varchar(19), BoffDutyStart, 121),12, 5) as BoffDutyStart, substring(convert(varchar(19), BoffDutyEnd, 121),12, 5) as BoffDutyEnd,BcalculateLate,BcalculateEarly, BrestTime, substring(convert(varchar(19), ConDuty, 121),12, 5) as ConDuty, substring(convert(varchar(19), ConDutyStart, 121),12, 5) as ConDutyStart, substring(convert(varchar(19), ConDutyEnd, 121),12, 5) as ConDutyEnd, substring(convert(varchar(19), CoffDuty, 121),12, 5) as CoffDuty, substring(convert(varchar(19), CoffDutyStart, 121),12, 5) as CoffDutyStart, substring(convert(varchar(19), CoffDutyEnd, 121),12, 5) as CoffDutyEnd,CcalculateLate,CcalculateEarly, CrestTime"
-	strSQL = "select top 1 "+cstr(strFields)+" from AttendanceShifts order by ShiftId desc "
-	On Error Resume Next
-	Rs.open strSQL, Conn, 1, 1
-	if NOT Rs.EOF then
-		strId			 = trim(Rs.fields("ShiftId").value)
-		strShiftName     = trim(Rs.fields("ShiftName").value)
-		strStretchShift  = Rs.fields("StretchShift").value
-		strDegree        = trim(Rs.fields("Degree").value)
-		strNight         = Rs.fields("Night").value
-		strFirstOnDuty   = trim(Rs.fields("FirstOnDuty").value)
-		strShiftTime     = trim(Rs.fields("ShiftTime").value)
-		if strShiftTime = "" then strShiftTime = "0"
 
-		strAonDuty       = GetDBValues(Rs.fields("AonDuty").value, 0)
-		strAonDutyStart  = GetDBValues(Rs.fields("AonDutyStart").value, 0)
-		strAonDutyEnd    = GetDBValues(Rs.fields("AonDutyEnd").value, 0)
-		strAoffDuty      = GetDBValues(Rs.fields("AoffDuty").value, 0)
-		strAoffDutyStart = GetDBValues(Rs.fields("AoffDutyStart").value, 0)
-		strAoffDutyEnd   = GetDBValues(Rs.fields("AoffDutyEnd").value, 0)
-		strAcalculateLate     = Rs.fields("AcalculateLate").value
-		strAcalculateEarly     = Rs.fields("AcalculateEarly").value
-		strArestTime     = Rs.fields("ArestTime").value
-		if strAcalculateLate = 0 then strAcalculateLate = ""
-		if strAcalculateEarly = 0 then strAcalculateEarly = ""
-		if strArestTime = 0 then strArestTime = ""
+dim iChangeNameORNot
+Dim iHaveNight, iIsAdd '覆盖标识
+'//************************************************************//'"EmployeeWork"
 
-		if clng(strDegree) > 1 Then          '时段二
-			strBonDuty       = GetDBValues(Rs.fields("BonDuty").value, 0)
-			strBonDutyStart  = GetDBValues(Rs.fields("BonDutyStart").value, 0)
-			strBonDutyEnd    = GetDBValues(Rs.fields("BonDutyEnd").value, 0)
-			strBoffDuty      = GetDBValues(Rs.fields("BoffDuty").value, 0)
-			strBoffDutyStart = GetDBValues(Rs.fields("BoffDutyStart").value, 0)
-			strBoffDutyEnd   = GetDBValues(Rs.fields("BoffDutyEnd").value, 0)
-			strBcalculateLate     = Rs.fields("BcalculateLate").value
-			strBcalculateEarly     = Rs.fields("BcalculateEarly").value
-			strBrestTime     = Rs.fields("BrestTime").value
-			if strBcalculateLate = 0 then strBcalculateLate = ""
-			if strBcalculateEarly = 0 then strBcalculateEarly = ""
-			if strBrestTime = 0 then strBrestTime = ""
-		End if
+strOper = Request.Form("oper")
+strRecordID = Replace(Request.Form("id"),"'","''")
 
-		if 	clng(strDegree) > 2 then     '时段三
-			strConDuty       = GetDBValues(Rs.fields("ConDuty").value, 0)
-			strConDutyStart  = GetDBValues(Rs.fields("ConDutyStart").value, 0)
-			strConDutyEnd    = GetDBValues(Rs.fields("ConDutyEnd").value, 0)
-			strCoffDuty      = GetDBValues(Rs.fields("CoffDuty").value, 0)
-			strCoffDutyStart = GetDBValues(Rs.fields("CoffDutyStart").value, 0)
-			strCoffDutyEnd   = GetDBValues(Rs.fields("CoffDutyEnd").value, 0)
-			strCcalculateLate     = Rs.fields("CcalculateLate").value
-			strCcalculateEarly     = Rs.fields("CcalculateEarly").value
-			strCrestTime     = Rs.fields("CrestTime").value
-			if strCcalculateLate = 0 then strCcalculateLate = ""
-			if strCcalculateEarly = 0 then strCcalculateEarly = ""
-			if strCrestTime = 0 then strCrestTime = ""
-		end if
+if strOper <> "del" then 
+	'//************************************判断权限*******************************************
+
+	lpage = Trim(Request.QueryString("lpage"))
+	'//***************************接收提交的数据************************************************
+	strShiftName = trim(Request.form("ShiftName"))
+	if strShiftName = "" Then  
+		Call ReturnErrMsg(GetEmpLbl("ShiftNameNull")) '"[班次名称]不能为空"
 	end if
-	Rs.close
+	strShiftName = SetStringSafe(strShiftName) 
+
+	strFirstOnDuty       = trim(Request.form("FirstOnDuty"))
+	If strFirstOnDuty = "" Then strFirstOnDuty = 0
+
+	'时间类型判断
+	strShiftTime = trim(Request.form("ShiftTime"))
+	if strShiftTime = "" Then
+		Call ReturnErrMsg(GetEmpLbl("ShiftTimeNull")) '"标准工时不能为空"
+	end if
+	if not isnumeric(strShiftTime) then
+		Call ReturnErrMsg(GetEmpLbl("ShiftTimeNull")) '"标准工时只能用数字"
+	end If
+
+	strStretchShift = trim(Request.form("StretchShift"))
+	if strStretchShift = "" then strStretchShift = "0"
+	strDegree = trim(Request.form("Degree"))
+	If strDegree = "" Then strDegree = 0           '弹性班次用
+	strNight = trim(Request.form("Night"))
+	if strNight = "" then strNight = 0
+
+	If strOverTime = "" Then strOverTime = 0
+
+	strAonDuty = trim(Request.form("AonDuty"))
+	strAonDutyStart = trim(Request.form("AonDutyStart"))
+	strAoffDuty = trim(Request.form("AoffDuty"))
+	strAoffDutyEnd = trim(Request.form("AoffDutyEnd"))
+	strAcalculateLate = trim(Request.form("AcalculateLate")) 
+	strAcalculateEarly = trim(Request.form("AcalculateEarly"))                     
+	strArestTime = trim(Request.form("ArestTime"))           '休息时间
+	TempTime = "1900-01-01"
+	PTempTime = "1899-12-31"
+	NTempTime = "1900-01-02"
+	iHaveNight = 0
+	iflagA = "0"
+	iflagB = "0"
+
+	On Error Resume Next
+	'判断是否为弹性班次
+	if cint(strStretchShift) = 0 then   '固定班次 
+		if strDegree = "" Then
+			Call ReturnErrMsg(GetEmpLbl("DegreeNull")) '"[时段数]不能为空"
+		end if
+		If CInt(strFirstOnDuty) = 1 Then TempTime = PTempTime                 '上日(过夜才有的)
+
+		if cint(strDegree) >= 1 then     '时间段1
+			strAonDutyEnd = trim(Request.form("AonDutyEnd"))
+			strAoffDutyStart = trim(Request.form("AoffDutyStart"))
+
+			strAonDutyStart = CStr(TempTime) + " " + CStr(strAonDutyStart)
+			strAonDutyEnd   = CStr(TempTime) + " " + CStr(strAonDutyEnd)
+			strAonDuty      = CStr(TempTime) + " " + CStr(strAonDuty)
+			strAoffDutyStart = CStr(TempTime) + " " + CStr(strAoffDutyStart)
+			strAoffDuty     = CStr(TempTime) + " " + CStr(strAoffDuty)
+			strAoffDutyEnd  = CStr(TempTime) + " " + CStr(strAoffDutyEnd)
+
+			If CInt(strNight) = 0 Then   '非过夜
+				If CDate(strAonDuty) < CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AOnDutyLtStartN")) '"第一次上班开始时间必须早于上班标准时间或您没选择［过夜］！"
+				If CDate(strAonDutyEnd) < CDate(strAonDuty)       Then Call ReturnErrMsg(GetEmpLbl("AOnDutyLtEndN")) '"第一次上班标准时间必须早于上班截止时间或您没选择［过夜］！"
+				If CDate(strAoffDutyStart) < CDate(strAonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("AOnDutyEndLtAoffDutyStartN")) '"第一次上班截止时间必须早于下班开始时间或您没选择［过夜］！"
+				If CDate(strAoffDuty)   < CDate(strAoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("AoffDutyLtStartN")) '"第一次下班开始时间必须早于下班标准时间或您没选择［过夜］！"
+				If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("AoffDutyEndLtoffDutyN")) '"第一次下班标准时间必须早于下班截止时间或您没选择［过夜］！"
+			Else
+				'If CDate(strAonDuty)    = CDate(strAonDutyStart)  Then Call ReturnErrMsg("第一次上班开始时间不能等于上班标准时间！",0)
+				'If CDate(strAonDutyEnd) = CDate(strAonDuty)       Then Call ReturnErrMsg("第一次上班标准时间不能等于上班截止时间！",0)
+				'If CDate(strAoffDutyStart) = CDate(strAonDutyEnd) Then Call ReturnErrMsg("第一次上班截止时间不能等于下班开始时间！",0)
+				'If CDate(strAoffDuty)   = CDate(strAoffDutyStart) Then Call ReturnErrMsg("第一次下班开始时间不能等于下班标准时间！",0)
+				'If CDate(strAoffDutyEnd)= CDate(strAoffDuty)      Then Call ReturnErrMsg("第一次下班标准时间不能等于下班截止时间！",0)
+
+				If CDate(strAonDuty) < CDate(strAonDutyStart)  Then
+					iHaveNight = 1
+					If CDate(strAonDutyEnd) < CDate(strAonDuty)       Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndLtAonDuty")) '"第一次上班标准时间必须早于上班截止时间！"
+					If CDate(strAonDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDutyStart) < CDate(strAonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("AoffDutyStartLtAonDutyEnd")) '"第一次上班截止时间必须早于下班开始时间！"
+					If CDate(strAoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDuty)   < CDate(strAoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("AoffDutyLtAoffDutyStart")) '"第一次下班开始时间必须早于下班标准时间！"
+					If CDate(strAoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("AoffDutyEndLtAoffDuty")) '"第一次下班标准时间必须早于下班截止时间！"
+					If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					
+					'时间段是否加1,iflagA = 5 ,表示有5个时间段要加1 
+					iflagA = "5"
+
+				ElseIf CDate(strAonDutyEnd) < CDate(strAonDuty)   Then
+					iHaveNight = 1
+					If CDate(strAonDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDutyStart) < CDate(strAonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("AoffDutyStartLtAonDutyEnd")) '"第一次上班截止时间必须早于下班开始时间！"
+					If CDate(strAoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDuty)   < CDate(strAoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("AoffDutyLtAoffDutyStart")) '"第一次下班开始时间必须早于下班标准时间！"
+					If CDate(strAoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("AoffDutyEndLtAoffDuty")) '"第一次下班标准时间必须早于下班截止时间！"
+					If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					
+					'
+					iflagA = "4"
+				ElseIf CDate(strAoffDutyStart) < CDate(strAonDutyEnd)   Then
+					iHaveNight = 1
+					If CDate(strAoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+					If CDate(strAoffDuty)   < CDate(strAoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("AoffDutyLtAoffDutyStart")) '"第一次下班开始时间必须早于下班标准时间！"
+					If CDate(strAoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("AoffDutyEndLtAoffDuty")) '"第一次下班标准时间必须早于下班截止时间！"
+					If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+					iflagA = "3"
+				ElseIf CDate(strAoffDuty)   < CDate(strAoffDutyStart)   Then
+					iHaveNight = 1
+					If CDate(strAoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+					If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("AoffDutyEndLtAoffDuty")) '"第一次下班标准时间必须早于下班截止时间！"
+					If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+					iflagA = "2"
+				ElseIf CDate(strAoffDutyEnd)< CDate(strAoffDuty)   Then
+					iHaveNight = 1
+					If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+					iflagA = "1"
+				End If
+				
+				'判断第一次开始时间到最后截止时间是否大于２４
+				strSumTotal = Datediff("n", CDate(strAoffDutyEnd), CDate(strAonDutyStart))
+
+				If abs(strSumTotal) > 1440 Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+		
+			End If
+		end If
+
+		if cint(strDegree) >= 2 then
+			strBonDuty = trim(Request.form("BonDuty"))
+			strBonDutyStart = trim(Request.form("BonDutyStart"))
+			strBonDutyEnd = trim(Request.form("BonDutyEnd"))
+			strBoffDuty = trim(Request.form("BoffDuty"))
+			strBoffDutyStart = trim(Request.form("BoffDutyStart"))
+			strBoffDutyEnd = trim(Request.form("BoffDutyEnd"))
+			strBcalculateLate = trim(Request.form("BcalculateLate")) 
+			strBcalculateEarly = trim(Request.form("BcalculateEarly"))                     
+			strBrestTime = trim(Request.form("BrestTime"))           '休息时间
+			If iHaveNight = 1 Then
+				strBonDutyStart = CStr(NTempTime) + " " + CStr(strBonDutyStart)
+				strBonDutyEnd   = CStr(NTempTime) + " " + CStr(strBonDutyEnd)
+				strBonDuty      = CStr(NTempTime) + " " + CStr(strBonDuty)
+				strBoffDutyStart = CStr(NTempTime) + " " + CStr(strBoffDutyStart)
+				strBoffDuty     = CStr(NTempTime) + " " + CStr(strBoffDuty)
+				strBoffDutyEnd  = CStr(NTempTime) + " " + CStr(strBoffDutyEnd)
+			Else
+				strBonDutyStart = CStr(TempTime) + " " + CStr(strBonDutyStart)
+				strBonDutyEnd   = CStr(TempTime) + " " + CStr(strBonDutyEnd)
+				strBonDuty      = CStr(TempTime) + " " + CStr(strBonDuty)
+				strBoffDutyStart = CStr(TempTime) + " " + CStr(strBoffDutyStart)
+				strBoffDuty     = CStr(TempTime) + " " + CStr(strBoffDuty)
+				strBoffDutyEnd  = CStr(TempTime) + " " + CStr(strBoffDutyEnd)
+			End if
+			If CInt(strNight) = 0 Then   '非过夜
+				If CDate(strBonDutyStart) < CDate(strAoffDutyEnd)  Then Call ReturnErrMsg(GetEmpLbl("BonDutyStartLtAoffDutyEndN")) '"第一次下班截止时间必须早于第二次上班开始时间或您没选择［过夜］！"
+				If CDate(strBonDuty) < CDate(strBonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("BOnDutyLtStartN")) '"第二次上班开始时间必须早于上班标准时间或您没选择［过夜］！"
+				If CDate(strBonDutyEnd) < CDate(strBonDuty)       Then Call ReturnErrMsg(GetEmpLbl("BOnDutyLtEndN")) '"第二次上班标准时间必须早于上班截止时间或您没选择［过夜］！"
+				If CDate(strBoffDutyStart) < CDate(strBonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("BOnDutyEndLtBoffDutyStartN")) '"第二次上班截止时间必须早于下班开始时间或您没选择［过夜］！"
+				If CDate(strBoffDuty)   < CDate(strBoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyLtStartN")) '"第二次下班开始时间必须早于下班标准时间或您没选择［过夜］！"
+				If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtoffDutyN")) '"第二次下班标准时间必须早于下班截止时间或您没选择［过夜］！"
+			Else
+				'If CDate(strBonDutyStart)    = CDate(strAoffDutyEnd)  Then Call ReturnErrMsg("第一次下班截止时间不能等于第二次上班开始时间！",0)
+				'If CDate(strBonDuty)    = CDate(strBonDutyStart)  Then Call ReturnErrMsg("第二次上班开始时间不能等于上班标准时间！",0)
+				'If CDate(strBonDutyEnd) = CDate(strBonDuty)       Then Call ReturnErrMsg("第二次上班标准时间不能等于上班截止时间！",0)
+				''If CDate(strBoffDutyStart) = CDate(strBonDutyEnd) Then Call ReturnErrMsg("第二次上班截止时间不能等于下班开始时间！",0)
+				'If CDate(strBoffDuty)   = CDate(strBoffDutyStart) Then Call ReturnErrMsg("第二次下班开始时间不能等于下班标准时间！",0)
+				'If CDate(strBoffDutyEnd)= CDate(strBoffDuty)      Then Call ReturnErrMsg("第二次下班标准时间不能等于下班截止时间！",0)
+
+				If iHaveNight = 0 Then
+					If CDate(strBonDutyStart) < CDate(strAoffDutyEnd) Then
+						iHaveNight = 1
+						If CDate(strBonDuty)    < CDate(strBonDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BonDutyLtBonDutyStart")) '"第二次上班开始时间必须早于上班标准时间！"
+						If CDate(strBonDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBonDutyEnd) < CDate(strBonDuty)       Then Call ReturnErrMsg(GetEmpLbl("BonDutyEndLtBonDuty")) '"第二次上班标准时间必须早于上班截止时间！"
+						If CDate(strBonDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyStart) < CDate(strBonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyStartLtBonDutyEnd")) '"第二次上班截止时间必须早于下班开始时间！"
+						If CDate(strBoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDuty)   < CDate(strBoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyLtBoffDutyStart")) '"第二次下班开始时间必须早于下班标准时间！"
+						If CDate(strBoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtBoffDuty")) '"第二次下班标准时间必须早于下班截止时间！"
+						If CDate(strBoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+						iflagB = "6"
+					ElseIf CDate(strBonDuty)    < CDate(strBonDutyStart)  Then
+						iHaveNight = 1
+						If CDate(strBonDutyEnd) < CDate(strBonDuty)       Then Call ReturnErrMsg(GetEmpLbl("BonDutyEndLtBonDuty")) '"第二次上班标准时间必须早于上班截止时间！"
+						If CDate(strBonDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyStart) < CDate(strBonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyStartLtBonDutyEnd")) '"第二次上班截止时间必须早于下班开始时间！"
+						If CDate(strBoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDuty)   < CDate(strBoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyLtBoffDutyStart")) '"第二次下班开始时间必须早于下班标准时间！"
+						If CDate(strBoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtBoffDuty")) '"第二次下班标准时间必须早于下班截止时间！"
+						If CDate(strBoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+						iflagB = "5"
+					ElseIf CDate(strBonDutyEnd) < CDate(strBonDuty)   Then
+						iHaveNight = 1
+						If CDate(strBonDutyEnd) > CDate(strBonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyStart) < CDate(strBonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyStartLtBonDutyEnd")) '"第二次上班截止时间必须早于下班开始时间！"
+						If CDate(strBoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDuty)   < CDate(strBoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyLtBoffDutyStart")) '"第二次下班开始时间必须早于下班标准时间！"
+						If CDate(strBoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtBoffDuty")) '"第二次下班标准时间必须早于下班截止时间！"
+						If CDate(strBoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+
+						iflagB = "4"
+					ElseIf CDate(strBoffDutyStart) < CDate(strBonDutyEnd)   Then
+						iHaveNight = 1
+						If CDate(strBoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDuty)   < CDate(strBoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyLtBoffDutyStart")) '"第二次下班开始时间必须早于下班标准时间！"
+						If CDate(strBoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtBoffDuty")) '"第二次下班标准时间必须早于下班截止时间！"
+						If CDate(strBoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+		
+						iflagB = "3"
+					ElseIf CDate(strBoffDuty)   < CDate(strBoffDutyStart)   Then
+						iHaveNight = 1
+						If CDate(strBoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtBoffDuty")) '"第二次下班标准时间必须早于下班截止时间！"
+						If CDate(strBoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+				
+						iflagB = "2"
+					ElseIf CDate(strBoffDutyEnd)< CDate(strBoffDuty)   Then
+						iHaveNight = 1
+						If CDate(strBoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+						
+						iflagB = "1"
+					End If
+				Else
+					If CDate(strBonDutyStart) < CDate(strAoffDutyEnd)  Then Call ReturnErrMsg(GetEmpLbl("BonDutyStartLtAoffDutyEnd")) '"第一次下班截止时间必须早于第二次上班开始时间！"
+					If CDate(strBonDuty)    < CDate(strBonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("BonDutyLtBonDutyStart")) '"第二次上班开始时间必须早于上班标准时间！""
+					If CDate(strBonDutyEnd) < CDate(strBonDuty)       Then Call ReturnErrMsg(GetEmpLbl("BonDutyEndLtBonDuty")) '"第二次上班标准时间必须早于上班截止时间！"
+					If CDate(strBoffDutyStart) < CDate(strBonDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyStartLtBonDutyEnd")) '"第二次上班截止时间必须早于下班开始时间！"
+					If CDate(strBoffDuty)   < CDate(strBoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("BoffDutyLtBoffDutyStart")) '"第二次下班开始时间必须早于下班标准时间！"
+					If CDate(strBoffDutyEnd)< CDate(strBoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("BoffDutyEndLtBoffDuty")) '"第二次下班标准时间必须早于下班截止时间！"
+				End If
+				
+				'判断第一次开始时间到最后截止时间是否大于２４
+				strSumTotal = Datediff("n", CDate(strBoffDutyEnd), CDate(strAonDutyStart))
+
+				If abs(strSumTotal) > 1440 Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '"一个班次的时间段必须在二十四小时之内！"
+			End If
+		end if
+
+		if cint(strDegree) = 3 then
+			strConDuty = trim(Request.form("ConDuty"))
+			strConDutyStart = trim(Request.form("ConDutyStart"))
+			strConDutyEnd = trim(Request.form("ConDutyEnd"))
+			strCoffDuty = trim(Request.form("CoffDuty"))
+			strCoffDutyStart = trim(Request.form("CoffDutyStart"))
+			strCoffDutyEnd = trim(Request.form("CoffDutyEnd"))
+
+			strCcalculateLate = trim(Request.form("CcalculateLate")) 
+			strCcalculateEarly = trim(Request.form("CcalculateEarly"))                     
+			strCrestTime = trim(Request.form("CrestTime"))           '休息时间
+			If iHaveNight = 1 Then
+				strConDutyStart = CStr(NTempTime) + " " + CStr(strConDutyStart)
+				strConDutyEnd   = CStr(NTempTime) + " " + CStr(strConDutyEnd)
+				strConDuty      = CStr(NTempTime) + " " + CStr(strConDuty)
+				strCoffDutyStart = CStr(NTempTime) + " " + CStr(strCoffDutyStart)
+				strCoffDuty     = CStr(NTempTime) + " " + CStr(strCoffDuty)
+				strCoffDutyEnd  = CStr(NTempTime) + " " + CStr(strCoffDutyEnd)				
+			Else
+				strConDutyStart = CStr(TempTime) + " " + CStr(strConDutyStart)
+				strConDutyEnd   = CStr(TempTime) + " " + CStr(strConDutyEnd)
+				strConDuty      = CStr(TempTime) + " " + CStr(strConDuty)
+				strCoffDutyStart = CStr(TempTime) + " " + CStr(strCoffDutyStart)
+				strCoffDuty     = CStr(TempTime) + " " + CStr(strCoffDuty)
+				strCoffDutyEnd  = CStr(TempTime) + " " + CStr(strCoffDutyEnd)				
+			End if
+
+			If CInt(strNight) = 0 Then   '非过夜
+				If CDate(strConDutyStart) < CDate(strBoffDutyEnd)  Then Call ReturnErrMsg(GetEmpLbl("ConDutyStartLtBoffDutyEndN")) '"第二次下班截止时间必须早于第三次上班开始时间或您没选择［过夜］！"
+				If CDate(strConDuty)    < CDate(strConDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("ConDutyLtConDutyStartN")) '"第三次上班开始时间必须早于上班标准时间或您没选择［过夜］！"
+				If CDate(strConDutyEnd) < CDate(strConDuty)       Then Call ReturnErrMsg(GetEmpLbl("ConDutyEndLtConDutyN")) '"第三次上班标准时间必须早于上班截止时间或您没选择［过夜］！"
+				If CDate(strCoffDutyStart) < CDate(strConDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyStartLtConDutyEndN")) '"第三次上班截止时间必须早于下班开始时间或您没选择［过夜］！"
+				If CDate(strCoffDuty)   < CDate(strCoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyLtCoffDutyStartN")) '"第三次下班开始时间必须早于下班标准时间或您没选择［过夜］！"
+				If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDutyN")) '"第三次下班标准时间必须早于下班截止时间或您没选择［过夜］！"
+			Else
+				'If CDate(strConDutyStart)    = CDate(strBoffDutyEnd)  Then Call ReturnErrMsg("第二次下班截止时间不能等于第三次上班开始时间！",0)
+				'If CDate(strConDuty)    = CDate(strConDutyStart)  Then Call ReturnErrMsg("第三次上班开始时间不能等于上班标准时间！",0)
+				'If CDate(strConDutyEnd) = CDate(strConDuty)       Then Call ReturnErrMsg("第三次上班标准时间不能等于上班截止时间！",0)
+				'If CDate(strCoffDutyStart) = CDate(strConDutyEnd) Then Call ReturnErrMsg("第三次上班截止时间不能等于下班开始时间！",0)
+				'If CDate(strCoffDuty)   = CDate(strCoffDutyStart) Then Call ReturnErrMsg("第三次下班开始时间不能等于下班标准时间！",0)
+				'If CDate(strCoffDutyEnd)= CDate(strCoffDuty)      Then Call ReturnErrMsg("第三次下班标准时间不能等于下班截止时间！",0)
+
+				If iHaveNight = 0 Then
+					If CDate(strConDutyStart) < CDate(strBoffDutyEnd) Then
+						iHaveNight = 1
+						If CDate(strConDuty)    < CDate(strConDutyStart) Then Call ReturnErrMsg(GetEmpLbl("ConDutyLtConDutyStart")) '第三次上班开始时间必须早于上班标准时间！"
+						If CDate(strConDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strConDutyEnd) < CDate(strConDuty)       Then Call ReturnErrMsg(GetEmpLbl("ConDutyEndLtConDuty")) '第三次上班标准时间必须早于上班截止时间！"
+						If CDate(strConDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyStart) < CDate(strConDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyStartLtConDutyEnd")) '第三次上班截止时间必须早于下班开始时间！"
+						If CDate(strCoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDuty)   < CDate(strCoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyLtCoffDutyStart")) '第三次下班开始时间必须早于下班标准时间！"
+						If CDate(strCoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDuty")) '第三次下班标准时间必须早于下班截止时间！"
+						If CDate(strCoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+						iflagC = "6"	
+					ElseIf CDate(strConDuty)    < CDate(strConDutyStart)  Then
+						iHaveNight = 1
+						If CDate(strConDutyEnd) < CDate(strConDuty)       Then Call ReturnErrMsg(GetEmpLbl("ConDutyEndLtConDuty")) '第三次上班标准时间必须早于上班截止时间！"
+						If CDate(strConDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyStart) < CDate(strConDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyStartLtConDutyEnd")) '第三次上班截止时间必须早于下班开始时间！"
+						If CDate(strCoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDuty)   < CDate(strCoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyLtCoffDutyStart")) '第三次下班开始时间必须早于下班标准时间！"
+						If CDate(strCoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDuty")) '第三次下班标准时间必须早于下班截止时间！"
+						If CDate(strCoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+
+						iflagC = "5"
+					ElseIf CDate(strConDutyEnd) < CDate(strConDuty)   Then
+						iHaveNight = 1
+						If CDate(strConDutyEnd) > CDate(strConDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyStart) < CDate(strConDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyStartLtConDutyEnd")) '第三次上班截止时间必须早于下班开始时间！"
+						If CDate(strCoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDuty)   < CDate(strCoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyLtCoffDutyStart")) '第三次下班开始时间必须早于下班标准时间！"
+						If CDate(strCoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDuty")) '第三次下班标准时间必须早于下班截止时间！"
+						If CDate(strCoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+			
+						iflagC = "4"
+					ElseIf CDate(strCoffDutyStart) < CDate(strConDutyEnd)   Then
+						iHaveNight = 1
+						If CDate(strCoffDutyStart) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDuty)   < CDate(strCoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyLtCoffDutyStart")) '第三次下班开始时间必须早于下班标准时间！"
+						If CDate(strCoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDuty")) '第三次下班标准时间必须早于下班截止时间！"
+						If CDate(strCoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+						iflagC = "3"
+					ElseIf CDate(strCoffDuty)   < CDate(strCoffDutyStart)   Then
+						iHaveNight = 1
+						If CDate(strCoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+						If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDuty")) '第三次下班标准时间必须早于下班截止时间！"
+						If CDate(strCoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+			
+						iflagC = "2"
+					ElseIf CDate(strCoffDutyEnd)< CDate(strCoffDuty)   Then
+						iHaveNight = 1
+						If CDate(strCoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+		
+						iflagC = "1"
+					End If
+				Else
+					If CDate(strConDutyStart) < CDate(strBoffDutyEnd)  Then Call ReturnErrMsg(GetEmpLbl("ConDutyStartLtBoffDutyEnd")) '第二次下班截止时间必须早于第三次上班开始时间！"
+					If CDate(right(strConDutyStart,8)) >= CDate( right(strAonDutyStart,8) )  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+					If CDate(strConDuty)    < CDate(strConDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("ConDutyLtConDutyStart")) '第三次上班开始时间必须早于上班标准时间！"
+					If CDate( Right(strConDuty,8) ) >= CDate( right(strAonDutyStart,8) ) Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+					If CDate(strConDutyEnd) < CDate(strConDuty)       Then Call ReturnErrMsg(GetEmpLbl("ConDutyEndLtConDuty")) '第三次上班标准时间必须早于上班截止时间！"
+					If CDate( Right(strConDutyEnd,8) ) >= CDate( right(strAonDutyStart,8) ) Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+					If CDate(strCoffDutyStart) < CDate(strConDutyEnd) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyStartLtConDutyEnd")) '第三次上班截止时间必须早于下班开始时间！"
+					If CDate( Right(strCoffDutyStart,8) ) >= CDate( right(strAonDutyStart,8) ) Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+					If CDate(strCoffDuty)   < CDate(strCoffDutyStart) Then Call ReturnErrMsg(GetEmpLbl("CoffDutyLtCoffDutyStart")) '第三次下班开始时间必须早于下班标准时间！"
+					If CDate( Right(strCoffDuty,8) ) >= CDate( right(strAonDutyStart,8) ) Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+					If CDate(strCoffDutyEnd)< CDate(strCoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("CoffDutyEndLtCoffDuty")) '第三次下班标准时间必须早于下班截止时间！"
+					If CDate( Right(strCoffDutyEnd,8) ) >= CDate( right(strAonDutyStart,8) ) Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+				End If
+				
+				'判断第一次开始时间到最后截止时间是否大于２４
+				strSumTotal = Datediff("n", CDate(strCoffDutyEnd), CDate(strAonDutyStart))
+				If abs(strSumTotal) > 1440 Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！",0)
+			End If
+
+
+		end If
+
+		''If CInt(strNight) <> 0 And iHaveNight = 0 Then   '非过夜
+		''	Call ReturnErrMsg("输入数据不符合过夜要求！"
+		''End If
+		
+		'对时间段的处理
+		If iflagA = "5" Then 
+			strAonDutyStart    = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty       = "DateAdd(day, 1, '"+strAonDuty+"')"
+			strAonDutyEnd    = "DateAdd(day, 1, '"+strAonDutyEnd+"')"			
+			strAoffDutyStart = "DateAdd(day, 1, '"+strAoffDutyStart+"')"
+			strAoffDuty      = "DateAdd(day, 1, '"+strAoffDuty+"')"
+			strAoffDutyEnd   = "DateAdd(day, 1, '"+strAoffDutyEnd+"')"
+		ElseIf iflagA = "4" Then 
+			strAonDutyStart    = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty       = "DateAdd(day, 0, '"+strAonDuty+"')"
+			strAonDutyEnd    = "DateAdd(day, 1, '"+strAonDutyEnd+"')"			
+			strAoffDutyStart = "DateAdd(day, 1, '"+strAoffDutyStart+"')"
+			strAoffDuty      = "DateAdd(day, 1, '"+strAoffDuty+"')"
+			strAoffDutyEnd   = "DateAdd(day, 1, '"+strAoffDutyEnd+"')"
+		ElseIf iflagA = "3" Then 
+			strAonDutyStart    = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty       = "DateAdd(day, 0, '"+strAonDuty+"')"
+			strAonDutyEnd    = "DateAdd(day, 0, '"+strAonDutyEnd+"')"			
+			strAoffDutyStart = "DateAdd(day, 1, '"+strAoffDutyStart+"')"
+			strAoffDuty      = "DateAdd(day, 1, '"+strAoffDuty+"')"
+			strAoffDutyEnd   = "DateAdd(day, 1, '"+strAoffDutyEnd+"')"
+		ElseIf iflagA = "2" Then 
+			strAonDutyStart    = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty       = "DateAdd(day, 0, '"+strAonDuty+"')"
+			strAonDutyEnd    = "DateAdd(day, 0, '"+strAonDutyEnd+"')"			
+			strAoffDutyStart = "DateAdd(day, 0, '"+strAoffDutyStart+"')"
+			strAoffDuty      = "DateAdd(day, 1, '"+strAoffDuty+"')"
+			strAoffDutyEnd   = "DateAdd(day, 1, '"+strAoffDutyEnd+"')"
+		ElseIf iflagA = "1" Then 
+			strAonDutyStart    = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty       = "DateAdd(day, 0, '"+strAonDuty+"')"
+			strAonDutyEnd    = "DateAdd(day, 0, '"+strAonDutyEnd+"')"			
+			strAoffDutyStart = "DateAdd(day, 0, '"+strAoffDutyStart+"')"
+			strAoffDuty      = "DateAdd(day, 0, '"+strAoffDuty+"')"
+			strAoffDutyEnd   = "DateAdd(day, 1, '"+strAoffDutyEnd+"')"
+		Else
+			strAonDutyStart    = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty       = "DateAdd(day, 0, '"+strAonDuty+"')"
+			strAonDutyEnd    = "DateAdd(day, 0, '"+strAonDutyEnd+"')"			
+			strAoffDutyStart = "DateAdd(day, 0, '"+strAoffDutyStart+"')"
+			strAoffDuty      = "DateAdd(day, 0, '"+strAoffDuty+"')"
+			strAoffDutyEnd   = "DateAdd(day, 0, '"+strAoffDutyEnd+"')"
+		End If 
+
+		If iflagB = "6" Then 
+			strBonDutyStart    = "DateAdd(day, 1, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 1, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 1, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 1, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 1, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 1, '"+strBoffDutyEnd+"')"
+		ElseIf iflagB = "5" Then 
+			strBonDutyStart    = "DateAdd(day, 0, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 1, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 1, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 1, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 1, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 1, '"+strBoffDutyEnd+"')"
+		ElseIf iflagB = "4" Then 
+			strBonDutyStart    = "DateAdd(day, 0, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 0, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 1, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 1, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 1, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 1, '"+strBoffDutyEnd+"')"
+		ElseIf iflagB = "3" Then 
+			strBonDutyStart    = "DateAdd(day, 0, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 0, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 0, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 1, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 1, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 1, '"+strBoffDutyEnd+"')"
+		ElseIf iflagB = "2" Then 
+			strBonDutyStart    = "DateAdd(day, 0, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 0, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 0, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 0, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 1, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 1, '"+strBoffDutyEnd+"')"
+		ElseIf iflagB = "1" Then 
+			strBonDutyStart    = "DateAdd(day, 0, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 0, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 0, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 0, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 0, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 1, '"+strBoffDutyEnd+"')"
+		Else
+			strBonDutyStart    = "DateAdd(day, 0, '"+strBonDutyStart+"')"
+			strBonDuty      = "DateAdd(day, 0, '"+strBonDuty+"')"
+			strBonDutyEnd   = "DateAdd(day, 0, '"+strBonDutyEnd+"')"				
+			strBoffDutyStart = "DateAdd(day, 0, '"+strBoffDutyStart+"')"
+			strBoffDuty     = "DateAdd(day, 0, '"+strBoffDuty+"')"	
+			strBoffDutyEnd  = "DateAdd(day, 0, '"+strBoffDutyEnd+"')"
+		End If 
+		
+		If iflagC = "6" Then 
+			strConDutyStart    = "DateAdd(day, 1, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 1, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 1, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 1, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 1, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 1, '"+strCoffDutyEnd+"')"
+		ElseIf iflagC = "5" Then 
+			strConDutyStart    = "DateAdd(day, 0, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 1, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 1, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 1, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 1, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 1, '"+strCoffDutyEnd+"')"
+		ElseIf iflagC = "4" Then 
+			strConDutyStart    = "DateAdd(day, 0, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 0, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 1, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 1, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 1, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 1, '"+strCoffDutyEnd+"')"
+		ElseIf iflagC = "3" Then 
+			strConDutyStart    = "DateAdd(day, 0, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 0, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 0, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 1, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 1, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 1, '"+strCoffDutyEnd+"')"
+		ElseIf iflagC = "2" Then 
+			strConDutyStart    = "DateAdd(day, 0, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 0, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 0, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 0, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 1, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 1, '"+strCoffDutyEnd+"')"
+		ElseIf iflagC = "1" Then 
+			strConDutyStart    = "DateAdd(day, 0, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 0, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 0, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 0, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 0, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 1, '"+strCoffDutyEnd+"')"
+		Else
+			strConDutyStart    = "DateAdd(day, 0, '"+strConDutyStart+"')"
+			strConDuty       = "DateAdd(day, 0, '"+strConDuty+"')"
+			strConDutyEnd    = "DateAdd(day, 0, '"+strConDutyEnd+"')"			
+			strCoffDutyStart = "DateAdd(day, 0, '"+strCoffDutyStart+"')"
+			strCoffDuty      = "DateAdd(day, 0, '"+strCoffDuty+"')"
+			strCoffDutyEnd   = "DateAdd(day, 0, '"+strCoffDutyEnd+"')"
+		End If 
+	Else                             '弹性班次
+		If CInt(strNight) = 0 Then   '非过夜
+			If CDate(strAonDuty)    < CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("StretchOnDutyLtOnDutyStart")) '弹性班上班开始时间必须早于上班标准时间！"
+			If CDate(strAoffDuty)   < CDate(strAonDuty)       Then Call ReturnErrMsg(GetEmpLbl("StretchOffDutyLtOnDuty")) '弹性班上班标准时间必须早于下班标准时间！"
+			If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("StretchOffDutyEndLtOffDuty")) '弹性班下班标准时间必须早于下班截止时间！"
+
+			strAonDutyStart = CStr(TempTime) + " " + CStr(strAonDutyStart)
+			strAonDuty      = CStr(TempTime) + " " + CStr(strAonDuty)
+			strAoffDuty     = CStr(TempTime) + " " + CStr(strAoffDuty)
+			strAoffDutyEnd  = CStr(TempTime) + " " + CStr(strAoffDutyEnd)
+
+			strAonDutyStart = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+			strAonDuty = "DateAdd(day, 0, '"+strAonDuty+"')"
+			strAoffDuty = "DateAdd(day, 0, '"+strAoffDuty+"')"
+			strAoffDutyEnd = "DateAdd(day, 0, '"+strAoffDutyEnd+"')"
+		Else
+			''If CDate(strAonDuty)    = CDate(strAonDutyStart)  Then Call ReturnErrMsg("弹性班上班开始时间不能等于上班标准时间！",0)
+			''If CDate(strAonDuty)   = CDate(strAoffDuty)      Then Call ReturnErrMsg("弹性班上班标准时间不能等于下班标准时间！",0)
+			''If CDate(strAoffDutyEnd)= CDate(strAoffDuty)      Then Call ReturnErrMsg("弹性班下班标准时间不能等于下班截止时间！",0)
+			''If CInt(strFirstOnDuty) = 1 Then TempTime = PTempTime
+
+			If CDate(strAonDuty)    < CDate(strAonDutyStart)  Then
+				iHaveNight = 1
+
+				If CDate(strAonDuty)   < CDate(strAoffDuty) Then Call ReturnErrMsg(GetEmpLbl("StretchOnDutyLtOffDuty")) '弹性班下班标准时间必须早于上班标准时间！"
+				If CDate(strAoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+				If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("StretchOffDutyEndLtOffDuty")) '弹性班下班标准时间必须早于下班截止时间！"
+				If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+				strAonDutyStart = CStr(TempTime) + " " + CStr(strAonDutyStart)
+				'TempTime = (TempTime) + 1
+				TempTime = "DateAdd(day, 1, '"+TempTime+"')"
+				strAonDuty      = CStr(TempTime) + "+' " + CStr(strAonDuty) + "'"
+				strAoffDuty     = CStr(TempTime) + "+' " + CStr(strAoffDuty) + "'"
+				strAoffDutyEnd  = CStr(TempTime) + "+' " + CStr(strAoffDutyEnd) + "'"
+
+				strAonDutyStart = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+				strAonDuty = "DateAdd(day, 0, "+strAonDuty+")"
+				strAoffDuty = "DateAdd(day, 0, "+strAoffDuty+")"
+				strAoffDutyEnd = "DateAdd(day, 0, "+strAoffDutyEnd+")"
+			ElseIf CDate(strAoffDuty)    < CDate(strAonDuty)  Then
+				iHaveNight = 1
+				If CDate(strAoffDuty) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+
+				If CDate(strAoffDutyEnd)< CDate(strAoffDuty)      Then Call ReturnErrMsg(GetEmpLbl("StretchOffDutyEndLtOffDuty")) '弹性班下班标准时间必须早于下班截止时间！"
+				If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+				strAonDutyStart = CStr(TempTime) + " " + CStr(strAonDutyStart)
+				strAonDuty      = CStr(TempTime) + " " + CStr(strAonDuty)
+				'TempTime = (TempTime) + 1
+				TempTime = "DateAdd(day, 1, '"+TempTime+"')"
+				strAoffDuty     = CStr(TempTime) + "+' " + CStr(strAoffDuty) + "'"
+				strAoffDutyEnd  = CStr(TempTime) + "+' " + CStr(strAoffDutyEnd) + "'"
+
+				strAonDutyStart = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+				strAonDuty = "DateAdd(day, 0, '"+strAonDuty+"')"
+				strAoffDuty = "DateAdd(day, 0, "+strAoffDuty+")"
+				strAoffDutyEnd = "DateAdd(day, 0, "+strAoffDutyEnd+")"
+			ElseIf CDate(strAoffDutyEnd)    < CDate(strAoffDuty)  Then
+				iHaveNight = 1
+				If CDate(strAoffDutyEnd) > CDate(strAonDutyStart)  Then Call ReturnErrMsg(GetEmpLbl("AonDutyEndMtAonDutyStart")) '一个班次的时间段必须在二十四小时之内！"
+				strAonDutyStart = CStr(TempTime) + " " + CStr(strAonDutyStart)
+				strAonDuty      = CStr(TempTime) + " " + CStr(strAonDuty)
+				strAoffDuty     = CStr(TempTime) + " " + CStr(strAoffDuty)
+				'TempTime = (TempTime) + 1
+				TempTime = "DateAdd(day, 1, '"+TempTime+"')"
+				strAoffDutyEnd  = CStr(TempTime) + "+' " + CStr(strAoffDutyEnd) + "'"
+
+				strAonDutyStart = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+				strAonDuty = "DateAdd(day, 0, '"+strAonDuty+"')"
+				strAoffDuty = "DateAdd(day, 0, '"+strAoffDuty+"')"
+				strAoffDutyEnd = "DateAdd(day, 0, "+strAoffDutyEnd+")"
+			Else
+				strAonDutyStart = "DateAdd(day, 0, '"+strAonDutyStart+"')"
+				strAonDuty = "DateAdd(day, 0, '"+strAonDuty+"')"
+				strAoffDuty = "DateAdd(day, 0, '"+strAoffDuty+"')"
+				strAoffDutyEnd = "DateAdd(day, 0, '"+strAoffDutyEnd+"')"
+			End If
+			If iHaveNight = 0 Then Call ReturnErrMsg(GetEmpLbl("DataIllegal")) '输入数据不符合过夜要求！"
+			
+		End if
+		strDegree = 1
+	end if
+
+	if strArestTime = "" then strArestTime = 0
+	if strBrestTime = "" then strBrestTime = 0
+	if strCrestTime = "" then strCrestTime = 0
+	if strAcalculateLate = "" then strAcalculateLate = 0
+	if strBcalculateLate = "" then strBcalculateLate = 0
+	if strCcalculateLate = "" then strCcalculateLate = 0
+	if strAcalculateEarly = "" then strAcalculateEarly = 0
+	if strBcalculateEarly = "" then strBcalculateEarly = 0
+	if strCcalculateEarly = "" then strCcalculateEarly = 0
+	'生效日期
+	''strAdjustDate = trim(Request.form("AdjustDate"))
+	if len( strShiftName ) > 50 Then Call ReturnErrMsg(GetEmpLbl("ShiftNameIllegal")) '班次名非法！"
+	''if len( strFirstOnDuty ) > 1 Then Call ReturnErrMsg("第一次上班非法！",0)
+	'//******************************************************************************/
+end if
+
+Call fConnectADODB()
+
+'判断模板名称是否存在
+strSQL=""
+Select Case strOper
+	Case "add": 'Add Record
+	strSQL = "Select 1 from AttendanceShifts where ShiftName='"&strShiftName&"'"
+	Case "edit": 'Edit Record
+	strSQL = "Select 1 from AttendanceShifts where ShiftName='"&strShiftName&"' and ShiftId <> "&strRecordID
+End Select
+if	strSQL<>"" then 
+	if IsExistsValue(strSQL) = true then 
+		Call fCloseADO()
+		Call ReturnErrMsg(GetEmpLbl("ShiftNameUsed"))	'"名称已使用"
+	end if
+end if
+
+Select Case strOper
+	Case "add": 'Add Record
+		if cint(strStretchShift) = 0 then   '固定班次
+			if cint(strDegree) = 1 then     '时间段1
+				strFields = "ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime,"
+				strValues = "'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+","+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+
+				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+				strValuesTemp = ",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+			ElseIf cint(strDegree) = 2 then     '时间段2
+				strFields = "ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime"
+				strValues = "'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+","+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+","+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+","+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)
+
+				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime"
+				strValuesTemp = ",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)
+			Else
+				strFields = "ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime, ConDuty, ConDutyStart, ConDutyEnd, CoffDuty, CoffDutyStart, CoffDutyEnd, CcalculateLate,CcalculateEarly, CrestTime"
+				strValues = "'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+","+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+","+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+","+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)+","+cstr(strConDuty)+","+cstr(strConDutyStart)+","+cstr(strConDutyEnd)+","+cstr(strCoffDuty)+","+cstr(strCoffDutyStart)+","+cstr(strCoffDutyEnd)+","+cstr(strCcalculateLate)+","+CStr(strCcalculateEarly)+","+CStr(strCrestTime)
+							
+				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStartq AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime, ConDuty, ConDutyStart, ConDutyEnd, CoffDuty, CoffDutyStart, CoffDutyEnd, CcalculateLate,CcalculateEarly, CrestTime"
+				strValuesTemp = ",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)+", "+cstr(strConDuty)+", "+cstr(strConDutyStart)+", "+cstr(strConDutyEnd)+","+cstr(strCoffDuty)+","+cstr(strCoffDutyStart)+","+cstr(strCoffDutyEnd)+","+cstr(strCcalculateLate)+","+CStr(strCcalculateEarly)+","+CStr(strCrestTime)
+			End if
+		Else
+			strFields = "ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart, AoffDuty, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+			strValues = "'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+			strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AoffDuty, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+			strValuesTemp = ",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAoffDuty)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+		End If
+
+ 		strSQL = "INSERT INTO AttendanceShifts(" & strFields & ") VALUES(" & strValues & ") "
+	Case "edit": 'Edit Record             '修改
+		if strRecordID = "" or not isnumeric(strRecordID) then
+			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+		end if
+		'修改正常班次时[生效日期]不能为空;
+		''if strAdjustDate = "" then
+		''	Call ReturnErrMsg("生效日期不能为空！"	,0)
+		''end if
+		''if CheckDate( strAdjustDate, 0, "" ) <> 1 then
+		''	Call ReturnErrMsg("生效日期格式非法！"	,0)
+		''end if
+		iChangeNameORNot = 0
+		iIsAdd = Trim(Request.QueryString("isadd"))
+		'判断班次名称唯一性
+		''if fCheckExist("AttendanceShifts", "shiftId", " shiftName='"+cstr(strShiftName)+"' and shiftId="+cstr(strId)) <> 1 then
+		''	if fCheckExist("AttendanceShifts", "shiftId", " shiftName='"+cstr(strShiftName)+"'") = 1 then
+		''		Call ReturnErrMsg("班次名已被使用！", "parent.form1.ShiftsName.value='';parent.form1.ShiftsName.focus();",0)
+		''	end if
+			iChangeNameORNot = 1
+		''end if
+		'判断strId 为isnumeric
+		if cint(strStretchShift) = 0 then   '固定班次
+			if cint(strDegree) = 1 then     '时间段1
+				strFields = "ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty=null, BonDutyStart=null, BonDutyEnd=null, BoffDuty=null, BoffDutyStart=null, BoffDutyEnd=null, BcalculateLate=null, BcalculateEarly=null, BrestTime=null, ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
+
+				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+
+				strValues = "0,'"+cstr(strAdjustDate)+"',"+cstr(strId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+			ElseIf cint(strDegree) = 2 then     '时间段2
+				strFields = "ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty="+cstr(strBonDuty)+", BonDutyStart="+cstr(strBonDutyStart)+", BonDutyEnd="+cstr(strBonDutyEnd)+", BoffDuty="+cstr(strBoffDuty)+", BoffDutyStart="+cstr(strBoffDutyStart)+", BoffDutyEnd="+cstr(strBoffDutyEnd)+", BcalculateLate="+cstr(strBcalculateLate)+", BcalculateEarly="+cstr(strBcalculateEarly)+", BrestTime="+cstr(strBrestTime)+", ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
+
+				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime"
+
+				strValues = "0,'"+cstr(strAdjustDate)+"',"+cstr(strId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)
+			Else
+				strFields = "ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty="+cstr(strBonDuty)+", BonDutyStart="+cstr(strBonDutyStart)+", BonDutyEnd="+cstr(strBonDutyEnd)+", BoffDuty="+cstr(strBoffDuty)+", BoffDutyStart="+cstr(strBoffDutyStart)+", BoffDutyEnd="+cstr(strBoffDutyEnd)+", BcalculateLate="+cstr(strBcalculateLate)+", BcalculateEarly="+cstr(strBcalculateEarly)+", BrestTime="+cstr(strBrestTime)+", ConDuty="+cstr(strConDuty)+", ConDutyStart="+cstr(strConDutyStart)+", ConDutyEnd="+cstr(strConDutyEnd)+", CoffDuty="+cstr(strCoffDuty)+", CoffDutyStart="+cstr(strCoffDutyStart)+", CoffDutyEnd="+cstr(strCoffDutyEnd)+", CcalculateLate="+cstr(strCcalculateLate)+", CcalculateEarly="+cstr(strCcalculateEarly)+", CrestTime="+cstr(strCrestTime)
+
+				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime, ConDuty, ConDutyStart, ConDutyEnd, CoffDuty, CoffDutyStart, CoffDutyEnd, CcalculateLate,CcalculateEarly, CrestTime"
+
+				strValues = "0,'"+cstr(strAdjustDate)+"',"+cstr(strId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)+", "+cstr(strConDuty)+", "+cstr(strConDutyStart)+", "+cstr(strConDutyEnd)+","+cstr(strCoffDuty)+","+cstr(strCoffDutyStart)+","+cstr(strCoffDutyEnd)+","+cstr(strCcalculateLate)+","+CStr(strCcalculateEarly)+","+CStr(strCrestTime)
+			End If
+		Else
+			strFields = "ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd=null, AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart=null, AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty=null, BonDutyStart=null, BonDutyEnd=null, BoffDuty=null, BoffDutyStart=null, BoffDutyEnd=null, BcalculateLate=null, BcalculateEarly=null, BrestTime=null, ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
+
+			strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+
+			strValues = "0,'"+cstr(strAdjustDate)+"',"+cstr(strId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+		End If
+
+		strSQL = "Update AttendanceShifts set " + cstr(strFields) + " where ShiftId=" + cstr(strRecordID) + ";"
+
+
+		''If fCheckExist("TempShifts", "TempShiftID", "ShiftType=0 and AdjustDate='"+cstr(strAdjustDate)+"' and  ShiftId="+cstr(strId)) = 1 Then
+		''	strSQL = strSQL + "delete TempShifts where ShiftType=0 and AdjustDate='"+cstr(strAdjustDate)+"' and  ShiftId="+cstr(strId)+" ;insert into TempShifts("+CStr(strFieldsTemp)+")values("+CStr(strValues)+");"
+		''Else
+		''	If iIsAdd = "1" Then
+		''		strSQL = strSQL + "delete TempShifts where ShiftType=0 and AdjustDate>'"+cstr(strAdjustDate)+"' and  ShiftId="+cstr(strId) + " ;"
+		''	End If
+		''	strSQL = strSQL + "insert into TempShifts("+CStr(strFieldsTemp)+")values("+CStr(strValues)+");"
+		''End If
+		
+		'Call AddLogEvent("人事-考勤-班次",cstr(strLogEdit),cstr(strLogEdit)&"班次,班次名称["&cstr(strShiftName)&"]")
+
+		''AddLogEvent "考勤-正常班次", "修改", "班次名称："+cstr(strShiftName)             '增加日志
+		''	if iChangeNameORNot = 1 then
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Monday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Monday1<>'' and Monday1 is not Null and left(Monday1,charindex('-', Monday1)-1)="+cstr(strId)
+			'	response.write "fds"
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Monday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Monday2<>'' and Monday2 is not Null and left(Monday2,charindex('-', Monday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Tuesday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Tuesday1<>'' and Tuesday1 is not Null and left(Tuesday1,charindex('-', Tuesday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Tuesday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Tuesday2<>'' and Tuesday2 is not Null and left(Tuesday2,charindex('-', Tuesday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Wednesday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Wednesday1<>'' and Wednesday1 is not Null and left(Wednesday1,charindex('-', Wednesday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Wednesday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Wednesday2<>'' and Wednesday2 is not Null and left(Wednesday2,charindex('-', Wednesday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Thursday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Thursday1<>'' and Thursday1 is not Null and left(Thursday1,charindex('-', Thursday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Thursday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Thursday2<>'' and Thursday2 is not Null and left(Thursday2,charindex('-', Thursday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Friday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Friday1<>'' and Friday1 is not Null and left(Friday1,charindex('-', Friday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Friday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Friday2<>'' and Friday2 is not Null and left(Friday2,charindex('-', Friday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Saturday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Saturday1<>'' and Saturday1 is not Null and left(Saturday1,charindex('-', Saturday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Saturday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Saturday2<>'' and Saturday2 is not Null and left(Saturday2,charindex('-', Saturday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Sunday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Sunday1<>'' and Sunday1 is not Null and left(Sunday1,charindex('-', Sunday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOndutyRule", "Sunday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Sunday2<>'' and Sunday2 is not Null and left(Sunday2,charindex('-', Sunday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Monday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Monday1<>'' and Monday1 is not Null and left(Monday1,charindex('-', Monday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Monday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Monday2<>'' and Monday2 is not Null and left(Monday2,charindex('-', Monday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Tuesday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Tuesday1<>'' and Tuesday1 is not Null and left(Tuesday1,charindex('-', Tuesday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Tuesday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Tuesday2<>'' and Tuesday2 is not Null and left(Tuesday2,charindex('-', Tuesday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Wednesday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Wednesday1<>'' and Wednesday1 is not Null and left(Wednesday1,charindex('-', Wednesday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Wednesday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Wednesday2<>'' and Wednesday2 is not Null and left(Wednesday2,charindex('-', Wednesday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Thursday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Thursday1<>'' and Thursday1 is not Null and left(Thursday1,charindex('-', Thursday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Thursday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Thursday2<>'' and Thursday2 is not Null and left(Thursday2,charindex('-', Thursday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Friday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Friday1<>'' and Friday1 is not Null and left(Friday1,charindex('-', Friday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Friday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Friday2<>'' and Friday2 is not Null and left(Friday2,charindex('-', Friday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Saturday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Saturday1<>'' and Saturday1 is not Null and left(Saturday1,charindex('-', Saturday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Saturday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Saturday2<>'' and Saturday2 is not Null and left(Saturday2,charindex('-', Saturday2)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Sunday1='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Sunday1<>'' and Sunday1 is not Null and left(Sunday1,charindex('-', Sunday1)-1)="+cstr(strId)
+		''		ChangeInfoToTable "AttendanceOnDutyRuleChange", "Sunday2='"+cstr(strId)+"-"+cstr(strShiftName)+"'", " Sunday2<>'' and Sunday2 is not Null and left(Sunday2,charindex('-', Sunday2)-1)="+cstr(strId)
+		''	end If
+		''	Call ReturnErrMsg("", "parent.location.href='AttendShifts.asp?url_lpage="+CStr(lpage)+"';",0)
+	Case "del": 'Delete Record
+		if strRecordID = "" or not isnumeric(strRecordID) then
+			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+		end if
+
+		strSQL = " Delete From AttendanceShifts where ShiftId in ("&strRecordID&") "
+End Select
+
+'Call ReturnErrMsg(strSQL)
+
+if	strSQL<>"" then 
+	On Error Resume Next
+	Conn.Execute strSQL
+	if err.number <> 0 then
+		Call fCloseADO()
+		Call ReturnMsg("false",Err.Description,0)
+		On Error GoTo 0
+		response.End()
+	end if
+	
+	Select Case strOper
+		Case "add": 'Add Record		
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Shifts"),cstr(GetCerbLbl("strLogAdd")),cstr(GetCerbLbl("strLogAdd"))&GetEmpLbl("Shifts")&","&GetEmpLbl("ShiftName")&"["&cstr(strShiftName)&"]")
+		Case "edit": 'Edit Record
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Shifts"),cstr(GetCerbLbl("strLogEdit")),cstr(GetCerbLbl("strLogEdit"))&GetEmpLbl("Shifts")&","&GetEmpLbl("ShiftName")&"["&cstr(strShiftName)&"]")
+		Case "del": 'Delete Record
+			strActions = GetCerbLbl("strLogDel")
+			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"]")
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Shifts"),cstr(GetCerbLbl("strLogDel")),cstr(GetCerbLbl("strLogDel"))&GetEmpLbl("Shifts")&",ID["&strRecordID&"]")
+	End Select
 	
 	Call fCloseADO()
+	Call ReturnMsg("true",GetEmpLbl("ExecSuccess"),0)	'"执行成功"
+else
+	Call fCloseADO()
+	Call ReturnErrMsg(GetEmpLbl("PartError")) '"参数错误"
+end if
 %>
-
-
-
-<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all " id="editmodDataGrid" dir="ltr" style="width: 970px; height: auto; " >
-	<div class="ui-jqgrid-view" id="gview_DataGrid"  style="width: 970px;">
-	<div class="ui-jqgrid-titlebar ui-jqgrid-caption ui-widget-header ui-corner-top ui-helper-clearfix" ><span class="ui-jqgrid-title"><%=GetEmpLbl("Shifts")%></span></div>
-	<div id="DataGrid_toppager" class="ui-state-default ui-jqgrid-toppager" dir="ltr"><div role="group" class="ui-pager-control" id="pg_DataGrid_toppager"><table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table"><tbody><tr><td align="left" id="DataGrid_toppager_left" style="width: 99%;"><table cellspacing="0" cellpadding="0" border="0" style="float:left;table-layout:auto;" class="ui-pg-table navtable">
-     <tbody>
-       <tr id="trOper">
-          
-       </tr>
-     </tbody>
-    </table></td><td align="right" id="DataGrid_toppager_right" style="width: 1%;"></td></tr></tbody></table></div></div>
-	<div id="editcntDataGrid" class="ui-jqdialog-content ui-widget-content">
-	<form name="FrmGrid_DataGrid" id="FrmGrid_DataGrid" >
-    <table id="TblGrid_DataGrid" class="EditTable" border="0" cellpadding="0" cellspacing="0">
-     <tbody>
-      <tr style="display: none;" id="FormError"><td colspan="4" class="ui-state-error"></td><td colspan="2" class="i-state-error"></td></tr>
-      <tr class="tinfo" style="display:none"><td colspan="4" class="topinfo"></td></tr>
-      <tr rowpos="2" class="FormData" id="trShiftName">
-        <td style="width: 13%;" align="center" class="ui-border ui-NoneRightBorder"><%=GetEmpLbl("ShiftName")%></td><td class="ui-border ui-NoneRightBorder" style="width: 37%;">&nbsp;<input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="ShiftName" id="ShiftName" type="text"><font color="#FF0000">*</font></td><td style="width: 13%;"  align="center"  class="ui-border ui-NoneRightBorder"><%=GetEmpLbl("ShiftTime")%></td><td class="ui-border ui-NoneRightBorder ui-border-R">&nbsp;<input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="ShiftTime" id="ShiftTime" type="text"><%=GetEmpLbl("Hour")%><font color="#FF0000">*</font></td></tr>
-      <tr id="trNight" class="FormData " rowpos="3" ><td align="center"  class="ui-border ui-NoneRightBorder" ><%=GetEmpLbl("Night")%></td><td class="ui-border ui-NoneRightBorder " >&nbsp;<input class="FormElement " role="checkbox" name="Night" id="Night" value="1" type="checkbox"></td><td style="display: table-cell;" align="center"  class="ui-border ui-NoneRightBorder"><%=GetEmpLbl("FirstOnDuty")%></td><td style="display: table-cell;" class="ui-border ui-NoneRightBorder ui-border-R">&nbsp;
-      <select class="FormElement ui-widget-content ui-corner-all" name="FirstOnDuty" id="FirstOnDuty" role="select" style="width:120px;">
-         <option value="0" role="option">0 - <%=GetEmpLbl("CurrentDay")%></option>
-       </select></td></tr>
-      <tr style="display: table-row;" id="trDegree" class="FormData" rowpos="4"><td  align="center"  class="ui-border ui-NoneRightBorder"><%=GetEmpLbl("Degree")%></td><td class="ui-border ui-NoneRightBorder">&nbsp;
-      <select class="FormElement ui-widget-content ui-corner-all" name="Degree" id="Degree" role="select" style="width:120px;" onchange="SelDegree(this)">
-         <option value="1" role="option">1</option>
-         <option value="2" role="option">2</option>
-         <option value="3" role="option">3</option>
-       </select>
-      </td><td  align="center"  class="ui-border ui-NoneRightBorder"><%=GetEmpLbl("StretchShift")%></td><td class="ui-border ui-NoneRightBorder ui-border-R">&nbsp;&nbsp;<input class="FormElement" role="checkbox" name="StretchShift" id="StretchShift" offval="0" value="1" type="checkbox"></td></tr>
-      <tr style="display: table-row;" id="tr_DNS" class="FormData" rowpos="5">
-       <td colspan="4">
-        <TABLE width="100%" border="0" cellPadding=0 cellSpacing=0>
-		  <TBODY>
-          	<TR  class="FormData" >
-             <TD colspan=2 rowspan="2" align="center" class="ui-border ui-NoneRightBorder ui-border-LB"  style="width: 13%;"><%=GetEmpLbl("Times")%></TD>
-             <TD colspan=3 align="center" class="ui-border ui-NoneRightBorder"  style="width: 25%;"><%=GetEmpLbl("OnDuty")%></TD>
-             <TD colspan=3 align="center" class="ui-border ui-NoneRightBorder"  style="width: 25%;"><%=GetEmpLbl("OffDuty")%></TD>
-             <TD colspan=6 align="center" class="ui-border ui-NoneRightBorder ui-border-R"><%=GetEmpLbl("Other")%></TD>
-            </TR>
-			<TR>
-             <TD colspan=1 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("Duty")%></TD>
-             <TD colspan=1 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("Start")%></TD>
-             <TD colspan=1 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("End")%></TD>
-             <TD colspan=1 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("Duty")%></TD>
-             <TD colspan=1 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("Start")%></TD>
-             <TD colspan=1 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("End")%></TD>
-             <TD colspan=2 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("AcalculateLate")%></TD>
-             <TD colspan=2 align="center" class="ui-border ui-NoneRightBorder ui-border-LB"><%=GetEmpLbl("AcalculateEarly")%></TD>
-             <TD colspan=2 align="center" class="ui-border ui-NoneRightBorder ui-border-LB ui-border-R"><%=GetEmpLbl("ArestTime")%></TD>
-            </TR>
-            <TR id="trAOnDuty">
-           	 <TD colspan=2 align="center" class="ui-border-LB">1</TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AonDuty" id="AonDuty" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AonDutyStart" id="AonDutyStart" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AonDutyEnd" id="AonDutyEnd" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AoffDuty" id="AoffDuty" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AoffDutyStart" id="AoffDutyStart" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AoffDutyEnd" id="AoffDutyEnd" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AcalculateLate" id="AcalculateLate" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="AcalculateEarly" id="AcalculateEarly" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB ui-border-R"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="ArestTime" id="ArestTime" type="text" style="width:50px;"></TD>
-            </TR>
-            <TR id="trBOnDuty">
-           	 <TD colspan=2 align="center" class="ui-border-LB">2</TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BonDuty" id="BonDuty" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BonDutyStart" id="BonDutyStart" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BonDutyEnd" id="BonDutyEnd" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BoffDuty" id="BoffDuty" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BoffDutyStart" id="BoffDutyStart" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BoffDutyEnd" id="BoffDutyEnd" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BcalculateLate" id="BcalculateLate" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BcalculateEarly" id="BcalculateEarly" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB ui-border-R"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="BrestTime" id="BrestTime" type="text" style="width:50px;"></TD>
-            </TR>
-            <TR id="trCOnDuty">
-           	 <TD colspan=2 align="center" class="ui-border-LB">3</TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="ConDuty" id="ConDuty" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="ConDutyStart" id="ConDutyStart" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="ConDutyEnd" id="ConDutyEnd" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="CoffDuty" id="CoffDuty" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="CoffDutyStart" id="CoffDutyStart" type="text" style="width:50px;"></TD>
-             <TD colspan=1 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="CoffDutyEnd" id="CoffDutyEnd" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="CcalculateLate" id="CcalculateLate" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="CcalculateEarly" id="CcalculateEarly" type="text" style="width:50px;"></TD>
-             <TD colspan=2 align="center" class="ui-border-LB ui-border-R"><input class="FormElement ui-widget-content ui-corner-all" role="textbox" name="CrestTime" id="CrestTime" type="text" style="width:50px;"></TD>
-            </TR>
-		  </TBODY>
-		</TABLE>
-       </td>
-      </tr>
-      <tr style="display:none" class="FormData"><td class="ui-border-LB"></td><td class="ui-border-LB" colspan="3"><input type="text" value="_empty" name="DataGrid_id" id="id_g" class="FormElement"></td></tr></tbody></table></form></div>
-     
-	 </div>
-	  <div style="text-align: center; width: 970px;" class="scroll ui-state-default ui-jqgrid-pager ui-corner-bottom" id="pager" dir="ltr"><div role="group" class="ui-pager-control" id="pg_pager"><table cellspacing="0" cellpadding="0" border="0" role="row" style="width:100%;table-layout:fixed;height:100%;" class="ui-pg-table"><tbody><tr><td align="left" id="pager_left"></td>
-	            <td align="center" style="white-space: pre; width: 240px;" id="pager_center">&nbsp;</td>
-	            <td align="right" id="pager_right">&nbsp;</td>
-	  </tr></tbody></table></div></div>
-	  
-     </div>
-    
-    
-<script type="text/javascript">
-var strId;
-$(document).ready(function(){
-CheckLoginStatus();  
-//获取操作权限
-var role = GetOperRole("Shifts");
-var iedit=false,iadd=false,idel=false,iview=false,irefresh=false,isearch=false,iexport=false,isync=false;
-try{
-	iedit=role.edit;
-	iadd=role.add;
-	idel=role.del;
-	iview=role.view;
-	irefresh=role.refresh;
-	isearch=role.search;
-	iexport=role.exportdata;
-	isync=role.sync;
-}
-catch(exception) {
-	alert(exception);
-}
-
-if(iedit){
-	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnEdit' title='<%=GetEmpLbl("Edit")%>'><div class='ui-pg-div'><span class='ui-icon ui-icon-pencil'></span><a><%=GetEmpLbl("Edit")%></a></div></td>");
-}
-if(iedit){
-	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnSubmit' title='<%=GetEmpLbl("Submit")%>'><div class='ui-pg-div'><span class='ui-icon ui-icon-disk'></span><a><%=GetEmpLbl("Submit")%></a></div></td>");
-}
-if(iedit){
-	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnCancel' title='<%=GetEmpLbl("Cancel")%>'><div class='ui-pg-div'><span class='ui-icon ui-icon-cancel'></span><a><%=GetEmpLbl("Cancel")%></a></div></td>");
-}
-if(irefresh){
-	$("#trOper").append("<td class='ui-pg-button ui-corner-all' id='DataGrid_btnRefresh' title='<%=GetEmpLbl("Refresh")%>'><div class='ui-pg-div'><span class='ui-icon ui-icon-refresh'></span><a><%=GetEmpLbl("Refresh")%></a></div></td>");
-}
-
-function InitValue(){
-	strId = "<%=strId%>";
-	var strNight = "<%=strNight%>";
-	var strStretchShift = "<%=strStretchShift%>";
-	var strDegree = "<%=strDegree%>";
-	$("#ShiftName").val("<%=strShiftName%>");
-	$("#ShiftTime").val("<%=strShiftTime%>");
-	if(strNight != "" && strNight == "1"){
-		$("#Night").val("1");
-		$("#Night").get(0).checked = true;
-	}
-	else{
-		$("#Night").val("0");
-		$("#Night").get(0).checked = false;
-	}
-	NightChange();
-	
-	if(strStretchShift != "" && strStretchShift == "1"){
-		$("#StretchShift").val("1");
-		$("#StretchShift").get(0).checked = true;
-	}
-	else{
-		$("#StretchShift").val("0");
-		$("#StretchShift").get(0).checked = false;
-	}
-	StretchShiftChange();
-
-	$("#FirstOnDuty").val("<%=strFirstOnDuty%>");
-	$("#Degree").val(strDegree);
-	$("#AonDuty").val("<%=strAonDuty%>");
-	$("#AonDutyStart").val("<%=strAonDutyStart%>");
-	$("#AonDutyEnd").val("<%=strAonDutyEnd%>");
-	$("#AoffDuty").val("<%=strAoffDuty%>");
-	$("#AoffDutyStart").val("<%=strAoffDutyStart%>");
-	$("#AoffDutyEnd").val("<%=strAoffDutyEnd%>");
-	$("#AcalculateLate").val("<%=strAcalculateLate%>");
-	$("#AcalculateEarly").val("<%=strAcalculateEarly%>");
-	$("#ArestTime").val("<%=strArestTime%>");
-	if(strDegree == "2" || strDegree > "2"){
-		$("#BonDuty").val("<%=strBonDuty%>");
-		$("#BonDutyStart").val("<%=strBonDutyStart%>");
-		$("#BonDutyEnd").val("<%=strBonDutyEnd%>");
-		$("#BoffDuty").val("<%=strBoffDuty%>");
-		$("#BoffDutyStart").val("<%=strBoffDutyStart%>");
-		$("#BoffDutyEnd").val("<%=strBoffDutyEnd%>");
-		$("#BcalculateLate").val("<%=strBcalculateLate%>");
-		$("#BcalculateEarly").val("<%=strBcalculateEarly%>");
-		$("#BrestTime").val("<%=strBrestTime%>");
-	}
-	if(strDegree == "3" || strDegree > "3"){
-		$("#ConDuty").val("<%=strConDuty%>");
-		$("#ConDutyStart").val("<%=strConDutyStart%>");
-		$("#ConDutyEnd").val("<%=strConDutyEnd%>");
-		$("#CoffDuty").val("<%=strCoffDuty%>");
-		$("#CoffDutyStart").val("<%=strCoffDutyStart%>");
-		$("#CoffDutyEnd").val("<%=strCoffDutyEnd%>");
-		$("#CcalculateLate").val("<%=strCcalculateLate%>");
-		$("#CcalculateEarly").val("<%=strCcalculateEarly%>");
-		$("#CrestTime").val("<%=strCrestTime%>");
-	}
-
-}
-function Init(){
-	$("#DataGrid_btnEdit").click(function(){
-		 if (!$(this).hasClass('ui-state-disabled')) {
-			btnEditClick(); 
-		}
-		return false;
-	}).hover(
-		function () {
-			if (!$(this).hasClass('ui-state-disabled')) {
-				$(this).addClass("ui-state-hover");
-			}
-		},
-		function() {$(this).removeClass("ui-state-hover");}
-	);
-	$("#DataGrid_btnSubmit").click(function(){
-		 if (!$(this).hasClass('ui-state-disabled')) {
-			btnbtnSubmit();      
-		}
-		return false;
-	}).hover(
-		function () {
-			if (!$(this).hasClass('ui-state-disabled')) {
-				$(this).addClass("ui-state-hover");
-			}
-		},
-		function() {$(this).removeClass("ui-state-hover");}
-	);
-	$("#DataGrid_btnCancel").click(function(){
-		 if (!$(this).hasClass('ui-state-disabled')) {
-			btnCancel();      
-		}
-		return false;
-	}).hover(
-		function () {
-			if (!$(this).hasClass('ui-state-disabled')) {
-				$(this).addClass("ui-state-hover");
-			}
-		},
-		function() {$(this).removeClass("ui-state-hover");}
-	);
-	$("#DataGrid_btnRefresh").click(function(){
-		 if (!$(this).hasClass('ui-state-disabled')) {
-			btnRefresh();      
-		}
-		return false;
-	}).hover(
-		function () {
-			if (!$(this).hasClass('ui-state-disabled')) {
-				$(this).addClass("ui-state-hover");
-			}
-		},
-		function() {$(this).removeClass("ui-state-hover");}
-	);
-		
-	$("#AonDuty").bind('focus',GetTime);
-	$("#AonDutyStart").bind('focus',GetTime);
-	$("#AonDutyEnd").bind('focus',GetTime);
-	$("#AoffDuty").bind('focus',GetTime);
-	$("#AoffDutyStart").bind('focus',GetTime);
-	$("#AoffDutyEnd").bind('focus',GetTime);
-	
-	$("#BonDuty").bind('focus',GetTime);
-	$("#BonDutyStart").bind('focus',GetTime);
-	$("#BonDutyEnd").bind('focus',GetTime);
-	$("#BoffDuty").bind('focus',GetTime);
-	$("#BoffDutyStart").bind('focus',GetTime);
-	$("#BoffDutyEnd").bind('focus',GetTime);
-	
-	$("#ConDuty").bind('focus',GetTime);
-	$("#ConDutyStart").bind('focus',GetTime);
-	$("#ConDutyEnd").bind('focus',GetTime);
-	$("#CoffDuty").bind('focus',GetTime);
-	$("#CoffDutyStart").bind('focus',GetTime);
-	$("#CoffDutyEnd").bind('focus',GetTime);
-	
-	$("#Night").click(function(){
-		NightChange();
-	});
-	
-	$("#StretchShift").click(function(){
-		StretchShiftChange();
-	});
-	
-	$("#Degree").change();
-	NightChange();
-	StretchShiftChange();
-	
-}
-Init();
-InitValue();
-
-});
-
-
-function GetTime(){
-	WdatePicker({isShowClear:true,dateFmt:'HH:mm',isShowToday:false,qsEnabled:false});
-};
-
-function CompareTime(Duty,DutyStart,DutyEnd)
-{
-	if(Duty == "")
-		return 1;
-	if(DutyStart == "")
-		return 2;
-	if(DutyEnd == "")
-		return 3;
-	
-	var arrDuty = Duty.split(":");
-	var arrDutyStart = DutyStart.split(":");
-	var arrDutyEnd = DutyEnd.split(":");
-	if(arrDuty.length !=2)
-		return 11;
-	if(arrDutyStart.length !=2)
-		return 22;
-	if(arrDutyEnd.length !=2)
-		return 33;
-		
-	if((arrDutyStart[0] > arrDuty[0]) || (arrDutyStart[0] == arrDuty[0] && arrDutyStart[1] > arrDuty[1])){
-		return 111;
-	}	
-	if((arrDuty[0] > arrDutyEnd[0]) || (arrDuty[0] == arrDutyEnd[0] && arrDuty[1] > arrDutyEnd[1])){
-		return 222;
-	}
-	return 0;
-}
-
-function CompareTime2(DutyStart,DutyEnd)
-{
-	if(DutyStart == "")
-		return 1;
-	if(DutyEnd == "")
-		return 2;
-	
-	var arrDutyStart = DutyStart.split(":");
-	var arrDutyEnd = DutyEnd.split(":");
-	if(arrDutyStart.length !=2)
-		return 11;
-	if(arrDutyEnd.length !=2)
-		return 22;
-		
-	if((arrDutyStart[0] > arrDutyEnd[0]) || (arrDutyStart[0] == arrDutyEnd[0] && arrDutyStart[1] > arrDutyEnd[1])){
-		return 111;
-	}
-	return 0;
-}
-
-
-function SelDegree(){
-	var val = $("#Degree").val();
-	if(val == "1"){
-		$("#trAOnDuty").show();
-		$("#trBOnDuty").hide();
-		$("#trCOnDuty").hide();
-	}
-	else if(val == "2"){
-		$("#trAOnDuty").show();
-		$("#trBOnDuty").show();
-		$("#trCOnDuty").hide();
-	}
-	else if(val == "3"){
-		$("#trAOnDuty").show();
-		$("#trBOnDuty").show();
-		$("#trCOnDuty").show();
-	}
-	else{
-		$("#trAOnDuty").show();
-		$("#trBOnDuty").hide();
-		$("#trCOnDuty").hide();
-	}
-}
-
-function NightChange(){
-	if($("#Night").get(0).checked == true){
-			$("#Night").val("1");
-			$("#FirstOnDuty").empty();
-			$("#FirstOnDuty").append("<option value='0'>0 - <%=GetEmpLbl("CurrentDay")%></option>"); //当日
-			$("#FirstOnDuty").append("<option value='1'>1 - <%=GetEmpLbl("LastDay")%></option>");  //上日
-		}else{
-			$("#Night").val("0");
-			$("#FirstOnDuty").empty();
-			$("#FirstOnDuty").append("<option value='0'>0 - <%=GetEmpLbl("CurrentDay")%></option>"); //当日
-		}
-}
-
-function StretchShiftChange(){
-	if($("#StretchShift").get(0).checked == true){
-			 $("#StretchShift").val("1");
-			 $("#Degree").val("1");
-			 $("#Degree").change();
-			 $("#AonDutyEnd").val("");
-			 $("#AoffDutyStart").val("");
-			 $("#AonDutyEnd").attr("disabled","disabled"); 
-			 $("#AoffDutyStart").attr("disabled","disabled");   
-			 $("#Degree").attr("disabled","disabled");  
-		}else{
-			$("#StretchShift").val("0");
-			$("#AonDutyEnd").removeAttr("disabled");  
-			$("#AoffDutyStart").removeAttr("disabled");  
-			$("#Degree").removeAttr("disabled");  
-		}
-}
-
-function btnEditClick(){
-	$("#DataGrid_btnSubmit").removeClass("ui-state-disabled");
-}
-function btnbtnSubmit(){
-	if(checkData() == false){
-		return;
-	}
-	 $.ajax({
-			type: "POST",
-			dataType: "html",
-			url: 'ShiftsEditSubmit.asp?iflag=1&strId='+strId,
-			data: $('#FrmGrid_DataGrid').serialize(),
-			 success: function(data) {
-			  try  {
-					var responseMsg = $.parseJSON(data);
-					if(responseMsg.success == false){
-						//alert(responseMsg.message);
-						showMsg(responseMsg.message);
-					}else if(responseMsg.success == true){
-						//成功
-						showMsg(responseMsg.message);
-						btnCancel();
-						//$("#DataGrid").trigger("reloadGrid");
-					}else{
-						alert("Save Exception");
-					}
-				}
-				catch(exception) {
-					alert(exception+"," + data);
-				}
-			},
-			error:function(XmlHttpRequest,textStatus, errorThrown){
-				alert(textStatus+":ShiftsEditSubmit.asp,"+XmlHttpRequest.responseText);
-			}
-
-		});
-}
-function btnCancel(){
-	$("#DataGrid_btnSubmit").addClass("ui-state-disabled");
-	window.location.href="ShiftsView.asp?nd="+getRandom();
-}
-function btnRefresh(){
-	window.location.href="ShiftsEdit.asp?nd="+getRandom();
-}
-function showMsg(strMsg){
-	$("#FormError").show();
-	$("#FormError").children("td:eq(0)").html(strMsg);
-}
-
-function checkData(){
-	if($("#ShiftName").val() == ""){
-		$("#ShiftName").focus();
-		showMsg("<%=GetEmpLbl("ShiftNameNull")%>");//[班次名称]不能为空
-		return false;
-	}else if($("#ShiftTime").val() == ""){
-		$("#ShiftTime").focus();
-		showMsg("<%=GetEmpLbl("ShiftTimeNull")%>"); //[标准工时]不能为空
-		return false;
-	}
-	if(isNaN($("#ShiftTime").val())){
-		$("#ShiftTime").focus();
-		$("#ShiftTime").select();
-		showMsg("<%=GetEmpLbl("ShiftTimeDigital")%>"); //[标准工时]必须为数字
-		return false;
-	}
-	else if($("#AcalculateLate").val() != "" && isNaN($("#AcalculateLate").val()) ){
-		$("#AcalculateLate").focus();
-		$("#AcalculateLate").select();
-		showMsg("<%=GetEmpLbl("AcalculateLateDigital")%>"); //[允许迟到]必须为数字
-		return false;
-	}
-	else if($("#AcalculateEarly").val() != "" && isNaN($("#AcalculateEarly").val()) ){
-		$("#AcalculateEarly").focus();
-		$("#AcalculateEarly").select();
-		showMsg("<%=GetEmpLbl("AcalculateEarlyDigital")%>"); //[允许早退]必须为数字
-		return false;
-	}
-	else if($("#ArestTime").val() != "" && isNaN($("#ArestTime").val()) ){
-		$("#ArestTime").focus();
-		$("#ArestTime").select();
-		showMsg("<%=GetEmpLbl("ArestTimeDigital")%>"); //[中间休]息必须为数字
-		return false;
-	}
-	var iDegree = $("#Degree").val();
-	var iStretchShift = $("#StretchShift").get(0).checked; //是否弹性班次
-	var iNight =  $("#Night").get(0).checked;//是否过夜
-	var iFirstOnDuty = $("#FirstOnDuty").val();
-	var RetVal;
-	if(!iStretchShift && !iNight){
-		RetVal = CompareTime($("#AonDuty").val(),$("#AonDutyStart").val(),$("#AonDutyEnd").val());
-		switch(RetVal){
-			case 1:showMsg("<%=GetEmpLbl("onDutyNull")%>");$("#AonDuty").focus(); return false; //[上班标准时间]不能为空！
-			case 2:showMsg("<%=GetEmpLbl("onDutyStartNull")%>");$("#AonDutyStart").focus(); return false; //[上班开始时间]不能为空！
-			case 3:showMsg("<%=GetEmpLbl("onDutyEndNull")%>");$("#AonDutyEnd").focus(); return false; //[上班截止时间]不能为空！
-			case 11:showMsg("<%=GetEmpLbl("onDutyIllegal")%>");$("#AonDuty").focus(); return false; //[上班标准时间]非法！
-			case 22:showMsg("<%=GetEmpLbl("onDutyStartIllegal")%>");$("#AonDutyStart").focus(); return false; //[上班开始时间]非法！
-			case 33:showMsg("<%=GetEmpLbl("onDutyEndIllegal")%>");$("#AonDutyEnd").focus(); return false; //[上班截止时间]非法！
-			case 111:showMsg("<%=GetEmpLbl("OnDutyLtonDutyStart")%>");$("#AonDuty").focus(); return false; //[上班标准时间]不能小于[上班开始时间]！
-			case 222:showMsg("<%=GetEmpLbl("OnDutyEndLtOnDuty")%>");$("#AonDutyEnd").focus(); return false; //[上班截止时间]不能小于[上班标准时间]！
-		}
-		RetVal = CompareTime($("#AoffDuty").val(),$("#AoffDutyStart").val(),$("#AoffDutyEnd").val());
-		switch(RetVal){
-			case 1:showMsg("<%=GetEmpLbl("offDutyNull")%>");$("#AoffDuty").focus(); return false; //[下班标准时间]不能为空！
-			case 2:showMsg("<%=GetEmpLbl("offDutyStartNull")%>");$("#AoffDutyStart").focus(); return false; //[下班开始时间]不能为空！
-			case 3:showMsg("<%=GetEmpLbl("offDutyEndNull")%>");$("#AoffDutyEnd").focus(); return false; //[下班截止时间]不能为空！
-			case 11:showMsg("<%=GetEmpLbl("offDutyIllegal")%>");$("#AoffDuty").focus(); return false; //[下班标准时间]非法！
-			case 22:showMsg("<%=GetEmpLbl("offDutyStartIllegal")%>");$("#AoffDutyStart").focus(); return false; //[下班开始时间]非法！
-			case 33:showMsg("<%=GetEmpLbl("offDutyEndIllegal")%>");$("#AoffDutyEnd").focus(); return false; //[下班截止时间]非法！
-			case 111:showMsg("<%=GetEmpLbl("offDutyLtoffDutyStart")%>");$("#AoffDuty").focus(); return false; //[下班标准时间]不能小于[下班开始时间]！
-			case 222:showMsg("<%=GetEmpLbl("offDutyEndLtoffDuty")%>");$("#AoffDutyEnd").focus(); return false; //[下班截止时间]不能小于[下班标准时间]！
-		}
-		
-		RetVal = CompareTime2($("#AonDutyEnd").val(),$("#AoffDutyStart").val());
-		switch(RetVal){
-			case 111:showMsg("<%=GetEmpLbl("FirstOffDutyLtOnDutyEnd")%>");$("#AoffDutyStart").focus(); return false; //第一次[下班开始时间]不能小于[上班截止时间]！
-		}
-	}
-	//alert(iDegree);
-	//两个时段或三个时段的，验证时段2的合法性
-	if(iDegree == "2" || iDegree == "3" ){
-		if($("#BcalculateLate").val() != "" && isNaN($("#BcalculateLate").val()) ){
-			$("#BcalculateLate").focus();
-			$("#BcalculateLate").select();
-			showMsg("<%=GetEmpLbl("AcalculateLateDigital")%>");//允许迟到必须为数字
-			return false;
-		}
-		else if($("#BcalculateEarly").val() != "" && isNaN($("#BcalculateEarly").val()) ){
-			$("#BcalculateEarly").focus();
-			$("#BcalculateEarly").select();
-			showMsg("<%=GetEmpLbl("AcalculateEarlyDigital")%>"); //允许早退必须为数字
-			return false;
-		}
-		else if($("#BrestTime").val() != "" && isNaN($("#BrestTime").val()) ){
-			$("#BrestTime").focus();
-			$("#BrestTime").select();
-			showMsg("<%=GetEmpLbl("ArestTimeDigital")%>");//中间休息必须为数字
-			return false;
-		}
-		if(!iStretchShift && !iNight){
-			RetVal = CompareTime($("#BonDuty").val(),$("#BonDutyStart").val(),$("#BonDutyEnd").val());
-			switch(RetVal){
-				case 1:showMsg("<%=GetEmpLbl("onDutyNull")%>");$("#BonDuty").focus(); return false; //[上班标准时间]不能为空！
-				case 2:showMsg("<%=GetEmpLbl("onDutyStartNull")%>");$("#BonDutyStart").focus(); return false; //[上班开始时间]不能为空！
-				case 3:showMsg("<%=GetEmpLbl("onDutyEndNull")%>");$("#BonDutyEnd").focus(); return false; //[上班截止时间]不能为空！
-				case 11:showMsg("<%=GetEmpLbl("onDutyIllegal")%>");$("#BonDuty").focus(); return false; //[上班标准时间]非法！
-				case 22:showMsg("<%=GetEmpLbl("onDutyStartIllegal")%>");$("#BonDutyStart").focus(); return false; //[上班开始时间]非法！
-				case 33:showMsg("<%=GetEmpLbl("onDutyEndIllegal")%>");$("#BonDutyEnd").focus(); return false; //[上班截止时间]非法！
-				case 111:showMsg("<%=GetEmpLbl("OnDutyLtonDutyStart")%>");$("#BonDuty").focus(); return false; //[上班标准时间]不能小于[上班开始时间]！
-				case 222:showMsg("<%=GetEmpLbl("OnDutyEndLtOnDuty")%>");$("#BonDutyEnd").focus(); return false; //[上班截止时间]不能小于[上班标准时间]！
-			}
-			RetVal = CompareTime($("#BoffDuty").val(),$("#BoffDutyStart").val(),$("#BoffDutyEnd").val());
-			switch(RetVal){
-				case 1:showMsg("<%=GetEmpLbl("offDutyNull")%>");$("#BoffDuty").focus(); return false; //[下班标准时间]不能为空！
-				case 2:showMsg("<%=GetEmpLbl("offDutyStartNull")%>");$("#BoffDutyStart").focus(); return false; //[下班开始时间]不能为空！
-				case 3:showMsg("<%=GetEmpLbl("offDutyEndNull")%>");$("#BoffDutyEnd").focus(); return false; //[下班截止时间]不能为空！
-				case 11:showMsg("<%=GetEmpLbl("offDutyIllegal")%>");$("#BoffDuty").focus(); return false; //[下班标准时间]非法！
-				case 22:showMsg("<%=GetEmpLbl("offDutyStartIllegal")%>");$("#BoffDutyStart").focus(); return false; //[下班开始时间]非法！
-				case 33:showMsg("<%=GetEmpLbl("offDutyEndIllegal")%>");$("#BoffDutyEnd").focus(); return false; //[下班截止时间]非法！
-				case 111:showMsg("<%=GetEmpLbl("offDutyLtoffDutyStart")%>");$("#BoffDuty").focus(); return false; //[下班标准时间]不能小于[下班开始时间]！
-				case 222:showMsg("<%=GetEmpLbl("offDutyEndLtoffDuty")%>");$("#BoffDutyEnd").focus(); return false; //[下班截止时间]不能小于[下班标准时间]！
-			}
-			RetVal = CompareTime2($("#BonDutyEnd").val(),$("#BoffDutyStart").val());
-			switch(RetVal){
-				case 111:showMsg("<%=GetEmpLbl("SecondOffDutyLtOnDutyEnd")%>");$("#BoffDutyStart").focus(); return false; //第二次[下班开始时间]不能小于[上班截止时间]！
-			}
-		}
-	}
-	//三个时段的，验证第三个时段的合法性
-	if(iDegree == "3" ){
-		if($("#CcalculateLate").val() != "" && isNaN($("#CcalculateLate").val()) ){
-			$("#CcalculateLate").focus();
-			$("#CcalculateLate").select();
-			showMsg("<%=GetEmpLbl("AcalculateLateDigital")%>");//允许迟到必须为数字
-			return false;
-		}
-		else if($("#CcalculateEarly").val() != "" && isNaN($("#CcalculateEarly").val()) ){
-			$("#CcalculateEarly").focus();
-			$("#CcalculateEarly").select();
-			showMsg("<%=GetEmpLbl("AcalculateEarlyDigital")%>"); //允许早退必须为数字
-			return false;
-		}
-		else if($("#CrestTime").val() != "" && isNaN($("#CrestTime").val()) ){
-			$("#CrestTime").focus();
-			$("#CrestTime").select();
-			showMsg("<%=GetEmpLbl("ArestTimeDigital")%>"); //中间休息必须为数字
-			return false;
-		}
-		if(!iStretchShift && !iNight){
-			RetVal = CompareTime($("#ConDuty").val(),$("#ConDutyStart").val(),$("#ConDutyEnd").val());
-			switch(RetVal){
-				case 1:showMsg("<%=GetEmpLbl("onDutyNull")%>");$("#ConDuty").focus(); return false; //[上班标准时间]不能为空！
-				case 2:showMsg("<%=GetEmpLbl("onDutyStartNull")%>");$("#ConDutyStart").focus(); return false; //[上班开始时间]不能为空！
-				case 3:showMsg("<%=GetEmpLbl("onDutyEndNull")%>");$("#ConDutyEnd").focus(); return false; //[上班截止时间]不能为空！
-				case 11:showMsg("<%=GetEmpLbl("onDutyIllegal")%>");$("#ConDuty").focus(); return false; //[上班标准时间]非法！
-				case 22:showMsg("<%=GetEmpLbl("onDutyStartIllegal")%>");$("#ConDutyStart").focus(); return false; //[上班开始时间]非法！
-				case 33:showMsg("<%=GetEmpLbl("onDutyEndIllegal")%>");$("#ConDutyEnd").focus(); return false; //[上班截止时间]非法！
-				case 111:showMsg("<%=GetEmpLbl("OnDutyLtonDutyStart")%>");$("#ConDuty").focus(); return false; //[上班标准时间]不能小于[上班开始时间]！
-				case 222:showMsg("<%=GetEmpLbl("OnDutyEndLtOnDuty")%>");$("#ConDutyEnd").focus(); return false; //[上班截止时间]不能小于[上班标准时间]！
-			}
-			RetVal = CompareTime($("#CoffDuty").val(),$("#CoffDutyStart").val(),$("#CoffDutyEnd").val());
-			switch(RetVal){
-				case 1:showMsg("<%=GetEmpLbl("offDutyNull")%>");$("#CoffDuty").focus(); return false; //[下班标准时间]不能为空！
-				case 2:showMsg("<%=GetEmpLbl("offDutyStartNull")%>");$("#CoffDutyStart").focus(); return false; //[下班开始时间]不能为空！
-				case 3:showMsg("<%=GetEmpLbl("offDutyEndNull")%>");$("#CoffDutyEnd").focus(); return false; //[下班截止时间]不能为空！
-				case 11:showMsg("<%=GetEmpLbl("offDutyIllegal")%>");$("#CoffDuty").focus(); return false; //[下班标准时间]非法！
-				case 22:showMsg("<%=GetEmpLbl("offDutyStartIllegal")%>");$("#CoffDutyStart").focus(); return false; //[下班开始时间]非法！
-				case 33:showMsg("<%=GetEmpLbl("offDutyEndIllegal")%>");$("#CoffDutyEnd").focus(); return false; //[下班截止时间]非法！
-				case 111:showMsg("<%=GetEmpLbl("offDutyLtoffDutyStart")%>");$("#CoffDuty").focus(); return false; //[下班标准时间]不能小于[下班开始时间]！
-				case 222:showMsg("<%=GetEmpLbl("offDutyEndLtoffDuty")%>");$("#CoffDutyEnd").focus(); return false; //[下班截止时间]不能小于[下班标准时间]！
-			}
-			RetVal = CompareTime2($("#ConDutyEnd").val(),$("#CoffDutyStart").val());
-			switch(RetVal){
-				case 111:showMsg("<%=GetEmpLbl("ThirdOffDutyLtOnDutyEnd")%>");$("#CoffDutyStart").focus(); return false; //第三次[下班开始时间]不能小于[上班截止时间]！
-			}
-		}
-	}
-	
-	//弹性班次，只有一个时段
-	if(iStretchShift){
-		RetVal = CompareTime2($("#AonDutyStart").val(),$("#AonDuty").val());
-		switch(RetVal){
-			case 1:showMsg("<%=GetEmpLbl("onDutyNull")%>");$("#AonDuty").focus(); return false; //[上班标准时间]不能为空！
-			case 2:showMsg("<%=GetEmpLbl("onDutyStartNull")%>");$("#AonDutyStart").focus(); return false; //[上班开始时间]不能为空！
-			case 11:showMsg("<%=GetEmpLbl("onDutyIllegal")%>");$("#AonDuty").focus(); return false; //[上班标准时间]非法！
-			case 22:showMsg("<%=GetEmpLbl("onDutyStartIllegal")%>");$("#AonDutyStart").focus(); return false; //[上班开始时间]非法！
-			case 111:showMsg("<%=GetEmpLbl("OnDutyLtonDutyStart")%>");$("#AonDuty").focus(); return false; //[上班标准时间]不能小于[上班开始时间]！
-		}
-		RetVal = CompareTime2($("#AoffDuty").val(),$("#AoffDutyEnd").val());
-		switch(RetVal){
-			case 1:showMsg("<%=GetEmpLbl("offDutyNull")%>");$("#AoffDuty").focus(); return false; //[下班标准时间]不能为空！
-			case 2:showMsg("<%=GetEmpLbl("offDutyStartNull")%>");$("#AoffDutyStart").focus(); return false; //[下班开始时间]不能为空！
-			case 11:showMsg("<%=GetEmpLbl("offDutyIllegal")%>");$("#AoffDuty").focus(); return false; //[下班标准时间]非法！
-			case 22:showMsg("<%=GetEmpLbl("offDutyStartIllegal")%>");$("#AoffDutyStart").focus(); return false; //[下班开始时间]非法！
-			case 111:showMsg("<%=GetEmpLbl("offDutyLtoffDutyStart")%>");$("#AoffDuty").focus(); return false; //[下班标准时间]不能小于[下班开始时间]！
-		}
-	}
-	$("#FormError").hide();
-}
-
-</script>

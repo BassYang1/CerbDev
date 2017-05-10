@@ -79,6 +79,9 @@ else if(strexportType == "users"){
 else if(strexportType == "logevent"){
 	strSheetName = "<%=GetToolLbl("logevent")%>";//日志
 }
+else if(strexportType == "shift"){
+	strSheetName = "<%=GetToolLbl("shift")%>";//班次
+}
 else
 {
 	strSheetName = "Sheet1";

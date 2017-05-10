@@ -59,11 +59,11 @@ window.onload = function() {
 	$("#spanNavAtt").click(function(){  
 		try{
 			if($("#divNavAtt").hasClass('collapsed')){
-				window.parent.mainFrame.location.href="ShiftsView.asp";
+				window.parent.mainFrame.location.href="Shifts.html";
 			}
 		}catch(exception){}
 	}); 
-	$("#hrefAttShift").attr("href","ShiftsView.asp?nd="+getRandom() );
+	$("#hrefAttShift").attr("href","Shifts.html?nd="+getRandom() );
 };
 </script>
 </head>
@@ -78,7 +78,7 @@ window.onload = function() {
 	</div>
     <div id="divNavAtt" class=" collapsed">
 		<span id="spanNavAtt">Attend</span>
-		<a id="hrefAttShift" href="ShiftsView.asp" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts</a>
+		<a id="hrefAttShift" href="Shifts.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts</a>
 	</div>
 </div>
 </body>
