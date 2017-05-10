@@ -324,7 +324,7 @@ function GetDepartments(){
 //初使化部门
 function InitDepartments(selId){
 	var id, name, code, sBlank, len;
-	var arrDepts = getDeptJSON();
+	var arrDepts = getUserDeptJSON();
 
 	var deptListHtml = "";
 

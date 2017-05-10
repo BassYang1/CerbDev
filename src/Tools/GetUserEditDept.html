@@ -22,9 +22,6 @@
 </BODY>
 
 <SCRIPT type="text/javascript">
-$("#treeDemo").css({'height':'220px'});
-$("#treeDemo").css({'width':'240px'});
-
 	<!--
 var setting = {
 	check: {
@@ -43,10 +40,23 @@ var setting = {
 	}
 };
 
-var strUserId = Request( location.href,"userId");
-var strView = Request( location.href,"view");
-var strUrl = '../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&userId='+strUserId;
-var htmlObj = $.ajax({url:strUrl,async:false});
+var loadedOver = false;
+var strUserId = Request(location.href, "userId");
+var strView = Request(location.href, "view");
+var oper = Request(location.href, "oper");
+var templateId = Request(location.href, "templateId");
+
+if(oper && oper == "regcard"){
+	$("#treeDemo").css({'height':'155px'});
+	$("#treeDemo").css({'width':'400px'});
+}
+else{
+	$("#treeDemo").css({'height':'220px'});
+	$("#treeDemo").css({'width':'240px'});
+}
+
+var strUrl = '../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&templateId=' + templateId + '&userId='+strUserId;
+var htmlObj = $.ajax({type:"post", url:strUrl, data:{oper: oper}, async:false});
 var zNodes = "";
 try{
 	zNodes = $.parseJSON(htmlObj.responseText);
@@ -99,8 +109,14 @@ $(document).ready(function(){
 			treeObj.setChkDisabled(nodes[i],true,true,true);
 		}
 	}
+
+	loadedOver = true;
 });
 //-->
+
+function checkDocLoaded(){
+	return loadedOver;
+}
 
 //获取所以选择的节点ID
 function GetCheckIDs()
@@ -115,6 +131,34 @@ function GetCheckIDs()
 	if(Ids != "")
 		Ids = Ids.substring(0,Ids.length-1);
 	return Ids;
+}
+
+//获取所以选择的节点ID
+function GetCheckDepts()
+{
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes = treeObj.getCheckedNodes(true);
+	var Ids = "", Names = "";
+	var chkNum = 0;
+
+	for(var i=0; i<nodes.length; i++){
+		if(nodes[i].id != 999999999){
+			Ids = Ids + nodes[i].id + ",";
+			Names = Names + nodes[i].name + ",";
+			chkNum++;
+		}
+	}
+
+	if(zNodes.length == chkNum){
+		return {Ids: "0 - " + getlbl("con.AllDept"), Names: getlbl("con.AllDept")}; //0 - 所有部门
+	}
+
+	if(Ids != ""){
+		Ids = Ids.substring(0,Ids.length-1);
+		Names = Names.substring(0,Names.length-1);
+	}
+
+	return {Ids: Ids, Names: Names};
 }
 
 </SCRIPT>

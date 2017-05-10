@@ -204,7 +204,7 @@ function selColChange()
 //初使化部门
 function InitDepartments(){
 	var id, name, code, sBlank, len;
-	var arrDepts = getDeptJSON();
+	var arrDepts = getUserDeptJSON();
 
 	var deptListHtml = "<select id='txtData' name='txtData' style='width:270px' class='FormElement ui-widget-content ui-corner-all'>";
 	for(var i in arrDepts){

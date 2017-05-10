@@ -280,7 +280,7 @@ function InitDepartments(selId){
 		$data = $tr.children("td.DataTD");
 
 	var id, name, code, sBlank, len;
-	var arrDepts = getDeptJSON();
+	var arrDepts = getUserDeptJSON();
 
 	var deptListHtml = "&nbsp;<select id='ParentDepartmentID' name='ParentDepartmentID' style='width:260px' class='FormElement ui-widget-content ui-corner-all'>";
 	deptListHtml += "<option value=''></option>";

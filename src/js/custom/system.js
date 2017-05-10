@@ -119,7 +119,7 @@ function getEmpJSON(){
 }
 
 //获取员工JSON数据
-function getDeptJSON(){
+function getUserDeptJSON(){
 	var condition = "";
 	if(arguments.length > 0){
 		condition = arguments[0]; //id|,eq|,100

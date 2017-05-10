@@ -1,12 +1,13 @@
 ﻿<!--#include file="Page.asp" -->
 <!--#include file="..\Conn\conn.asp" -->
 <%
-dim strUserId, strDeptIds, strOper
+dim strUserId, strDeptIds, strOper, templateId
 dim strSQL,strJS,strid,strPid,strDepartmentCode,strName,strCheck
 
 strDeptIds = Cstr(Trim(Request.Form("deptIds")))
 strOper = Cstr(Trim(Request.Form("oper")))
 strUserId = Cstr(Trim(Request.QueryString("userId")))
+templateId = Cstr(Trim(Request.QueryString("templateId")))
 if strUserId = "" then strUserId = "0" end if
 
 
@@ -26,6 +27,18 @@ if strOper = "filter" then 'filter
 
 	if strDeptIds <> "" then
 		strSQL = strSQL & " and D.DepartmentId IN (" & strDeptIds & ")"
+	end if
+
+	strSQL = strSQL & " order by D.DepartmentCode for xml path('')) as JsonData"
+elseif strOper = "regcard" then '注册卡号模板加载用户部门列表
+	strSQL = "select(select '{"&chr(34)&"id"&chr(34)&":"&chr(34)&"' + CAST(D.DepartmentID AS NVARCHAR(10)) + '"&chr(34)&",', '"&chr(34)&"name"&chr(34)&":"&chr(34)&"' + D.DepartmentName + '"&chr(34)&",', '"&chr(34)&"code"&chr(34)&":"&chr(34)&"' + D.DepartmentCode + '"&chr(34)&",', '"&chr(34)&"pId"&chr(34)&":"&chr(34)&"' + CAST(ISNULL(D.ParentDepartmentID,0) AS NVARCHAR(10)) + '"&chr(34)&"',(case when ISNULL(T.DepartmentCode,'') <> '' then ',"&chr(34)&"checked"&chr(34)&":"&chr(34)&"true"&chr(34)&"' else '' end), '},' from Departments D"
+
+	strSQL = strSQL & " LEFT JOIN (select TOP 1 CAST(DepartmentCode AS NVARCHAR(MAX)) AS DepartmentCode from ControllerTemplates where TemplateType = 4 and TemplateId = " & templateId & ") T"
+	strSQL = strSQL & " ON LEFT(LTRIM(ISNULL(T.DepartmentCode, '')),3) = '0 -' OR CHARINDEX(',' + CAST(D.DepartmentId AS NVARCHAR(10)) + ',', ',' + T.DepartmentCode + ',') > 0"
+	strSQL = strSQL & " where isNumeric(D.DepartmentCode)=1"
+
+	if strUserId <> "1" then
+		strSQL = strSQL & " and exists(select 1 from RoleDepartment where DepartmentId=D.DepartmentId and UserId = '"&strUserId&"')"
 	end if
 
 	strSQL = strSQL & " order by D.DepartmentCode for xml path('')) as JsonData"

@@ -22,9 +22,6 @@
 </BODY>
 
 <SCRIPT type="text/javascript">
-$("#treeDemo").css({'height':'220px'});
-$("#treeDemo").css({'width':'240px'});
-
 	<!--
 var setting = {
 	check: {
@@ -45,9 +42,22 @@ var setting = {
 
 var strUserId = Request( location.href,"userId");
 var strView = Request( location.href,"view");
-var strUrl = '../Common/GetControllerJSON.asp?nd='+getRandom()+'&userId='+strUserId;
-var htmlObj = $.ajax({url:strUrl,async:false});
+var oper = Request(location.href, "oper");
+var templateId = Request(location.href, "templateId");
+var strUrl = '../Common/GetControllerJSON.asp?nd='+getRandom()+'&templateId=' + templateId + '&userId='+strUserId;
+var htmlObj = $.ajax({type:"post", url:strUrl, data:{oper: oper}, async:false});
 var zNodes = "";
+
+
+if(oper && oper == "regcard"){
+	$("#treeDemo").css({'height':'155px'});
+	$("#treeDemo").css({'width':'400px'});
+}
+else{
+	$("#treeDemo").css({'height':'220px'});
+	$("#treeDemo").css({'width':'240px'});
+}
+
 try{
 	zNodes = $.parseJSON(htmlObj.responseText);
 }
@@ -75,6 +85,7 @@ function zTreeOnCheck(event, treeId, treeNode) {
 		treeObj.checkAllNodes(treeNode.checked);
 	}
 };
+
 $(document).ready(function(){
 	$.fn.zTree.init($("#treeDemo"), setting, zNodes);
 	setCheck();
@@ -113,6 +124,32 @@ function GetCheckIDs()
 	}
 	if(Ids != "")
 		Ids = Ids.substring(0,Ids.length-1);
+	return Ids;
+}
+
+//获取所以选择的节点ID
+function GetCheckCtrlIDs()
+{
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes = treeObj.getCheckedNodes(true);
+	var Ids = "";
+	var chkNum = 0;
+
+	for(var i=0; i<nodes.length; i++){
+		if(nodes[i].id != 999999999){
+			Ids = Ids + nodes[i].id + ",";
+			chkNum++;
+		}
+	}
+
+	if(zNodes.length == chkNum){
+		return "0 - " + getlbl("con.AllCon") ;
+	}
+	
+	if(Ids != ""){
+		Ids = Ids.substring(0,Ids.length-1);
+	}
+
 	return Ids;
 }
 

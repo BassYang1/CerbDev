@@ -259,7 +259,7 @@ function gridReload() {
 //获取部门列表HTML
 function GetDepartmentHtml(selId) {
     var id, name, code, sBlank, len;
-    var arrDepts = getDeptJSON();
+    var arrDepts = getUserDeptJSON();
 
     var deptListHtml = "";
 

@@ -21,7 +21,7 @@ $("#DataGrid").jqGrid({
 	//colNames:['模板ID','模板名称','职员','EmployeeCode','DepartmentCode','部门列表',OtherCode',设备','选择设备','时间表','EmployeeScheID','进出门','验证方式', 'OnlyByCondition'],
 	colNames:[getlbl("con.TempID"),getlbl("con.TempName"),getlbl("con.ByDept"),getlbl("con.DeptList"),getlbl("con.ByEmp"),getlbl("con.EmpList"),'OtherCode',getlbl("con.Controller"),getlbl("con.SelController"),getlbl("con.Schedule"),'EmployeeScheID',getlbl("con.InOutDoor"),getlbl("con.ValidateMode"),getlbl("con.OnlyByCond")],
 	colModel :[
-		{name:'TemplateId',index:'TemplateId',align:'center',width:100,hidden:false,editrules:{edithidden:false},search:false},
+		{name:'TemplateId',index:'TemplateId',align:'center',width:100,hidden:false,editrules:{required:true,edithidden:false},search:false},
 		{name:'TemplateName',index:'TemplateName',align:'center',editable:true,editrules:{required:true},
 			searchoptions:{sopt:["eq","ne",'cn','nc']},
 			formoptions:{elmsuffix:"<font color=#FF0000>*</font>"}},
@@ -32,7 +32,7 @@ $("#DataGrid").jqGrid({
 		{name:'EmployeeList',index:'EmployeeList',edittype:'none',hidden:true,align:'center',editable:true,editrules:{edithidden:true,required:true},search:false},
 		{name:'OtherCode',index:'OtherCode',align:'center',hidden:true,editable:true,editrules:{edithidden:false,required:false},search:false},
 		{name:'EmployeeController',index:'EmployeeController',align:'center',editable:true,editrules:{required:true},search:false},
-		{name:'ControllerID',index:'ControllerID',hidden:true,align:'center',editable:true,editrules:{required:true},search:false},
+		{name:'ControllerID',index:'ControllerID',hidden:true,align:'center',editable:true,editrules:{required:false},search:false},
 		{name:'EmployeeScheName',index:'EmployeeScheName',align:'center',editable:true,editrules:{required:false},search:false,
 			edittype:'select',},
 		{name:'EmployeeScheID',index:'EmployeeScheID',hidden:true,editrules:{edithidden:false},search:false},
@@ -83,15 +83,16 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		closeAfterEdit: true,
 		afterSubmit:getEditafterSubmit,
 		afterShowForm:function(formid){
-			ShowLoading();		
-			InitEditForm();
+			ShowLoading();
 			
 			var rowid = $("#DataGrid").jqGrid('getGridParam', 'selrow');
 			var ret = $("#DataGrid").jqGrid('getRowData',rowid);
 			var EmployeeController = ret.EmployeeController; //获取设备ID
 
+			InitEditForm(ret.TemplateId);
+
 			//加载部门
-			if(LoadSelDept(ret.DepartmentCode)){
+			if(ret.DepartmentCode){
 				$("#tr_DepartmentCode").children("td.DataTD").children("input").attr("checked", true);
 			}
 
@@ -100,36 +101,17 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 				$("#tr_EmployeeCode").children("td.DataTD").children("input").attr("checked", true);
 			}
 
-			if(EmployeeController != "" && EmployeeController.trim().substring(0,1) == "0"){
-				$("input[name='ControllerSel']").get(0).checked = true;
-				fCheckController();
-			}else if (EmployeeController != ""){
-				$("input[name='ControllerSel']").get(1).checked = true;
-				fCheckController();
-				var strConId = EmployeeController;
-				var arrSelCon = strConId.toString().split(",");
-				var i,j,k,selobject;
-				selobject = document.getElementById("selConDesc").options;
-				k=0; 
-				for(i=0; i<arrSelCon.length; i++){
-					for(j=document.getElementById("selConSrc").options.length-1; j>=0; j--){
-						if(document.getElementById("selConSrc").options[j].value == arrSelCon[i]){
-							selobject[k++] = new Option(document.getElementById("selConSrc").options[j].text, document.getElementById("selConSrc").options[j].value);
-							break;
-						}
-					}
-				}
-			}
-
 			$("#tr_EmployeeScheName").children("td.DataTD").children("select").val(ret.EmployeeScheID);//根据时间表ID，选择时间表
 			$(".navButton").hide();
 
 			fCheckDept();
 			fCheckEmp();
 
-			window.setTimeout(function(){
-				LoadInitDept();
-				$("#load_EditForm").hide();
+			window.setInterval(function(){
+				var objIframe = $("#depframe")[0];
+				if(objIframe.contentWindow && objIframe.contentWindow.checkDocLoaded && objIframe.contentWindow.checkDocLoaded()){
+					$("#load_EditForm").hide();
+				}
 			}, 500);
 		},
 		onclickSubmit: function(params) {
@@ -153,9 +135,12 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 
 			fCheckDept();
 			fCheckEmp();
-			window.setTimeout(function(){
-				LoadInitDept();
-				$("#load_EditForm").hide();
+
+			window.setInterval(function(){
+				var objIframe = $("#depframe")[0];
+				if(objIframe.contentWindow && objIframe.contentWindow.checkDocLoaded && objIframe.contentWindow.checkDocLoaded()){
+					$("#load_EditForm").hide();
+				}
 			}, 500);
 		},
 		onclickSubmit: function(params) {
@@ -224,8 +209,8 @@ function ShowLoading(){
 	$div.show();
 }
 
-function InitEditForm(){
-	InitDepartments(); //初使化部门列表
+function InitEditForm(templateId){	
+	InitDepartments(templateId); //初使化部门列表
 	InitEmployees(); //初使化员工列表
 	$("#DepartmentCode").bind("change", fCheckDept);
 	$("#EmployeeCode").bind("change", fCheckEmp);
@@ -241,40 +226,7 @@ function InitEditForm(){
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");	
 	
-	//部分设备
-	var ctrlOptionHtml = "<div align='left' style='padding-left:1em;' class='ui-jqdialog-content ui-widget-content'>" +
-				"<input type='radio' name='ControllerSel' checked value='0' id='Sel1'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;" +
-				"<label for='Sel1'>"+getlbl("con.AllCon")+"</label>&nbsp;&nbsp;&nbsp;&nbsp;" +
-				"<input type='radio' name='ControllerSel' value='1' id='Sel2'  onClick='fCheckController()' class='ui-jqdialog-content ui-widget-content'>&nbsp;" +
-				"<label for='Sel2'>"+getlbl("con.PartCon")+"</label></div>";
-
-	$data.html(ctrlOptionHtml);
-	
-	$tr = $("#tr_ControllerID"), 
-		$label = $tr.children("td.CaptionTD"),
-		$data = $tr.children("td.DataTD");
-
-    //设备列表
-	var ctrlListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
-			"<TBODY><TR>" + 
-			"<TD width='30%' valign='top'><div onDblClick='fInsertCon()'  style='padding-left:1em;' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selConSrc' name='selConSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 270px'></select>" + 
-			"</div></TD>" + 
-			"<TD width='18%'align=middle valign='middle'>" + 
-			"<div align='center'>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='conadd' onclick='fInsertCon()'>" + 
-			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
-			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
-			"</a><p>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='condel' onclick='fDelCon()'>" + 
-			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
-			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
-			"</a></div></TD>" + 
-			"<TD width='52%' valign='top'><div onDblClick='fDelCon()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selConDesc' name='selConDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 270px' multiple size=8 ></select>" + 
-			"</div></TD></TR></TBODY></TABLE>";
-
-	$data.html(ctrlListHtml);
+	InitControllers(templateId); //初使化设备
 	
 	GetSchedule();
 	$("#tr_DepartmentCode").children("td.DataTD").children("input").css({"margin-top": "5px"});
@@ -286,103 +238,41 @@ function InitEditForm(){
 }
 
 //初使化部门
-function InitDepartments(){
+function InitDepartments(templateId){
 	var $tr = $("#tr_DepartmentList"), 
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");
 
-	var deptListHtml = "<TABLE width='100%' border='0' cellPadding=0 cellSpacing=0>" + 
-			"<TBODY><TR>" + 
-			"<TD width='30%' valign='top' style='padding-left:1em;'><div onDblClick='fInsertDept()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selDeptSrc' name='selDeptSrc' class='FormElement ui-widget-content ui-corner-all' size=8 multiple style='WIDTH: 270px'>";
-	
-	deptListHtml += "</select></div></TD>" + 
-			"<TD width='18%'align=middle valign='middle'>" + 
-			"<div align='center'>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left ' id='deptadd' onclick='fInsertDept()'>" + 
-			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -13px;top: 8px;'></span>" + 
-			"<span class='ui-icon ui-icon-carat-1-e ' style='position:relative;left: -8px;top: 0px;'></span>" + 
-			"</a><p>" + 
-			"<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='deptdel' onclick='fDelDept()'>" + 
-			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -13px;top: 8px;'></span>" + 
-			"<span class='ui-icon ui-icon-carat-1-w ' style='position:relative;left: -8px;top: 0px;'></span>" + 
-			"</a></div></TD>" + 
-			"<TD width='52%' valign='top'><div onDblClick='fDelDept()' class='ui-jqdialog-content ui-widget-content'>" + 
-			"<select id='selDeptDesc' name='selDeptDesc' class='FormElement ui-widget-content ui-corner-all' style='WIDTH: 270px' multiple size=8 >" + 
-			"</select></div></TD></TR></TBODY></TABLE>";
+	if(templateId == undefined || templateId == null || templateId == "" || typeof templateId != "string"){
+		templateId = "0";
+	}
 
-	$data.html(deptListHtml);
+	var userId = getCookie(cookieUserId); 
+	$data.html("&nbsp;<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=regcard&templateId=" + templateId + "&userId=" + userId + "'></iframe>");
 }
 
-function LoadInitDept(){	
-	var arrDepts = getDeptJSON();
+//初使化设备
+function InitControllers(templateId){
+	var $tr = $("#tr_EmployeeController"), 
+		$label = $tr.children("td.CaptionTD"),
+		$data = $tr.children("td.DataTD");	
 
-	var deptListHtml = "<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>";
-
-	var id, name, code, sBlank, len;
-
-	for(var i in arrDepts){
-		id = arrDepts[i].id;
-		name = arrDepts[i].name;
-		code = arrDepts[i].code;
-		sBlank = "";
-		len = code.length / 5;
-
-		if(len == 1){
-			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
-		}
-		else{
-			for(var i = 0; i < len; i ++){
-				sBlank += "&nbsp;";
-			}
-
-			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
-		}
+	if(templateId == undefined || templateId == null || templateId == "" || typeof templateId != "string"){
+		templateId = "0";
 	}
 
-	$("#selDeptSrc").html(deptListHtml);
+	var userId = getCookie(cookieUserId); 
+	$data.html("&nbsp;<iframe id='conframe' name='conframe' width='90%' height='180' frameborder='0' align='center' src='../Tools/GetUserEditController.html?nd=" + getRandom() + "&oper=regcard&templateId=" + templateId + "&userId=" + userId + "'></iframe>");
 }
 
-function LoadSelDept(deptIds){
-	if(deptIds == undefined || typeof deptIds != "string" || deptIds == ""|| deptIds.search(/[a-zA-Z]+/g) >= 0){
-		return false;
-	}
-
-	//所选部门列表
-	var $selObj = $("#selDeptDesc");
-	var arrIds = deptIds.split(",");	
-
-	$selObj.empty();
-
-	if($.inArray("0", arrIds) >= 0){
-		$selObj.append("<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>");
-	}
-	else{
-		var arrDepts = getDeptJSON(null, deptIds); //获取部门数据
-		var id, name, code, pcode, sBlank;
-
-		for(var i in arrDepts){
-			id = arrDepts[i].id;
-			name = arrDepts[i].name;
-			code = arrDepts[i].code;
-			pcode = code.substr(0, code.length - 5);
-			sBlank = "";
-
-			if(pcode && pcode.length >= 5 && $selObj.find("option[code='" + pcode + "']").size() > 0){
-				for(var i = 0; i <  code.length / 5; i ++){
-					sBlank += "&nbsp;";
-				}
-
-				$selObj.append("<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>");		
-			}
-			else{
-				$selObj.append("<option value='" + id + "' code='" + code + "'>" + name + "</option>");	
-			}
-		}
-	}
-
-	return true;
+function GetSelDepts() {
+    return $("#depframe")[0].contentWindow.GetCheckDepts(); //{Ids: Ids, Names: Names}
 }
+
+function GetSelCtrlIds() {
+    return $("#conframe")[0].contentWindow.GetCheckCtrlIDs();
+}
+
 
 function InitEmployees(){
 	var condition = "";
@@ -432,24 +322,6 @@ function LoadSelEmp(empIds){
 	}
 
 	return true;
-}
-
-function fCheckController(){
-	var con = $("input[name='ControllerSel']:checked").val();
-	if (con == "0")
-	{
-		//全部设备
-		$("#tr_ControllerID").hide();
-		$("#editmodDataGrid").css("height","auto");
-		$("#FrmGrid_DataGrid").css("height","auto");
-	}
-	else
-	{
-		$("#tr_ControllerID").show();
-		$("#editmodDataGrid").css("height","auto");
-		$("#FrmGrid_DataGrid").css("height","auto");
-		GetController();
-	}
 }
 
 function GetController(){
@@ -532,61 +404,6 @@ function fDelCon(){
 		if(document.getElementById("selConDesc").options[i].selected == true)
 			document.getElementById("selConDesc").remove(i);
 	}
-}
-
-function fInsertDept(){
-	//部门列表
-	var srcCode;
-	var $srcObj = $("#selDeptSrc");
-	var $selOptions = $srcObj.find("option:selected")
-
-	//所选部门列表
-	var $selObj = $("#selDeptDesc");
-
-	//是否选择所有部门
-	if($selObj.find("option[value='0']").length <= 0){
-		if($selOptions.filter("option[value='0']").length > 0){
-			$selObj.empty();
-			$selObj.append("<option value='0' code='00000'>" + getlbl("con.AllDept") + "</option>");
-		}
-		else{
-			var deptIds = "";
-			var optCode;
-
-			$selOptions.each(function(i){
-				srcCode = $(this).attr("code");
-
-				$srcObj.find("option[code^='" +  srcCode + "']").each(function(j){
-					deptIds += "," + $(this).val();
-				});
-			});
-
-			$selObj.find("option").each(function(i){
-				deptIds += "," + $(this).val();
-			});
-
-			if(deptIds != ""){
-				LoadSelDept(deptIds.substr(1));
-			}
-		}
-	}
-}
-
-function fDelDept(){
-	//所选部门列表
-	var $selObj = $("#selDeptDesc");
-	var $selOptions = $selObj.find("option:selected"); //待移出的选项
-	var $selOption;
-	var optCode;
-
-	$selOptions.each(function(i){
-		$selOption = $(this);
-		optCode = $selOption.attr("code");
-
-		$selObj.find("option[code^='" + optCode + "']").each(function(j){
-			$(this).remove();
-		});
-	});
 }
 
 function fInsertEmp(){
@@ -687,30 +504,13 @@ function fGetFormData(){
 	data.EmployeeScheID = $("#EmployeeScheID").val();
 
 	//设备
-	var strEmployeeController = $("input[name='ControllerSel']:checked").val();
-	var strConvalues = "";//EmployeeController
-	if(strEmployeeController == "1"){ //0 所有设备  1 部分设备
-		for(i=0; i<$("#selConDesc option").length; i++){
-			strConvalues = strConvalues + "," + document.getElementById("selConDesc").options[i].value;
-		}
-		if (strConvalues != ""){
-			strConvalues = strConvalues.substr(1);
-		}
-		strEmployeeController = strConvalues;
-	}
-
-	data.EmployeeController = strEmployeeController;
+	data.EmployeeController = GetSelCtrlIds();
 
 	//选择部门
-	if($("#tr_DepartmentCode").children("td.DataTD").children("input").is(":checked")){
-		var deptIds = "", deptNames = "";
-		$("#selDeptDesc").find("option").each(function(){
-			deptIds += "," + $(this).val();
-			deptNames += "," + $(this).text();
-		});
-
-		data.DepartmentCode = deptIds.substr(1);
-		data.DepartmentName = deptNames.substr(1);
+	var depts = GetSelDepts();
+	if(depts && depts.Ids && depts.Names){
+		data.DepartmentCode = depts.Ids;
+		data.DepartmentName = depts.Names;
 	}
 
 	//选择职员
