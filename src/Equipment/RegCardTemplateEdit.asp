@@ -33,7 +33,8 @@ strUserId = session("UserId")
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
 	response.End()
-end if 
+end if
+
 if GetOperRole("RegCardTemplate",strOper) <> true then 
 	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
 	response.End()

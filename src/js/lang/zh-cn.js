@@ -103,6 +103,7 @@ var hr={
 	No : '否',
 	ShiftList : "班次列表",
 	OnThatDay : "0 - 当日",
+	OnPriorDay : "1 - 上日",
 	FirstOnDuty: "第一次上班刷卡",
 	TimePeriod: "时段",
 	Clockin: "上班",
@@ -115,6 +116,11 @@ var hr={
 	Standard: "标准",
 	Start: "开始",
 	End: "截止",
+	hrefAdjustShift : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班次调整",
+	AdjustDate: "调整日期",
+	Description: "调整说明",
+	DeptList: '部门列表',
+	EmpList: '职员列表',
 }
 
 

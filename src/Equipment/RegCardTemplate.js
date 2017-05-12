@@ -106,13 +106,7 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 
 			fCheckDept();
 			fCheckEmp();
-
-			window.setInterval(function(){
-				var objIframe = $("#depframe")[0];
-				if(objIframe.contentWindow && objIframe.contentWindow.checkDocLoaded && objIframe.contentWindow.checkDocLoaded()){
-					$("#load_EditForm").hide();
-				}
-			}, 500);
+			CloseLoadingByDept();
 		},
 		onclickSubmit: function(params) {
 			return fGetFormData();
@@ -135,13 +129,7 @@ $("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 
 			fCheckDept();
 			fCheckEmp();
-
-			window.setInterval(function(){
-				var objIframe = $("#depframe")[0];
-				if(objIframe.contentWindow && objIframe.contentWindow.checkDocLoaded && objIframe.contentWindow.checkDocLoaded()){
-					$("#load_EditForm").hide();
-				}
-			}, 500);
+			CloseLoadingByDept();
 		},
 		onclickSubmit: function(params) {
 			return fGetFormData(); 
@@ -170,43 +158,6 @@ if(iadd){
 		onClickButton: RegController,
 		position:"last"
 	});
-}
-
-function ShowLoading(){
-	var $div = $("#load_EditForm");
-	var $page = $div.parent();
-	var height = 0;
-	var width = 0;
-
-	// 获取窗口宽度
-	if (window.innerWidth){
-		width = window.innerWidth;
-	}
-	else if ((document.body) && (document.body.clientWidth)){
-		width = document.body.clientWidth;
-	}
-	// 获取窗口高度
-	if (window.innerHeight){
-		height = window.innerHeight;
-	}
-	else if ((document.body) && (document.body.clientHeight)){
-		height = document.body.clientHeight;
-	}
-	// 通过深入 Document 内部对 body 进行检测，获取窗口大小
-	if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth){
-		height = document.documentElement.clientHeight;
-		width = document.documentElement.clientWidth;
-	}
-
-	$div.width(width);
-	$div.height(height);
-
-	var $label = $div.find("label");
-	$label.css("margin-left", (width / 2) + "px");
-	$label.css("margin-top", (height / 3) + "px");
-	$label.html(strloadtext);
-
-	$div.show();
 }
 
 function InitEditForm(templateId){	
@@ -275,11 +226,6 @@ function GetSelCtrlIds() {
 
 
 function InitEmployees(){
-	var condition = "";
-	if(arguments.length > 0) {
-		condition = arguments[0];
-	}
-
 	var $tr = $("#tr_EmployeeList"), 
 		$label = $tr.children("td.CaptionTD"),
 		$data = $tr.children("td.DataTD");

@@ -82,6 +82,9 @@ else if(strexportType == "logevent"){
 else if(strexportType == "shift"){
 	strSheetName = "<%=GetToolLbl("shift")%>";//班次
 }
+else if(strexportType == "shiftadjustment"){
+	strSheetName = "<%=GetToolLbl("shiftadjustment")%>";//班次调整
+}
 else
 {
 	strSheetName = "Sheet1";

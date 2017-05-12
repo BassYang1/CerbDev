@@ -4,7 +4,8 @@
 <!--#include file="..\CheckLoginStatus.asp"-->
 <!--#include file="..\Conn\GetLbl.asp"-->
 <%
-
+Call CheckLoginStatus("parent.location.href='../login.html'")
+Call CheckOperPermissions()
 
 '//*********************  Declare Values  **********************//
 dim strFields, strValues, strFieldsTemp, strValuesTemp
@@ -23,6 +24,17 @@ Dim iHaveNight, iIsAdd '覆盖标识
 '//************************************************************//'"EmployeeWork"
 
 strOper = Request.Form("oper")
+
+if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
+	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
+	response.End()
+end if
+
+if GetOperRole("Shifts",strOper) <> true then 
+	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
+	response.End()
+end if
+
 strRecordID = Replace(Request.Form("id"),"'","''")
 
 if strOper <> "del" then 

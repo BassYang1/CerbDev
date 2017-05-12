@@ -46,7 +46,7 @@ var strView = Request(location.href, "view");
 var oper = Request(location.href, "oper");
 var templateId = Request(location.href, "templateId");
 
-if(oper && oper == "regcard"){
+if(oper && (oper == "regcard" || oper == "shiftadjustment")){
 	$("#treeDemo").css({'height':'155px'});
 	$("#treeDemo").css({'width':'400px'});
 }

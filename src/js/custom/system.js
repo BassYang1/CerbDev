@@ -227,6 +227,59 @@ function GetDeptSelChildIds(selID){
 	return selDeptIds;
 }
 
+function ShowLoading(){
+	var $div = $("#load_EditForm");
+	var $page = $div.parent();
+	var height = 0;
+	var width = 0;
+
+	// 获取窗口宽度
+	if (window.innerWidth){
+		width = window.innerWidth;
+	}
+	else if ((document.body) && (document.body.clientWidth)){
+		width = document.body.clientWidth;
+	}
+	// 获取窗口高度
+	if (window.innerHeight){
+		height = window.innerHeight;
+	}
+	else if ((document.body) && (document.body.clientHeight)){
+		height = document.body.clientHeight;
+	}
+	// 通过深入 Document 内部对 body 进行检测，获取窗口大小
+	if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth){
+		height = document.documentElement.clientHeight;
+		width = document.documentElement.clientWidth;
+	}
+
+	$div.width(width);
+	$div.height(height);
+
+	var $label = $div.find("label");
+	$label.css("margin-left", (width / 2) + "px");
+	$label.css("margin-top", (height / 3) + "px");
+	$label.html(strloadtext);
+
+	$div.show();
+}
+
+function CloseLoadingByDept(){
+	var loadingTimer = window.setInterval(function(){
+		var objIframe = $("#depframe")[0];
+
+		if(objIframe == undefined || objIframe == null){
+			$("#load_EditForm").hide();
+			window.clearInterval(loadingTimer);
+		}
+
+		if(objIframe.contentWindow && objIframe.contentWindow.checkDocLoaded && objIframe.contentWindow.checkDocLoaded()){
+			$("#load_EditForm").hide();
+			window.clearInterval(loadingTimer);
+		}
+	}, 500);
+}
+
 //判断是否为IE，是IE返回true,否则false
 function isIE(){
 	if(!!window.ActiveXObject || "ActiveXObject" in window){

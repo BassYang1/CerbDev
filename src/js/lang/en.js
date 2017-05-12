@@ -103,6 +103,7 @@ var hr={
 	No : 'No',
 	ShiftList : "Shift List",
 	OnThatDay : "0 - Same Day",
+	OnPriorDay : "1 - Prior Day",
 	FirstOnDuty: "First Clock In",
 	TimePeriod: "Time Period",
 	Clockin: "On Duty",
@@ -115,6 +116,11 @@ var hr={
 	Standard: "Standard",
 	Start: "Start",
 	End: "End",
+	hrefAdjustShift : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts Adjustment",
+	AdjustDate: "Adjustment Date",
+	Description: "Adjustment Desc",
+	DeptList: 'Department List',
+	EmpList: 'Employee List',
 }
 
 
