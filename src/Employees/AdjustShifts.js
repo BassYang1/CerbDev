@@ -16,98 +16,98 @@ $(document).ready(function () {
         //colNames:['TempShiftID','ShiftType','调整日期','ShiftId','班次名','EmployeeDesc','调整说明',弹性班次','基本工时','上班次数','是否过夜','第一次上班刷卡','DepartmentCode','EmployeeCode','OtherCode','AonDuty','AonDutyStart','AonDutyEnd','AoffDuty','AoffDutyStart','AoffDutyEnd','AcalculateLate','AcalculateEarly','ArestTime','BonDuty','BonDutyStart','BonDutyEnd','BoffDuty','BoffDutyStart','BoffDutyEnd','BcalculateLate','BcalculateEarly','BrestTime','ConDuty','ConDutyStart','ConDutyEnd','CoffDuty','CoffDutyStart','CoffDutyEnd','CcalculateLate','CcalculateEarly','CrestTime'],
         colNames: ['TempShiftID', 'ShiftType', getlbl("hr.AdjustDate"), 'ShiftId', getlbl("hr.ShiftName"), 'EmployeeDesc', getlbl("hr.Description"), getlbl("hr.StretchShift"), getlbl("hr.ShiftTime"), getlbl("hr.Degree"), getlbl("hr.Night"), getlbl("hr.FirstOnDuty"), getlbl("hr.DeptList"), getlbl("hr.EmpList"), 'OtherCode', 'AonDuty', 'AonDutyStart', 'AonDutyEnd', 'AoffDuty', 'AoffDutyStart', 'AoffDutyEnd', 'AcalculateLate', 'AcalculateEarly', 'ArestTime', 'BonDuty', 'BonDutyStart', 'BonDutyEnd', 'BoffDuty', 'BoffDutyStart', 'BoffDutyEnd', 'BcalculateLate', 'BcalculateEarly', 'BrestTime', 'ConDuty', 'ConDutyStart', 'ConDutyEnd', 'CoffDuty', 'CoffDutyStart', 'CoffDutyEnd', 'CcalculateLate', 'CcalculateEarly', 'CrestTime'],
         colModel: [
-			{ name: 'TempShiftID', index: 'TempShiftID', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'ShiftType', index: 'TempShiftID', align: 'center', width: 10, hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false },
-			{
-			    name: 'AdjustDate', index: 'ShiftType', align: 'center', editable: true, editrules: { required: true, date: false, edithidden: true },
-			    width: 150, search: false, formatter: 'date', sorttype: 'date',
-			    formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }, datefmt: 'Y-m-d',
-			    editoptions: {
-			        size: 20, maxlengh: 20
-			    },
-			    formoptions: { elmsuffix: "<font color=#FF0000>*</font>", rowpos: 1, colpos: 1 }
-			},
-			{ name: 'ShiftId', index: 'ShiftId', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{
-			    name: 'ShiftName', index: 'ShiftName', align: 'center', edittype: 'select', editable: true, editrules: { required: true, edithidden: true },
-			    stype: 'select', searchoptions: { sopt: ["eq"], value:":", dataInit:initShiftsList },
-			    formoptions: { rowpos: 5, colpos: 1 },
-			    editoptions: {dataInit:initShiftsList}
-			},
-			{ name: 'EmployeeDesc', index: 'EmployeeDesc', align: 'center', width: 10, hidden: true, viewable: true, search: false },
-			{
-			    name: 'Description', index: 'Description', edittype: 'textarea', width: 250, editable: true, editrules: { required: false }, 
-			    search: false, sortable: false, formoptions: { rowpos: 2, colpos: 1 },
-			    editoptions: { rows: 3, cols: 65, dataInit: mergeFormCells },
-			},
-			{
-			    name: 'StretchShift', index: 'StretchShift', align: 'center', editable: true, editrules: { required: false, edithidden: true },
-			    edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
-			    formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
-			    formoptions: { rowpos: 7, colpos: 2 }
-			},
-			{
-			    name: 'ShiftTime', index: 'ShiftTime', width: 120, align: 'center', editable: true, sortable: false, search: false, formatter: 'number',
-			    editrules: { required: true, edithidden: true },
-			    formoptions: { rowpos: 5, colpos: 2, elmsuffix: "<font color=#FF0000>*</font>" }
-			},
-			{
-			    name: 'Degree', index: 'Degree', width: 120, align: 'center', editable: true, sortable: false, search: false,
-			    editrules: { required: true, edithidden: true },
-			    edittype: 'select', editoptions: { value: '1:1;2:2;3:3' },
-			    formoptions: { rowpos: 7, colpos: 1 }
-			},
-			{
-			    name: 'Night', index: 'Night', editable: true, align: 'center', editrules: { required: false, edithidden: true },
-			    edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
-			    formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
-			    formoptions: { rowpos: 6, colpos: 1 }
-			},
-			{
-			    name: 'FirstOnDuty', index: 'FirstOnDuty', editable: true, hidden: true, align: 'center', editrules: { required: false, edithidden: true },
-			    edittype: 'select', editoptions: { value: '0:' + getlbl("hr.OnThatDay") + ";1:" +  getlbl("hr.OnPriorDay")},
-			    formoptions: { rowpos: 6, colpos: 2 }
-			},
-			{
-			    name: 'DepartmentCode', index: 'DepartmentCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
-			    formoptions: { rowpos: 3, colpos: 1 },
-			    editoptions: { dataInit: mergeFormCells },
-			},
-			{
-			    name: 'EmployeeCode', index: 'EmployeeCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
-			    formoptions: { rowpos: 4, colpos: 1 },
-			    editoptions: { dataInit: mergeFormCells },
-			},
-			{ name: 'OtherCode', index: 'OtherCode', align: 'center', width: 10, editable: true, edittype: 'none', hidden: true, viewable: false, search: false },
-			{ name: 'AonDuty', index: 'AonDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AonDutyStart', index: 'AonDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AonDutyEnd', index: 'AonDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AoffDuty', index: 'AoffDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AoffDutyStart', index: 'AoffDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AoffDutyEnd', index: 'AoffDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AcalculateLate', index: 'AcalculateLate', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'AcalculateEarly', index: 'AcalculateEarly', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'ArestTime', index: 'ArestTime', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BonDuty', index: 'BonDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BonDutyStart', index: 'BonDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BonDutyEnd', index: 'BonDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BoffDuty', index: 'BoffDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BoffDutyStart', index: 'BoffDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BoffDutyEnd', index: 'BoffDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BcalculateLate', index: 'BcalculateLate', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BcalculateEarly', index: 'BcalculateEarly', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'BrestTime', index: 'BrestTime', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'ConDuty', index: 'ConDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'ConDutyStart', index: 'ConDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'ConDutyEnd', index: 'ConDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'CoffDuty', index: 'CoffDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'CoffDutyStart', index: 'CoffDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'CoffDutyEnd', index: 'CoffDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'CcalculateLate', index: 'CcalculateLate', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'CcalculateEarly', index: 'CcalculateEarly', align: 'center', width: 10, hidden: true, viewable: false, search: false },
-			{ name: 'CrestTime', index: 'CrestTime', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'TempShiftID', index: 'TempShiftID', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'ShiftType', index: 'ShiftType', align: 'center', width: 10, hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false },
+            {
+                name: 'AdjustDate', index: 'AdjustDate', align: 'center', editable: true, editrules: { required: true, date: false, edithidden: true },
+                width: 150, search: false, formatter: 'date', sorttype: 'date',
+                formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }, datefmt: 'Y-m-d',
+                editoptions: {
+                    size: 20, maxlengh: 20
+                },
+                formoptions: { elmsuffix: "<font color=#FF0000>*</font>", rowpos: 1, colpos: 1 }
+            },
+            { name: 'ShiftId', index: 'ShiftId', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            {
+                name: 'ShiftName', index: 'ShiftName', align: 'center', edittype: 'select', editable: true, editrules: { required: true, edithidden: true },
+                stype: 'select', searchoptions: { sopt: ["eq"], value:":", dataInit:initShiftsList },
+                formoptions: { rowpos: 5, colpos: 1 },
+                editoptions: {readonly:true,dataInit:initShiftsList}
+            },
+            { name: 'EmployeeDesc', index: 'EmployeeDesc', align: 'center', width: 10, hidden: true, viewable: true, search: false },
+            {
+                name: 'Description', index: 'Description', edittype: 'textarea', width: 250, editable: true, editrules: { required: false }, 
+                search: false, sortable: false, formoptions: { rowpos: 2, colpos: 1 },
+                editoptions: { rows: 3, cols: 65, dataInit: mergeFormCells },
+            },
+            {
+                name: 'StretchShift', index: 'StretchShift', align: 'center', editable: true, editrules: { required: false, edithidden: true },
+                edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
+                formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
+                formoptions: { rowpos: 7, colpos: 2 }
+            },
+            {
+                name: 'ShiftTime', index: 'ShiftTime', width: 120, align: 'center', editable: true, sortable: false, search: false, formatter: 'number',
+                editrules: { required: true, edithidden: true },
+                formoptions: { rowpos: 5, colpos: 2, elmsuffix: "<font color=#FF0000>*</font>" }
+            },
+            {
+                name: 'Degree', index: 'Degree', width: 120, align: 'center', editable: true, sortable: false, search: false,
+                editrules: { required: true, edithidden: true },
+                edittype: 'select', editoptions: { value: '1:1;2:2;3:3' },
+                formoptions: { rowpos: 7, colpos: 1 }
+            },
+            {
+                name: 'Night', index: 'Night', editable: true, align: 'center', editrules: { required: false, edithidden: true },
+                edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
+                formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
+                formoptions: { rowpos: 6, colpos: 1 }
+            },
+            {
+                name: 'FirstOnDuty', index: 'FirstOnDuty', editable: true, hidden: true, align: 'center', editrules: { required: false, edithidden: true },
+                edittype: 'select', editoptions: { value: '0:' + getlbl("hr.OnThatDay") + ";1:" +  getlbl("hr.OnPriorDay")},
+                formoptions: { rowpos: 6, colpos: 2 }
+            },
+            {
+                name: 'DepartmentCode', index: 'DepartmentCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                formoptions: { rowpos: 3, colpos: 1 },
+                editoptions: { dataInit: mergeFormCells },
+            },
+            {
+                name: 'EmployeeCode', index: 'EmployeeCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                formoptions: { rowpos: 4, colpos: 1 },
+                editoptions: { dataInit: mergeFormCells },
+            },
+            { name: 'OtherCode', index: 'OtherCode', align: 'center', width: 10, editable: true, edittype: 'none', hidden: true, viewable: false, search: false },
+            { name: 'AonDuty', index: 'AonDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AonDutyStart', index: 'AonDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AonDutyEnd', index: 'AonDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AoffDuty', index: 'AoffDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AoffDutyStart', index: 'AoffDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AoffDutyEnd', index: 'AoffDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AcalculateLate', index: 'AcalculateLate', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'AcalculateEarly', index: 'AcalculateEarly', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'ArestTime', index: 'ArestTime', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BonDuty', index: 'BonDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BonDutyStart', index: 'BonDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BonDutyEnd', index: 'BonDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BoffDuty', index: 'BoffDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BoffDutyStart', index: 'BoffDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BoffDutyEnd', index: 'BoffDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BcalculateLate', index: 'BcalculateLate', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BcalculateEarly', index: 'BcalculateEarly', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'BrestTime', index: 'BrestTime', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'ConDuty', index: 'ConDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'ConDutyStart', index: 'ConDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'ConDutyEnd', index: 'ConDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'CoffDuty', index: 'CoffDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'CoffDutyStart', index: 'CoffDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'CoffDutyEnd', index: 'CoffDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'CcalculateLate', index: 'CcalculateLate', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'CcalculateEarly', index: 'CcalculateEarly', align: 'center', width: 10, hidden: true, viewable: false, search: false },
+            { name: 'CrestTime', index: 'CrestTime', align: 'center', width: 10, hidden: true, viewable: false, search: false },
         ],
-        caption: getlbl("hr.ShiftList"),//"班次列表"
+        caption: getlbl("hr.ShiftAdjust"),//"班次调整"
         imgpath: '/images',
         multiselect: false,
         rowNum: irowNum,
@@ -158,7 +158,7 @@ $(document).ready(function () {
             top: 0, width: 850, labelswidth: '70px', height: "auto",
             dataheight: "auto",
             reloadAfterSubmit: true,
-            closeAfterEdit: document.all ? false : true,	//IE下修改后，对话框不关闭。主要是上传照片Ajax无法同步执行
+            closeAfterEdit: document.all ? false : true,    //IE下修改后，对话框不关闭。主要是上传照片Ajax无法同步执行
             jqModal: true,
             closeOnEscape: false,
             beforeInitData: function (formid) {},
@@ -190,7 +190,7 @@ $(document).ready(function () {
             //url: addUrl,
             jqModal: true,
             reloadAfterSubmit: true,
-            closeAfterAdd: document.all ? false : true,	//IE下修改后，对话框不关闭。主要是上传照片Ajax无法同步执行
+            closeAfterAdd: document.all ? false : true, //IE下修改后，对话框不关闭。主要是上传照片Ajax无法同步执行
             //bottominfo : "<div class=&#39test'>有*号的为必填项  </div>",,
             afterSubmit: getAddafterSubmit,
             afterShowForm: function (formid) {
@@ -214,12 +214,12 @@ $(document).ready(function () {
                 var rowid = $("#DataGrid").jqGrid('getGridParam', 'selrow');
                 var ret = $("#DataGrid").jqGrid('getRowData', rowid);
 
-                showOnDutyView(ret); //查看详细
+                initShiftDetail4View(ret); //查看详细
                 setFormStyle("view"); //查看详细
 
-                $(".navButton").hide(); //隐藏按钮	
+                $(".navButton").hide(); //隐藏按钮  
             }
-        }	//view parameters
+        }   //view parameters
         );
 
     var topPagerDiv = $('#DataGrid_toppager')[0];         // "#list_toppager"
@@ -250,23 +250,23 @@ function mergeFormCells(element, options) {
 
 //加载班次列表
 function initShiftsList(element){
-	var result = $.ajax({type:'post',url:'../Common/GetShiftJSON.asp?nd='+getRandom(),data:null,async:false});
-	var data = result.responseText;
-	var arrShifts = data ? ($.parseJSON(data) || []) : [];
+    var result = $.ajax({type:'post',url:'../Common/GetShiftJSON.asp?nd='+getRandom(),data:null,async:false});
+    var data = result.responseText;
+    var arrShifts = data ? ($.parseJSON(data) || []) : [];
 
-	var $selObj = $(element);
-	$selObj.attr({"id":"ShiftName", "name":"ShiftName"});
+    var $selObj = $(element);
+    $selObj.attr({"id":"ShiftName", "name":"ShiftName"});
 
-	for(var i in arrShifts){
-		$selObj.append("<option value='" + arrShifts[i].id + "'>" + arrShifts[i].name + "</option>");
-	}
+    for(var i in arrShifts){
+        $selObj.append("<option value='" + arrShifts[i].id + "'>" + arrShifts[i].name + "</option>");
+    }
 
-	$selObj.find("option:first").attr("selected","selected");
+    $selObj.find("option:first").attr("selected","selected");
 }
 
 //degree 上班时段
 //rowObject 班次数据
-function showOnDutyForm(degree, rowObject) {
+function initShiftDetail4Form(degree, rowObject) {
     if (degree == undefined || isNaN(degree) || parseInt(degree) < 1) {
         degree = 1;
     }
@@ -405,13 +405,13 @@ function showOnDutyForm(degree, rowObject) {
 
 //degree 上班时段
 //rowObject 班次数据
-function showOnDutyView(rowObject) {
+function initShiftDetail4View(rowObject) {
     if (rowObject == undefined || rowObject == null || typeof rowObject != "object") {
         return;
     }
 
     $("#trv_EmployeeDesc").remove();
-	$("#trv_StretchShift").after("<tr rowpos='8' class='FormData' id='trv_EmployeeDesc'><td class='CaptionTD form-view-label ui-widget-content' width='30%'><b>调整员工</b></td><td colspan='3' class='DataTD form-view-data ui-helper-reset ui-widget-content' id='v_EmployeeDesc'>&nbsp;<span>" + (rowObject && rowObject.EmployeeDesc ? rowObject.EmployeeDesc : "") + "</span></td></tr>");
+    $("#trv_StretchShift").after("<tr rowpos='8' class='FormData' id='trv_EmployeeDesc'><td class='CaptionTD form-view-label ui-widget-content' width='30%'><b>调整员工</b></td><td colspan='3' class='DataTD form-view-data ui-helper-reset ui-widget-content' id='v_EmployeeDesc'>&nbsp;<span>" + (rowObject && rowObject.EmployeeDesc ? rowObject.EmployeeDesc : "") + "</span></td></tr>");
 
     var degree = rowObject.Degree && !isNaN(rowObject.Degree) ? 1 : parseInt(rowObject.Degree);
 
@@ -511,48 +511,48 @@ function checkStretchShift(stretchShift) {
 }
 
 function setFormStyle(oper) {    
-	if(oper == "view"){
-		//$("#trv_ShiftName").children(":even").css("width", "15%");
-	}else{
-		//$("#tr_Description>td,#tr_AdjustDate>td,#tr_ShiftName>td,#tr_StretchShift>td,#tr_Night>td").addClass("ui-border ui-NoneRightBorder");
-	    //$("#tr_ShiftName>td:last,#tr_Night>td:last,#tr_StretchShift>td:last,#tr_AdjustDate>td:last,#tr_Description>td:last").addClass("ui-border-R");
-	    $("#Night").css({ "margin-top": "5px" });
-	    $("#StretchShift").css({ "margin-top": "5px" });
-	    $("#Degree").css({ "width": "120px" });
+    if(oper == "view"){
+        //$("#trv_ShiftName").children(":even").css("width", "15%");
+    }else{
+        //$("#tr_Description>td,#tr_AdjustDate>td,#tr_ShiftName>td,#tr_StretchShift>td,#tr_Night>td").addClass("ui-border ui-NoneRightBorder");
+        //$("#tr_ShiftName>td:last,#tr_Night>td:last,#tr_StretchShift>td:last,#tr_AdjustDate>td:last,#tr_Description>td:last").addClass("ui-border-R");
+        $("#Night").css({ "margin-top": "5px" });
+        $("#StretchShift").css({ "margin-top": "5px" });
+        $("#Degree").css({ "width": "120px" });
 
-		//$("#trv_ShiftName").children(":even").css("width", "12%");
-	}
+        //$("#trv_ShiftName").children(":even").css("width", "12%");
+    }
 }
 
 function checkFirstOnDuty(firstOnDuty){
-	if($("#Night").is(':checked')){
-		if(firstOnDuty && firstOnDuty == "1"){
-    		$("#FirstOnDuty").html("<option value='0'>" + getlbl("hr.OnThatDay") + "</option><option selected value='1'>" + getlbl("hr.OnPriorDay") + "</option>");
-    	}
-    	else{
-    		$("#FirstOnDuty").html("<option selected value='0'>" + getlbl("hr.OnThatDay") + "</option><option value='1'>" + getlbl("hr.OnPriorDay") + "</option>");
-    	}
+    if($("#Night").is(':checked')){
+        if(firstOnDuty && firstOnDuty == "1"){
+            $("#FirstOnDuty").html("<option value='0'>" + getlbl("hr.OnThatDay") + "</option><option selected value='1'>" + getlbl("hr.OnPriorDay") + "</option>");
+        }
+        else{
+            $("#FirstOnDuty").html("<option selected value='0'>" + getlbl("hr.OnThatDay") + "</option><option value='1'>" + getlbl("hr.OnPriorDay") + "</option>");
+        }
     }
     else{
-		$("#FirstOnDuty").html("<option selected value='0'>" + getlbl("hr.OnThatDay") + "</option>");
+        $("#FirstOnDuty").html("<option selected value='0'>" + getlbl("hr.OnThatDay") + "</option>");
     }
 }
 
 function initEditForm(rowObject) {
-	var id = rowObject && rowObject.TempShiftID ? rowObject.TempShiftID : "";
-	var degree = rowObject && rowObject.Degree ? rowObject.Degree : "";
+    var id = rowObject && rowObject.TempShiftID ? rowObject.TempShiftID : "";
+    var degree = rowObject && rowObject.Degree ? rowObject.Degree : "";
 
     InitDepartments(id); //加载部门
     InitEmployees(); //加载员工
-    showOnDutyForm(degree, rowObject); //显示上班时段详细
+    initShiftDetail4Form(degree, rowObject); //显示上班时段详细
     setFormStyle("edit"); //设置表单样式
 
     if(rowObject && rowObject.EmployeeCode){ //加载已选中人员
-    	LoadSelEmp(rowObject.EmployeeCode);
+        LoadSelEmp(rowObject.EmployeeCode);
     }
 
     $("#AdjustDate").bind("focus", function () { 
-    	WdatePicker({ isShowClear: false, dateFmt: 'yyyy-MM-dd' }); 
+        WdatePicker({ isShowClear: false, dateFmt: 'yyyy-MM-dd' }); 
     }).blur();
 
     $("#StretchShift").bind("change", function () {
@@ -560,7 +560,7 @@ function initEditForm(rowObject) {
     });
 
     $("#Night").bind("change", function () {
-    	checkFirstOnDuty(rowObject && rowObject.FirstOnDuty ? rowObject.FirstOnDuty : "");
+        checkFirstOnDuty(rowObject && rowObject.FirstOnDuty ? rowObject.FirstOnDuty : "");
     });
 
     $("#Degree").bind("change", function () {
@@ -593,15 +593,15 @@ function initEditForm(rowObject) {
         rowObject.CcalculateEarly = $("#CcalculateEarly").size() > 0 ? $("#CcalculateEarly").val() : "";
         rowObject.CrestTime = $("#CrestTime").size() > 0 ? $("#CrestTime").val() : "";
 
-        showOnDutyForm($(this).val(), rowObject);
+        initShiftDetail4Form($(this).val(), rowObject);
     });
 
     if(rowObject && rowObject.ShiftId && !isNaN(rowObject.ShiftId)){
-	    $("#ShiftName").find("option[value='" + rowObject.ShiftId + "']").attr("selected","selected");
-	}
+        $("#ShiftName").find("option[value='" + rowObject.ShiftId + "']").attr("selected","selected");
+    }
 
-	checkFirstOnDuty(rowObject && rowObject.FirstOnDuty ? rowObject.FirstOnDuty : "");
-	$("#WdateDiv").hide();
+    checkFirstOnDuty(rowObject && rowObject.FirstOnDuty ? rowObject.FirstOnDuty : "");
+    $("#WdateDiv").hide();
 }
 
 //初使化部门
@@ -711,20 +711,20 @@ function fSearchEmployeeSubmit() {
 }
 
 function LoadSelEmp(empIds){
-	if(empIds == undefined || typeof empIds != "string" || empIds == "" || empIds.search(/[a-zA-Z]+/g) >= 0){
-		return false;
-	}
+    if(empIds == undefined || typeof empIds != "string" || empIds == "" || empIds.search(/[a-zA-Z]+/g) >= 0){
+        return false;
+    }
 
-	var arrEmps = getEmpJSON(null, empIds); //获取员工JSON数据
+    var arrEmps = getEmpJSON(null, empIds); //获取员工JSON数据
 
-	//所选职员列表
-	var $selObj = $("#selEmpDesc");
+    //所选职员列表
+    var $selObj = $("#selEmpDesc");
 
-	for(var i in arrEmps){
-		$selObj.append("<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>");
-	}
+    for(var i in arrEmps){
+        $selObj.append("<option value='" + arrEmps[i].id + "'>" + arrEmps[i].number + "-" + arrEmps[i].name + "</option>");
+    }
 
-	return true;
+    return true;
 }
 
 function gridReload() {
@@ -747,26 +747,26 @@ function fGetFormData() {
     data.ShiftId = $("#ShiftName").find("option:selected").val();
     data.ShiftName = $("#ShiftName").find("option:selected").text();
 
-	//选择部门
-	var depts = GetSelDepts();
-	if(depts && depts.Ids && depts.Names){
-		data.DepartmentCode = depts.Ids;
-		data.DepartmentName = depts.Names;
-	}
+    //选择部门
+    var depts = GetSelDepts();
+    if(depts && depts.Ids && depts.Names){
+        data.DepartmentCode = depts.Ids;
+        data.DepartmentName = depts.Names;
+    }
 
-	//选择职员
-	var empIds = "", empNames = "";
-	$("#selEmpDesc").find("option").each(function(){
-		empIds += "," + $(this).val();
-		empNames += "," + $(this).text();
-	});
+    //选择职员
+    var empIds = "", empNames = "";
+    $("#selEmpDesc").find("option").each(function(){
+        empIds += "," + $(this).val();
+        empNames += "," + $(this).text();
+    });
 
-	data.EmployeeCode = empIds.substr(1);
-	data.EmployeeName = empNames.substr(1);
+    data.EmployeeCode = empIds.substr(1);
+    data.EmployeeName = empNames.substr(1);
 
     data.StretchShift = $("#StretchShift").is(":checked") ? "1" : "0";
     data.Night = $("#Night").is(":checked") ? "1" : "0";
-	data.AdjustDate = $("#AdjustDate").val();
+    data.AdjustDate = $("#AdjustDate").val();
 
     data.AonDuty = $("#AonDuty").val();
     data.AonDutyStart = $("#AonDutyStart").val();

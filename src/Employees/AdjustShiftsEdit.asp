@@ -15,7 +15,7 @@ dim strAonDutyStart, strAonDutyEnd, strAoffDuty, strAoffDutyStart, strAoffDutyEn
 dim strBonDutyEnd, strBoffDuty, strBoffDutyStart, strBoffDutyEnd, strBrestTime, strConDuty, strConDutyStart, strConDutyEnd
 dim strCoffDuty, strCoffDutyStart, strCoffDutyEnd, strCrestTime
 dim strAdjustcheck, strAdjustDate
-dim strDeptCode, strEmployeeCode, strDepartmentName, strEmployeeName, strEmployeeDesc, strDescription
+dim strDepartmentCode, strEmployeeCode, strDepartmentName, strEmployeeName, strEmployeeDesc, strDescription
 dim TempTime
 dim strRecordID
 

@@ -429,4 +429,84 @@ sub RegCard(tempId, isClearOld)
 	end if
 end sub
 
+'检测年份正确性
+'2006-3-2:Mike
+'输入参数：
+'strYear: 年份
+'iType:   时间数据类型: 0为smalldatetime型, 否则为:datetime型
+Function CheckYear( iYear, iType )
+	CheckYear = 0
+	if not IsNumeric(iYear) then exit function
+	if iType = 0 then
+		if iYear < 2099 and iYear >= 1900 then
+			CheckYear = iYear
+		end if
+	else
+		if iYear < 9999 and iYear > 1111 then
+			CheckYear = iYear
+		end if
+	end if
+End Function
+
+'检测月份正确性
+'2006-3-2:Mike
+'输入参数：
+'strYear: 年份
+Function CheckMonth( iMonth )
+	CheckMonth = 0
+	if not IsNumeric(iMonth) then exit function
+	if iMonth > 0 and iMonth < 13 then
+		CheckMonth = iMonth
+	end if
+End Function
+
+'检测日期正确性
+'2006-3-2:Mike
+'输入参数：
+'strYear: 日期
+Function CheckDay( iDay )
+	CheckDay = 0
+	if not IsNumeric(iDay) then exit function
+	if iDay > 0 and iDay < 32 then
+		CheckDay = iDay
+	end if
+End Function
+
+
+'检测日期时间正确性 YYYY-MM-DD
+'2006-3-2:Mike
+'iType:   时间数据类型: 0为smalldatetime型, 否则为:datetime型
+'ch   :   时期格式分隔符
+Function CheckDate( strDate, iType, ch )
+	dim iyear
+	dim imonth
+	dim iday
+	dim arrValues
+	CheckDate = 0
+	if strDate = "" then
+		exit Function
+	end if 
+	if ch = "" then       '默认格式 YYYY-MM-DD
+		ch = "-"
+	end if
+	arrValues = split(strDate, ch)
+
+	if ubound(arrValues) > 2 then
+		exit Function
+	end if
+
+	if CheckYear( arrValues(0), iType ) = 0 then
+		exit function
+	end if
+
+	if CheckMonth( arrValues(1) ) = 0 then
+		exit function
+	end if
+
+	if CheckDay( arrValues(2) ) = 0 then
+		exit function
+	end if
+	
+	CheckDate = 1
+End Function
 %>

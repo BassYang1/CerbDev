@@ -146,7 +146,7 @@ $(document).ready(function () {
 
                 $(".navButton").hide(); //隐藏按钮
 
-                showOnDutyForm(ret.Degree, ret); //显示上班时段详细
+                initShiftDetail4Form(ret.Degree, ret); //显示上班时段详细
                 setFormStyle("edit"); //设置表单样式
                 initForm(ret); //绑定事件处理方法
             },
@@ -165,7 +165,7 @@ $(document).ready(function () {
             //bottominfo : "<div class=&#39test'>有*号的为必填项  </div>",,
             afterSubmit: getAddafterSubmit,
             afterShowForm: function (formid) {
-                showOnDutyForm(); //显示上班时段详细
+                initShiftDetail4Form(); //显示上班时段详细
                 setFormStyle("edit"); //设置表单样式
                 initForm(); //绑定事件处理方法
             },
@@ -184,7 +184,7 @@ $(document).ready(function () {
             beforeShowForm: function () {
                 var rowid = $("#DataGrid").jqGrid('getGridParam', 'selrow');
                 var ret = $("#DataGrid").jqGrid('getRowData', rowid);
-                showOnDutyView(ret); //查看详细
+                initShiftDetail4View(ret); //查看详细
                 setFormStyle("oper"); //设置表单样式
 
                 $(".navButton").hide(); //隐藏按钮		
@@ -214,7 +214,7 @@ $(document).ready(function () {
 
 //degree 上班时段
 //rowObject 班次数据
-function showOnDutyForm(degree, rowObject) {
+function initShiftDetail4Form(degree, rowObject) {
     if (degree == undefined || isNaN(degree) || parseInt(degree) < 1) {
         degree = 1;
     }
@@ -353,7 +353,7 @@ function showOnDutyForm(degree, rowObject) {
 
 //degree 上班时段
 //rowObject 班次数据
-function showOnDutyView(rowObject) {
+function initShiftDetail4View(rowObject) {
     if (rowObject == undefined || rowObject == null || typeof rowObject != "object") {
         return;
     }
@@ -522,7 +522,7 @@ function initForm(rowObject) {
         rowObject.CcalculateEarly = $("#CcalculateEarly").size() > 0 ? $("#CcalculateEarly").val() : "";
         rowObject.CrestTime = $("#CrestTime").size() > 0 ? $("#CrestTime").val() : "";
 
-        showOnDutyForm($(this).val(), rowObject);
+        initShiftDetail4Form($(this).val(), rowObject);
     });
     
 	checkFirstOnDuty(rowObject && rowObject.FirstOnDuty ? rowObject.FirstOnDuty : "");

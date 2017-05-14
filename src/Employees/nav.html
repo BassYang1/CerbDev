@@ -80,6 +80,7 @@ window.onload = function() {
 		<span id="spanNavAtt">Attend</span>
 		<a id="hrefAttShift" href="Shifts.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts</a>
 		<a id="hrefAdjustShift" href="AdjustShifts.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts Adjustment</a>
+		<a id="hrefShiftRules" href="ShiftRules.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Rules</a>
 	</div>
 </div>
 </body>
@@ -93,6 +94,7 @@ $(document).ready(function(){
 	$("#spanNavAtt").html(getlbl("hr.spanNavAtt"));
 	$("#hrefAttShift").html(getlbl("hr.hrefAttShift"));
 	$("#hrefAdjustShift").html(getlbl("hr.hrefAdjustShift"));
+	$("#hrefShiftRules").html(getlbl("hr.hrefShiftRules"));
 	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*";
 	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*";
 });

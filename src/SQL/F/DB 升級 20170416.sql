@@ -74,7 +74,24 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'OtherCode')
 	ALTER TABLE TempShifts ADD OtherCode NTEXT NULL --Ô¤Áô,ºóĞø¿ÉÄÜÔÙÔö¼ÓµÄÌõ¼ş
-		
+
+--°à´Îµ÷ÕûAttendanceOndutyRule£¬Ôö¼Ó×Ö¶Î
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'DepartmentCode')
+	ALTER TABLE AttendanceOndutyRule ADD DepartmentCode NTEXT NULL --±£´æ²¿ÃÅÁĞ±íÌõ¼ş	
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'OtherCode')
+	ALTER TABLE AttendanceOndutyRule ADD OtherCode NTEXT NULL --Ô¤Áô,ºóĞø¿ÉÄÜÔÙÔö¼ÓµÄÌõ¼ş
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'DepartmentCode')
+	ALTER TABLE AttendanceOndutyRuleChange ADD DepartmentCode NTEXT NULL --±£´æ²¿ÃÅÁĞ±íÌõ¼ş	
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'OtherCode')
+	ALTER TABLE AttendanceOndutyRuleChange ADD OtherCode NTEXT NULL --Ô¤Áô,ºóĞø¿ÉÄÜÔÙÔö¼ÓµÄÌõ¼ş		
+
 --Ìí¼ÓLabelText
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Equipment', NULL, 'Yes', 'ÊÇ', 'ÊÇ', 'Yes', '' 
@@ -93,8 +110,16 @@ SELECT 'Employees', NULL, 'AdjustShiftCondition', 'Î´ÉèÖÃ°à´Îµ÷ÕûÔ±¹¤Ìõ¼ş', 'Î´Ô
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'AdjustShiftCondition');
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'ShiftRulesCondition', 'Î´ÉèÖÃÉÏ°à¹æÔòÔ±¹¤Ìõ¼ş', 'Î´ÔOÖÃÉÏ°àÒ„t†T¹¤—l¼ş', 'Not set the staff conditions', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'ShiftRulesCondition');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', NULL, 'AdjustShiftDate_Invalid', '°à´Îµ÷ÕûÊ±¼äÎŞĞ§', '°à´ÎÕ{Õû•régŸoĞ§', 'Invalid the date of the Shift Adjustment', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'AdjustShiftDate_Invalid');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'ShiftRule_Invalid', 'Î´ÉèÖÃÉÏ°à¹æÔò', 'Î´ÔOÖÃÉÏ°àÒ„t', 'Not set the shift rules', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'ShiftRule_Invalid');
 				
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', NULL, 'AllDept', 'ËùÓĞ²¿ÃÅ', 'ËùÓĞ²¿éT', 'All Departments', '' 
@@ -118,8 +143,20 @@ SELECT 'Tool', 'ExportDataExec.asp', 'shiftadjustment', '°à´Îµ÷Õû', '°à´ÎÕ{Õû', 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'shiftadjustment');
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'ShiftRules', 'ÉÏ°à¹æÔò', 'ÉÏ°àÒ„t', 'Shift Rules', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'ShiftRules');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', NULL, 'ShiftsAdjustment', '°à´Îµ÷Õû', '°à´ÎÕ{Õû', 'Shifts Adjustment', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'ShiftsAdjustment');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'ShiftRules', 'ÉÏ°à¹æÔò', 'ÉÏ°àÒ„t', 'Shift Rules', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'ShiftRules');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'EmpDescription', 'Ô±¹¤ËµÃ÷', '†T¹¤ÕfÃ÷', 'Employees Description', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'EmpDescription');
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', NULL, 'ExportShiftTitle', N'°à´ÎId,°à´ÎÃû,»ù±¾¹¤Ê±,ÊÇ·ñ¹ıÒ¹,µÚÒ»´ÎÉÏ°àË¢¿¨,ÉÏ°à´ÎÊı,µ¯ĞÔ°à´Î,ÉÏ°à±ê×¼Ê±¼ä1,ÉÏ°à¿ªÊ¼Ê±¼ä1,ÉÏ°à½ØÖ¹Ê±¼ä1,ÏÂ°à¿ªÊ¼Ê±¼ä1,ÏÂ°à±ê×¼Ê±¼ä1,ÏÂ°à½ØÖ¹Ê±¼ä1,ÔÊĞí³Ùµ½Ê±¼ä1,ÔÊĞíÔçÍËÊ±¼ä1,ÖĞ¼äĞİÏ¢1,ÉÏ°à±ê×¼Ê±¼ä2,ÉÏ°à¿ªÊ¼Ê±¼ä2,ÉÏ°à½ØÖ¹Ê±¼ä2,ÏÂ°à¿ªÊ¼Ê±¼ä2,ÏÂ°à±ê×¼Ê±¼ä2,ÏÂ°à½ØÖ¹Ê±¼ä2,ÔÊĞí³Ùµ½Ê±¼ä2,ÔÊĞíÔçÍËÊ±¼ä2,ÖĞ¼äĞİÏ¢2,ÉÏ°à±ê×¼Ê±¼ä3,ÉÏ°à¿ªÊ¼Ê±¼ä3,ÉÏ°à½ØÖ¹Ê±¼ä3,ÏÂ°à¿ªÊ¼Ê±¼ä3,ÏÂ°à±ê×¼Ê±¼ä3,ÏÂ°à½ØÖ¹Ê±¼ä3,ÔÊĞí³Ùµ½Ê±¼ä3,ÔÊĞíÔçÍËÊ±¼ä3,ÖĞ¼äĞİÏ¢3', N'°à´ÎId,°à´ÎÃû,»ù±¾¹¤•r,ÊÇ·ñß^Ò¹,µÚÒ¼´ÎÉÏ°àË¢¿¨,ÉÏ°à´Î”µ,—ĞÔ°à´Î,ÉÏ°à˜ËœÊ•rég1,ÉÏ°àé_Ê¼•rég1,ÉÏ°à½ØÖ¹•rég1,ÏÂ°àé_Ê¼•rég1,ÏÂ°à˜ËœÊ•rég1,ÏÂ°à½ØÖ¹•rég1,ÔÊÔSßtµ½•rég1,ÔÊÔSÔçÍË•rég1,ÖĞégĞİÏ¢1,ÉÏ°à˜ËœÊ•rég2,ÉÏ°àé_Ê¼•rég2,ÉÏ°à½ØÖ¹•rég2,ÏÂ°àé_Ê¼•rég2,ÏÂ°à˜ËœÊ•rég2,ÏÂ°à½ØÖ¹•rég2,ÔÊÔSßtµ½•rég2,ÔÊÔSÔçÍË•rég2,ÖĞégĞİÏ¢2,ÉÏ°à˜ËœÊ•rég3,ÉÏ°àé_Ê¼•rég3,ÉÏ°à½ØÖ¹•rég3,ÏÂ°àé_Ê¼•rég3,ÏÂ°à˜ËœÊ•rég3,ÏÂ°à½ØÖ¹•rég3,ÔÊÔSßtµ½•rég3,ÔÊÔSÔçÍË•rég3,ÖĞégĞİÏ¢3', 'Shift Id,Shift Name,Working Hour,Overnight,First Clock In,Time Period,Flexible Shifts,Standard Time 1 of On Duty,Start Time 1 of On Duty,End Time 1 of On Duty,Start Time 1 of Off Duty,Standard Time 1 of Off Duty,End Time 1 of Off Duty,Allow Late Time 1 (min),Allow Early Leave Time 1 (min),Rest 1 (min),Standard Time 2 of On Duty,Start Time 2 of On Duty,End Time 2 of On Duty,Start Time 2 of Off Duty,Standard Time 2 of Off Duty,End Time 2 of Off Duty,Allow Late Time 2 (min),Allow Early Leave Time 2 (min),Rest 2 (min),Standard Time 3 of On Duty,Start Time 3 of On Duty,End Time 3 of On Duty,Start Time 3 of Off Duty,Standard Time 3 of Off Duty,End Time 3 of Off Duty,Allow Late Time 3 (min),Allow Early Leave Time 3 (min),Rest 3 (min)', NULL 
@@ -128,6 +165,43 @@ SELECT 'Tool', NULL, 'ExportShiftTitle', N'°à´ÎId,°à´ÎÃû,»ù±¾¹¤Ê±,ÊÇ·ñ¹ıÒ¹,µÚÒ»´
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', NULL, 'ExportShiftAdjustmentTitle', N'Id,°à´ÎÀàĞÍ,µ÷ÕûÊ±¼ä,°à´ÎÃû,»ù±¾¹¤Ê±,ÊÇ·ñ¹ıÒ¹,µÚÒ»´ÎÉÏ°àË¢¿¨,ÉÏ°à´ÎÊı,µ¯ĞÔ°à´Î,µ÷ÕûÔ±¹¤,ÉÏ°à±ê×¼Ê±¼ä1,ÉÏ°à¿ªÊ¼Ê±¼ä1,ÉÏ°à½ØÖ¹Ê±¼ä1,ÏÂ°à¿ªÊ¼Ê±¼ä1,ÏÂ°à±ê×¼Ê±¼ä1,ÏÂ°à½ØÖ¹Ê±¼ä1,ÔÊĞí³Ùµ½Ê±¼ä1,ÔÊĞíÔçÍËÊ±¼ä1,ÖĞ¼äĞİÏ¢1,ÉÏ°à±ê×¼Ê±¼ä2,ÉÏ°à¿ªÊ¼Ê±¼ä2,ÉÏ°à½ØÖ¹Ê±¼ä2,ÏÂ°à¿ªÊ¼Ê±¼ä2,ÏÂ°à±ê×¼Ê±¼ä2,ÏÂ°à½ØÖ¹Ê±¼ä2,ÔÊĞí³Ùµ½Ê±¼ä2,ÔÊĞíÔçÍËÊ±¼ä2,ÖĞ¼äĞİÏ¢2,ÉÏ°à±ê×¼Ê±¼ä3,ÉÏ°à¿ªÊ¼Ê±¼ä3,ÉÏ°à½ØÖ¹Ê±¼ä3,ÏÂ°à¿ªÊ¼Ê±¼ä3,ÏÂ°à±ê×¼Ê±¼ä3,ÏÂ°à½ØÖ¹Ê±¼ä3,ÔÊĞí³Ùµ½Ê±¼ä3,ÔÊĞíÔçÍËÊ±¼ä3,ÖĞ¼äĞİÏ¢3', N'Id,°à´ÎîĞÍ,Õ{Õû•rég,°à´ÎÃû,»ù±¾¹¤•r,ÊÇ·ñß^Ò¹,µÚÒ¼´ÎÉÏ°àË¢¿¨,ÉÏ°à´Î”µ,—ĞÔ°à´Î,Õ{Õû†T¹¤,ÉÏ°à˜ËœÊ•rég1,ÉÏ°àé_Ê¼•rég1,ÉÏ°à½ØÖ¹•rég1,ÏÂ°àé_Ê¼•rég1,ÏÂ°à˜ËœÊ•rég1,ÏÂ°à½ØÖ¹•rég1,ÔÊÔSßtµ½•rég1,ÔÊÔSÔçÍË•rég1,ÖĞégĞİÏ¢1,ÉÏ°à˜ËœÊ•rég2,ÉÏ°àé_Ê¼•rég2,ÉÏ°à½ØÖ¹•rég2,ÏÂ°àé_Ê¼•rég2,ÏÂ°à˜ËœÊ•rég2,ÏÂ°à½ØÖ¹•rég2,ÔÊÔSßtµ½•rég2,ÔÊÔSÔçÍË•rég2,ÖĞégĞİÏ¢2,ÉÏ°à˜ËœÊ•rég3,ÉÏ°àé_Ê¼•rég3,ÉÏ°à½ØÖ¹•rég3,ÏÂ°àé_Ê¼•rég3,ÏÂ°à˜ËœÊ•rég3,ÏÂ°à½ØÖ¹•rég3,ÔÊÔSßtµ½•rég3,ÔÊÔSÔçÍË•rég3,ÖĞégĞİÏ¢3', 'Temp Shift Id,Shift Type,Adjustment Date,Shift Name,Working Hour,Overnight,First Clock In,Time Period,Flexible Shifts,Employee Desciption,Standard Time 1 of On Duty,Start Time 1 of On Duty,End Time 1 of On Duty,Start Time 1 of Off Duty,Standard Time 1 of Off Duty,End Time 1 of Off Duty,Allow Late Time 1 (min),Allow Early Leave Time 1 (min),Rest 1 (min),Standard Time 2 of On Duty,Start Time 2 of On Duty,End Time 2 of On Duty,Start Time 2 of Off Duty,Standard Time 2 of Off Duty,End Time 2 of Off Duty,Allow Late Time 2 (min),Allow Early Leave Time 2 (min),Rest 2 (min),Standard Time 3 of On Duty,Start Time 3 of On Duty,End Time 3 of On Duty,Start Time 3 of Off Duty,Standard Time 3 of Off Duty,End Time 3 of Off Duty,Allow Late Time 3 (min),Allow Early Leave Time 3 (min),Rest 3 (min)', NULL 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'ExportShiftAdjustmentTitle');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'ExportShiftRulesTitle', N'¹æÔòId,Ô±¹¤ËµÃ÷,ÉÏ°à·½Ê½,ÃâË¢¿¨,µÚÒ»ÖÜ¿ªÊ¼ÈÕ,ÏêÏ¸¹æÔò,ÉúĞ§ÈÕÆÚ', N'Ò„tId,†T¹¤ÕfÃ÷,ÉÏ°à·½Ê½,ÃâË¢¿¨,µÚÒ¼ÖÜé_Ê¼ÈÕ,Ô”¼šÒ„t,ÉúĞ§ÈÕÆÚ', 'Rule Id,Employee Desciption,On Duty Mode,Start Date,Rule Detail,Effective Date', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'ExportShiftRulesTitle');
+
+--ÉÏ°à·½Ê½
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Sng_Week_1', N'1-µ¥ÖÜÑ­»·',N'1-†ÎÖÜŞ’È¦',N'1-Single-week Cycle',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Sng_Week_1');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Dbl_Week_2', N'2-Ë«ÖÜÑ­»·',N'2-ëpÖÜŞ’È¦',N'2-Double-week Cycle',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Dbl_Week_2');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Custom_3', N'3-×Ô¶¨ÒåÑ­»·',N'3-×Ô¶¨ÁxŞ’È¦',N'3-Custom Cycle',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Custom_3');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Dbl_St_Dt_Null', N'Ë«ÖÜÊ±µÚÒ»ÖÜ¿ªÊ¼ÈÕ²»ÄÜÎª¿Õ£¡',N'ëpÖÜ•rµÚÒ»ÖÜé_Ê¼ÈÕ²»ÄÜé¿Õ£¡',N'The start day in the first week for a double-week cycle Not empty£¡',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Dbl_St_Dt_Null');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Dbl_St_Dt_Invalid', N'µÚÒ»ÖÜ¿ªÊ¼ÈÕ¸ñÊ½ÎŞĞ§£¡',N'µÚÒ»ÖÜé_Ê¼ÈÕ¸ñÊ½ŸoĞ§£¡',N'Invalid format for the start day in the week£¡',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Dbl_St_Dt_Invalid');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Loop_Count_Invalid', N'Ñ­»·ÌìÊıÎŞĞ§£¡',N'µÚÒ»ÖÜé_Ê¼ÈÕ¸ñÊ½ŸoĞ§£¡',N'Invalid format for the start day in the week£¡',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Dbl_St_Dt_Invalid');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Effec_Dt_Null', N'ÉúĞ§ÈÕÆÚ²»ÄÜÎª¿Õ£¡',N'ÉúĞ§ÈÕÆÚ²»ÄÜé¿Õ£¡',N'Blank effecitve date£¡',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Effec_Dt_Null');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Wm_Effec_Dt_Invalid', N'ÉúĞ§ÈÕÆÚ¸ñÊ½ÎŞĞ§£¡',N'ÉúĞ§ÈÕÆÚ¸ñÊ½ŸoĞ§£¡',N'Invalid Format for Effective Date£¡',NULL
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Wm_Effec_Dt_Invalid');
 
 --°´µ¥¸öÄ£°å×¢²áµ½Éè±¸
 if exists (select name from sysObjects where name = 'pRegCardTemplateRegister' and type = 'p')

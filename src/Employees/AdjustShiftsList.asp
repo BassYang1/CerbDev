@@ -12,7 +12,7 @@ sidx = request.QueryString("sidx") 'order by ??
 sord = request.QueryString("sord")
 if page="" then page = 1 end if
 if rows = "" then rows = 10 end if
-if sidx = "" then sidx = "ShiftId" end if
+if sidx = "" then sidx = "TempShiftID" end if
 if sord = "" then sord ="asc" end if
 
 dim strUserId

@@ -1,13 +1,13 @@
 ﻿<!--#include file="Page.asp" -->
 <!--#include file="..\Conn\conn.asp" -->
 <%
-dim strUserId, strDeptIds, strOper, templateId
-dim strSQL,strJS,strid,strPid,strDepartmentCode,strName,strCheck
+dim strUserId, strDeptIds, strOper, templateId, strId
+dim strSQL,strJS,strPid,strDepartmentCode,strName,strCheck
 
 strDeptIds = Cstr(Trim(Request.Form("deptIds")))
 strOper = Cstr(Trim(Request.Form("oper")))
 strUserId = Cstr(Trim(Request.QueryString("userId")))
-templateId = Cstr(Trim(Request.QueryString("templateId")))
+strId = Cstr(Trim(Request.QueryString("id")))
 if strUserId = "" then strUserId = "0" end if
 
 
@@ -54,9 +54,24 @@ elseif LCASE(strOper) = "shiftadjustment" then '班次调整
 	end if
 
 	strSQL = strSQL & " order by D.DepartmentCode for xml path('')) as JsonData"
+elseif LCASE(strOper) = "shiftrules" then '上班规则
+	strSQL = "select(select '{"&chr(34)&"id"&chr(34)&":"&chr(34)&"' + CAST(D.DepartmentID AS NVARCHAR(10)) + '"&chr(34)&",', '"&chr(34)&"name"&chr(34)&":"&chr(34)&"' + D.DepartmentName + '"&chr(34)&",', '"&chr(34)&"code"&chr(34)&":"&chr(34)&"' + D.DepartmentCode + '"&chr(34)&",', '"&chr(34)&"pId"&chr(34)&":"&chr(34)&"' + CAST(ISNULL(D.ParentDepartmentID,0) AS NVARCHAR(10)) + '"&chr(34)&"',(case when ISNULL(T.DepartmentCode,'') <> '' then ',"&chr(34)&"checked"&chr(34)&":"&chr(34)&"true"&chr(34)&"' else '' end), '},' from Departments D"
+
+	strSQL = strSQL & " LEFT JOIN (select TOP 1 CAST(DepartmentCode AS NVARCHAR(MAX)) AS DepartmentCode from AttendanceOndutyRule where RuleId = " & strId & ") T"
+	strSQL = strSQL & " ON LEFT(LTRIM(ISNULL(T.DepartmentCode, '')),3) = '0 -' OR CHARINDEX(',' + CAST(D.DepartmentId AS NVARCHAR(10)) + ',', ',' + T.DepartmentCode + ',') > 0"
+	strSQL = strSQL & " where isNumeric(D.DepartmentCode)=1"
+
+	if strUserId <> "1" then
+		strSQL = strSQL & " and exists(select 1 from RoleDepartment where DepartmentId=D.DepartmentId and UserId = '"&strUserId&"')"
+	end if
+
+	strSQL = strSQL & " order by D.DepartmentCode for xml path('')) as JsonData"
 else 'all
 	strSQL = "select(select '{"&chr(34)&"id"&chr(34)&":"&chr(34)&"' + CAST(D.DepartmentID AS NVARCHAR(10)) + '"&chr(34)&",', '"&chr(34)&"name"&chr(34)&":"&chr(34)&"' + D.DepartmentName + '"&chr(34)&",', '"&chr(34)&"code"&chr(34)&":"&chr(34)&"' + D.DepartmentCode + '"&chr(34)&",', '"&chr(34)&"pId"&chr(34)&":"&chr(34)&"' + CAST(ISNULL(P.DepartmentID,0) AS NVARCHAR(10)) + '"&chr(34)&"',(case ISNULL(R.Permission,0) when 1 then ',"&chr(34)&"checked"&chr(34)&":"&chr(34)&"true"&chr(34)&"' else '' end), '},' from Departments D Left join Departments P on left(D.DepartmentCode,len(D.DepartmentCode)-5)=P.DepartmentCode left join RoleDepartment R on (D.DepartmentId=R.DepartmentId and R.UserId = '"&strUserId&"') where isNumeric(D.DepartmentCode)=1 order by D.DepartmentCode for xml path('')) as JsonData"
 end if
+
+'response.write strSQL
+'response.end
 
 Rs.open strSQL, Conn, 2, 1
 strJS = "["

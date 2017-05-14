@@ -100,6 +100,13 @@ Function SetStringSafe( strValue )
 	SetStringSafe = strValue
 End Function
 
+Function FormatStringSafe( strValue )
+	if strValue <> "" and instr(strValue, "'")>0 then
+		strValue = replace(strValue, "'", "''")
+	end if
+	FormatStringSafe = trim(strValue)
+End Function
+
 'iType:类型标识:  0:字符,时间类型;  1:整型.BOOL型;
 Function GetDBValues( strTemp, iType)
 	If Not IsNull(strTemp) Then

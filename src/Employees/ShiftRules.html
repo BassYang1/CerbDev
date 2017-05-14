@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>RegCard Template</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.custom.css"/>
+<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"' rel='nofollow'><\/script>");
+</script>
+<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../js/grid.subgrid.js"></script>
+<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+
+<script src="../js/ui/jquery.ui.core.js"></script>
+<script src="../js/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
+<script src="../js/ui/jquery.ui.mouse.js"></script>
+<script src="../js/ui/jquery.ui.button.js"></script>
+<script src="../js/ui/jquery.ui.draggable.js"></script>
+<script src="../js/ui/jquery.ui.position.js"></script>
+<script src="../js/ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../css/demos.css">
+<style>
+.ui-border {
+	border-top:1px solid #a6c9e2 !important;
+	border-left:1px solid #a6c9e2 !important;
+	padding: 6px !important;
+}
+.ui-border-LB {
+	border-bottom:1px solid #a6c9e2 !important;
+	border-left:1px solid #a6c9e2 !important;
+	padding: 6px !important;
+}
+.ui-border-R {
+	border-right:1px solid #a6c9e2 !important;
+	padding: 6px !important;
+}
+.ui-NoneRightBorder {
+}
+.c-radio {vertical-align:middle; margin-top:-2px; margin-bottom:1px;}
+</style>
+</head>
+<body>
+<table id="DataGrid" class="scroll"></table>
+<div id="pager" class="scroll" style="text-align:center;"></div>
+<div id="dialog-confirm" title="Template Reg" style="display: none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span id="RegTempTotice"</span>
+</p>
+</div>
+<div id="divSearch"></div>
+<div id="divExport"></div>
+<div id="load_EditForm" style="display: none; position: absolute; top: 0px; z-index: 1002; left: 0px; filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#3f000000',endColorstr='#3f000000');
+    background-color:rgba(255, 255, 255, 0.3)"><label class="loading ui-state-default ui-state-active" label style="background-color: white; position: inherit;opacity:1.0; padding: 5px;">正在獲取，請稍後...</label></div>
+</body>
+</html>
+<script type="text/javascript" src="ShiftRules.js"></script>
