@@ -88,6 +88,9 @@ else if(strexportType == "shiftadjustment"){
 else if(strexportType == "shiftrules"){
 	strSheetName = "<%=GetToolLbl("ShiftRules")%>";//上班规则
 }
+else if(strexportType == "legalholiday"){
+	strSheetName = "<%=GetToolLbl("Holiday")%>";//法定假期
+}
 else
 {
 	strSheetName = "Sheet1";

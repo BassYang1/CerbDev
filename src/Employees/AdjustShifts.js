@@ -728,7 +728,7 @@ function LoadSelEmp(empIds){
 }
 
 function gridReload() {
-    $("#DataGrid").jqGrid('setGridParam', { url: "ShiftsList.asp", page: 1, }).trigger("reloadGrid");
+    $("#DataGrid").jqGrid('setGridParam', { url: "AdjustShiftsList.asp", page: 1, }).trigger("reloadGrid");
 }
 
 function GetTime() {

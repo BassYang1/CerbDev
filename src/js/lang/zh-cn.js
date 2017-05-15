@@ -145,6 +145,12 @@ var hr={
 	Sunday : "周日",
 	Rest: "休息",
 	Date: "日期",
+	hrefHolidy : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;法定假日",
+	Holiday: "法定假日",
+	HolidayDate: "假期日期",
+	TransposalDate: "调换日期",
+	HolidayDesc: "假期说明",
+	ChooseTemp: "请选择模板...",
 }
 
 

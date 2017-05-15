@@ -855,7 +855,7 @@ function fGetFormData() {
 }
 
 function gridReload() {
-    $("#DataGrid").jqGrid('setGridParam', { url: "ShiftsList.asp", page: 1, }).trigger("reloadGrid");
+    $("#DataGrid").jqGrid('setGridParam', { url: "ShiftRulesList.asp", page: 1, }).trigger("reloadGrid");
 }
 
 function GetTime() {

@@ -145,6 +145,12 @@ var hr={
 	Sunday : "Sunday",
 	Rest: "Rest",
 	Date: "Date",
+	hrefHolidy : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Legal Holidays",
+	Holiday: "Legal Holidays",
+	HolidayDate: "Holiday Date",
+	TransposalDate: "Adjust Date",
+	HolidayDesc: "Holiday Description",
+	ChooseTemp: "Please choose the template...",
 }
 
 

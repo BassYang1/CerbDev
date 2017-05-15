@@ -195,12 +195,12 @@ Select Case strOper
 			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
 		end if
 
-		strSQL = "SELECT(SELECT EmployeeDesc + '|' FROM AttendanceOnDutyRule WHERE RuleId in ("+cstr(strCode)+") for xml path('')) AS EmployeeDesc"
+		strSQL = "SELECT(SELECT EmployeeDesc + '|' FROM AttendanceOnDutyRule WHERE RuleId in ("+strRecordID+") for xml path('')) AS EmployeeDesc"
 
 		Rs.open strSQL, Conn, 2, 1
 
 		If Not Rs.eof Then
-			strEmployeeDesc = strEmployeeDesc & Trim(Rs.fields(0).value)
+			strEmployeeDesc = Trim(Rs.fields(0).value)
 		End If
 
 		Rs.close
@@ -210,8 +210,8 @@ Select Case strOper
 
 		strSQL = "BEGIN TRY "	
 		strSQL = strSQL & "BEGIN TRANSACTION "			
-		strSQL = strSQL & "DELETE AttendanceOnDutyRuleChange WHERE ChangeId in ("+cstr(strCode)+")"
-		strSQL = strSQL & "DELETE AttendanceOnDutyRule WHERE RuleId in ("+cstr(strCode)+")"
+		strSQL = strSQL & "DELETE AttendanceOnDutyRuleChange WHERE ChangeId in ("+strRecordID+")"
+		strSQL = strSQL & "DELETE AttendanceOnDutyRule WHERE RuleId in ("+strRecordID+")"
 		strSQL = strSQL & "COMMIT TRANSACTION "
 		strSQL = strSQL & "END TRY "
 		strSQL = strSQL & "BEGIN CATCH "
