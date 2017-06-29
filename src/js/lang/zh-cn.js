@@ -151,6 +151,7 @@ var hr={
 	TransposalDate: "调换日期",
 	HolidayDesc: "假期说明",
 	ChooseTemp: "请选择模板...",
+	hrefLeave : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请假",
 }
 
 

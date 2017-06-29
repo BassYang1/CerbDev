@@ -161,7 +161,16 @@ SELECT 'Employees', NULL, 'ShiftRules', '上班规则', '上班規則', 'Shift Rules', '
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', NULL, 'Holiday', '法定假期', '法定假期', 'Legal Holidays', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Holiday');
-	
+
+--请假	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Emp_Trip', '出差', '出差', 'Trip', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Emp_Trip');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Emp_Annu_Leave', '年假', '年假', 'Annual', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Emp_Annu_Leave');
+
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', NULL, 'HolidayName', '假期说明', '假期說明', 'Remarks on Holidays', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'HolidayName');
