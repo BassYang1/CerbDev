@@ -111,6 +111,27 @@ ElseIF strType = "knowledge" then
 
 	strJS = strJS + "</select>"
 	response.write strJS
+ElseIF strType = "controllertype" then 
+	strSQL = "select FieldId,Content from TableFieldCode where FieldID=7 order by RecordID "
+	if selID <>  "" then 
+		strJS = "<select  id='"+selID+"'  class='FormElement ui-widget-content ui-corner-all' >"
+	else
+		strJS = "<select class='FormElement ui-widget-content ui-corner-all' >"
+	end if
+	Rs.open strSQL, Conn, 1, 1
+	while NOT Rs.EOF
+		if instr(trim(Rs.fields("Content").value), "'") > 0 then
+			strJS = strJS + "<option value ='"+trim(Rs.fields("Content").value)+"'>" + GetSafeJs(trim(Rs.fields("Content").value)) + "</option>"
+		else
+			strJS = strJS + "<option value ='"+trim(Rs.fields("Content").value)+"'>" + trim(Rs.fields("Content").value) + "</option>"
+		end if
+		Rs.movenext
+		i = i + 1
+	wend
+	Rs.close
+
+	strJS = strJS + "</select>"
+	response.write strJS
 End IF
 fCloseADO()
 %>

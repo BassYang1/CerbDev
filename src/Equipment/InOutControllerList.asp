@@ -92,6 +92,13 @@ if strUserId<>"1" then '1 为admin用户
 	strWhere = strWhere & " ControllerId in (select ControllerID from RoleController where UserId in ("&strUserId&") and Permission=1 ) "
 	strExportSql=strExportSql & " C.ControllerId in (select ControllerID from RoleController where UserId in ("&strUserId&") and Permission=1 ) "
 end if 
+if strWhere = "" then 
+	strWhere = " where Left(isnull(ControllerType,'1'),1) <> '2' "
+	strExportSql = " where Left(isnull(C.ControllerType,'1'),1) <> '2' "
+else
+	strWhere = strWhere & " and Left(isnull(ControllerType,'1'),1) <> '2' "
+	strExportSql = strExportSql & " and Left(isnull(C.ControllerType,'1'),1) <> '2' "
+end if
 
 a.Sqlstring="select ControllerId,ControllerNumber,ControllerName,Location,IP,WorkType,ServerIP from Controllers"&strWhere&" "&"order by "& sidx & " " & sord
 set a.dbconnection=conn

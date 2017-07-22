@@ -18,7 +18,7 @@ jQuery("#DataGrid").jqGrid({
 				return "<input type='checkbox' class='itmchk' id='itmchk_"+options.rowId+"' value='"+options.rowId+"' >";
 			}
 			},  
-			{name:'ParentDepartmentID',index:'ParentDepartmentID',width:80,edittype:'none',editable:true,hidden:true,editrules:{edithidden:true,required:true},sortable:false,},
+			{name:'ParentDepartmentID',index:'ParentDepartmentID',width:80,edittype:'none',editable:true,hidden:true,editrules:{edithidden:true,required:false},sortable:false,},
 			{name:'DepartmentName',index:'DepartmentName',width:500,editable:true,editrules:{required:true},sortable:false,
 				searchoptions:{sopt:["eq","ne",'cn']},
 				formoptions:{elmsuffix:"<font color=#FF0000>*</font>"}},
@@ -296,8 +296,11 @@ function InitDepartments(selId){
 			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
 		}
 		else{
-			for(var i = 0; i < len; i ++){
-				sBlank += "&nbsp;";
+			for(var i = 1; i < len; i ++){
+				if(i==1)
+					sBlank += "&nbsp;&nbsp;";
+				else
+					sBlank += "|&nbsp;";
 			}
 
 			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";

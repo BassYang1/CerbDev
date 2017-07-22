@@ -11,7 +11,7 @@ strTableId = Cstr(Trim(Request.QueryString("TableId")))
 fConnectADODB()
 strJS = ""
 
-if LCase(strexportType) = "employees" or  LCase(strexportType) = "departments" or LCase(strexportType) = "controllers" or LCase(strexportType) = "holiday" or LCase(strexportType) = "schedule" or LCase(strexportType) = "inout" or LCase(strexportType) = "register" or LCase(strexportType) = "registerdetail" or LCase(strexportType) = "users" or LCase(strexportType) = "logevent" or LCase(strexportType) = "attendtotal" or LCase(strexportType) = "acsbuttonreport" then  
+if LCase(strexportType) = "employees" or  LCase(strexportType) = "departments" or LCase(strexportType) = "controllers" or LCase(strexportType) = "holiday" or LCase(strexportType) = "schedule" or LCase(strexportType) = "inout" or LCase(strexportType) = "register" or LCase(strexportType) = "registerdetail" or LCase(strexportType) = "users" or LCase(strexportType) = "logevent" or LCase(strexportType) = "attendtotal" or LCase(strexportType) = "acsbuttonreport" or LCase(strexportType) = "askforleave" or LCase(strexportType) = "ontrip" or LCase(strexportType) = "signcard" or LCase(strexportType) = "overtime"then  
 	if LCase(strexportType) = "employees" then 
 		strSQL = Session("exportdata")
 		'strColumnName="部门,姓名,工号,卡号,身份证,性别,职务,职位,电话,Email,出生日期,入职日期,婚否,学历,国籍,籍贯,通信地址,在职状态,含指纹,含照片"
@@ -62,8 +62,37 @@ if LCase(strexportType) = "employees" or  LCase(strexportType) = "departments" o
 		strSQL = Session("exportdata")
 		'strColumnName="设备,输入,日期,时间"
 		strColumnName=GetToolLbl("ExportAcsbuttonreportTitle")
+	elseif LCase(strexportType) = "shift" then  '班次
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportShiftTitle")
+	elseif LCase(strexportType) = "shiftadjustment" then  '班次调整
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportShiftAdjustmentTitle")
+	elseif LCase(strexportType) = "shiftrules" then  '上班规则
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportShiftRulesTitle")
+	elseif LCase(strexportType) = "legalholiday" then  '法定假期
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportHolidayTitle")
+	elseif LCase(strexportType) = "askforleave" then  '请假
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportLeaveTitle")
+	elseif LCase(strexportType) = "ontrip" then  '出差
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportTripTitle")
+	elseif LCase(strexportType) = "signcard" then  '补卡
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportSignCardTitle")
+	elseif LCase(strexportType) = "overtime" then  '加班
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportOvertimeTitle")
 	end if
 	strJS=strJS&strColumnName
+
+
+	'response.write strSQL + "<br />"
+	'response.write strColumnName + "<br />"
+	'response.end
 	On Error Resume Next
 	Rs.open strSQL, Conn, 2, 1
 	if err.number <> 0 then

@@ -10,7 +10,7 @@ strTableId = Cstr(Trim(Request.QueryString("TableId")))
 fConnectADODB()
 strJS = "<table border='1' id='"+strTableId+"' border='0' cellspacing='0' cellpadding='0'>"
 
-if LCase(strexportType) = "employees" or  LCase(strexportType) = "departments" or LCase(strexportType) = "controllers" or LCase(strexportType) = "holiday" or LCase(strexportType) = "schedule" or LCase(strexportType) = "inout" or LCase(strexportType) = "register" or LCase(strexportType) = "registerdetail" or LCase(strexportType) = "users" or LCase(strexportType) = "logevent" or LCase(strexportType) = "attendtotal" or LCase(strexportType) = "acsbuttonreport" or LCase(strexportType) = "shift" OR LCase(strexportType) = "shiftadjustment" or LCase(strexportType) = "shiftrules" or LCase(strexportType) = "legalholiday" then  
+if LCase(strexportType) = "employees" or  LCase(strexportType) = "departments" or LCase(strexportType) = "controllers" or LCase(strexportType) = "holiday" or LCase(strexportType) = "schedule" or LCase(strexportType) = "inout" or LCase(strexportType) = "register" or LCase(strexportType) = "registerdetail" or LCase(strexportType) = "users" or LCase(strexportType) = "logevent" or LCase(strexportType) = "attendtotal" or LCase(strexportType) = "acsbuttonreport" or LCase(strexportType) = "shift" OR LCase(strexportType) = "shiftadjustment" or LCase(strexportType) = "shiftrules" or LCase(strexportType) = "legalholiday" or LCase(strexportType) = "askforleave" or LCase(strexportType) = "ontrip" or LCase(strexportType) = "signcard" or LCase(strexportType) = "overtime" then  
 	if LCase(strexportType) = "employees" then 
 		strSQL = Session("exportdata")
 		'strColumnName="部门,姓名,工号,卡号,身份证,性别,职务,职位,电话,Email,出生日期,入职日期,婚否,学历,国籍,籍贯,通信地址,在职状态,含指纹,含照片"
@@ -73,6 +73,18 @@ if LCase(strexportType) = "employees" or  LCase(strexportType) = "departments" o
 	elseif LCase(strexportType) = "legalholiday" then  '法定假期
 		strSQL = Session("exportdata")
 		strColumnName=GetToolLbl("ExportHolidayTitle")
+	elseif LCase(strexportType) = "askforleave" then  '请假
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportLeaveTitle")
+	elseif LCase(strexportType) = "ontrip" then  '出差
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportTripTitle")
+	elseif LCase(strexportType) = "signcard" then  '补卡
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportSignCardTitle")
+	elseif LCase(strexportType) = "overtime" then  '加班
+		strSQL = Session("exportdata")
+		strColumnName=GetToolLbl("ExportOvertimeTitle")
 	end if
 	arrColumn = Split(strColumnName,",")
 	strJS=strJS&"<tr>"

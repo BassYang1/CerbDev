@@ -83,6 +83,9 @@ window.onload = function() {
 		<a id="hrefShiftRules" href="ShiftRules.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Rules</a>
 		<a id="hrefHolidy" href="Holiday.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Holiday</a>
 		<a id="hrefLeave" href="Leave.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leave</a>
+		<a id="hrefTrip" href="Trip.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Trip</a>
+		<a id="hrefSign" href="Sign.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sign</a>
+		<a id="hrefOvertime" href="Overtime.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overtime</a>
 	</div>
 </div>
 </body>
@@ -99,6 +102,9 @@ $(document).ready(function(){
 	$("#hrefShiftRules").html(getlbl("hr.hrefShiftRules"));
 	$("#hrefHolidy").html(getlbl("hr.hrefHolidy"));
 	$("#hrefLeave").html(getlbl("hr.hrefLeave"));
+	$("#hrefTrip").html(getlbl("hr.hrefTrip"));
+	$("#hrefSign").html(getlbl("hr.hrefSign"));
+	$("#hrefOvertime").html(getlbl("hr.hrefOvertime"));
 	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*";
 	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*";
 });

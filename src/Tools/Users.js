@@ -270,16 +270,19 @@ function GetDepartmentHtml(selId) {
         sBlank = "";
         len = code.length / 5;
 
-        if (len == 1) {
-            deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";
-        }
-        else {
-            for (var i = 0; i < len; i++) {
-                sBlank += "&nbsp;";
-            }
+        if(len == 1){
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + name + "</option>";			
+		}
+		else{
+			for(var i = 1; i < len; i ++){
+				if(i==1)
+					sBlank += "&nbsp;&nbsp;";
+				else
+					sBlank += "|&nbsp;";
+			}
 
-            deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
-        }
+			deptListHtml += "<option value='" + id + "' code='" + code + "'>" + sBlank + "|-" + name + "</option>";
+		}
     }
 
     return deptListHtml;

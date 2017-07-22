@@ -37,6 +37,9 @@ if session("UserName") = "" or session("UserId") = "" or session("EmId") = ""  o
 		Response.Cookies("Cerb_EmId") = strEmId
 		Response.Cookies("Cerb_OperPermissions") = strOperPermissions
 		
+		'考勤申请是否走工作流
+		Call CheckWorkflowApproval()
+
 		'Call AddLogEvent2(cstr(strUserName),"登录系统","登录","用户名:"&cstr(strUserName))
 		Call AddLogEvent2(cstr(strUserName),GetCerbLbl("LoginSystem"),GetCerbLbl("Login"),GetCerbLbl("UserName")&cstr(strUserName))
 		Call fCloseADO()

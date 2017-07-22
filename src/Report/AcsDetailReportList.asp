@@ -149,7 +149,7 @@ strCondition=strWhere
 'JSON显示的字段及顺序
 strShowField = " TB.RecordID,D.DepartmentName,TB.Name,TB.Number,TB.Card,"
 strShowField = strShowField & "C.location+(Case TB.Door When '1' Then (Case when C.CardReader1 is not null then '('+isnull(ltrim(C.DoorLocation1),'')+ ','+isnull(ltrim(substring(C.CardReader1,charindex('-',C.CardReader1)+1,len(C.CardReader1))),'') +')' else '' end) "
-strShowField = strShowField & "when '2' then ((Case when C.CardReader2 is not null then '('+(case isnull(ltrim(left(C.DoorType,1)),'') when '0' then isnull(ltrim(C.DoorLocation1),'') else isnull(ltrim(C.DoorLocation2),'') end )+','+isnull(ltrim(substring(C.CardReader1,charindex('-',C.CardReader1)+1,len(C.CardReader1))),'') +')' else '' end)) else '' end) as location "
+strShowField = strShowField & "when '2' then ((Case when C.CardReader2 is not null then '('+(case isnull(ltrim(left(C.DoorType,1)),'') when '0' then isnull(ltrim(C.DoorLocation1),'') else isnull(ltrim(C.DoorLocation2),'') end )+','+isnull(ltrim(substring(C.CardReader2,charindex('-',C.CardReader2)+1,len(C.CardReader2))),'') +')' else '' end)) else '' end) as location "
 strShowField = strShowField & ",TB.Brushtime1,TB.Brushtime2,TB.Property "
 '分页后再与其它表关联
 strJoinTable = " left join Controllers C on TB.Controllerid = C.ControllerId left Join Departments D on TB.DepartmentID=D.DepartmentID "		

@@ -1,4 +1,9 @@
-var strloadtext= "正在获取，请稍后...";
+﻿var strloadtext= "正在获取，请稍后...";
+var strapplytext = "申请";
+var strrevoketext = "撤销";
+var strrevokemsg = "撤销所选记录？";
+var strapprovetext = "批准";
+var strrefusetext = "拒绝";
 var stredittext = "修改";
 var straddtext = "增加";
 var strviewtext = "查看";
@@ -35,7 +40,7 @@ var login={
 	Tool : "工&nbsp;&nbsp;具",
 	LogOut : "注&nbsp;&nbsp;销",
 	Help : "帮&nbsp;&nbsp;助",
-	Monitor : "实时监控"
+	Monitor : "实时监控",
 }
 
 var hr={
@@ -152,6 +157,57 @@ var hr={
 	HolidayDesc: "假期说明",
 	ChooseTemp: "请选择模板...",
 	hrefLeave : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请假",
+	LeaveList: "请假",
+	LeaveType: "请假类型",
+	StartTime: "开始时间",
+	EndTime: "结束时间",
+	Status : "状态",
+	LeaveStatus : "休假状态",
+	Note : "说明",
+	ApproveDesc: "批注",
+	Private : "事假",
+	Sick : "病假",
+	Annual : "年假",
+	Compensatory : "补假",
+	Maternity : "产假",
+	Matrimony : "婚假",
+	Visit : "探亲假",
+	Lactation : "哺乳假",
+	Funeral : "丧假",
+	OtherLeave : "其它",
+	Hour: "小时",
+	Day: "天",
+	Year: "年",
+	Month: "月",
+	IsAllDay: "是否整天",
+	FlowData_My: "我的资料",
+	FlowData_Processing: "待办资料",
+	FlowData_Processed: "已办资料",
+	FlowStatus_All_A: "全部",
+	FlowStatus_Applied_0: "申请",
+	FlowStatus_Reviewing_1: "待审",
+	FlowStatus_Reviewed_1: "已审",
+	FlowStatus_Approving_2: "待批",
+	FlowStatus_Approved_2: "已批",
+	FlowStatus_Refused_3: "拒絕",
+	FlowStatus_Reviewing_With_Revoke_4: "待撤审",
+	FlowStatus_Approving_With_Revode_5: "待撤批",
+	FlowStatus_Ceased_C: "中止",
+	YearLeave: "全年应休日数",
+	AppliedLeave: "已休日数",
+	ApplingLeave: "本次申请",
+	RemainLeave: "剩余年假",
+	hrefTrip: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出差",
+	TripList: "出差",
+	TripDes: "出差地点",
+	TripThing: "拟办事项",
+	hrefSign: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;补卡",
+	BrushTime: "时间",
+	SingReason: "原因",
+	SignList: "补卡", 
+	hrefOvertime: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加班",
+	OvertimeList: "加班",
+	OTReason: "原因",
 }
 
 
@@ -284,7 +340,7 @@ var con={
 	Schedule : "时间表",
 	InOutDoor : "进出门",
 	HavePhoto : "有照片",
-	HaveFP : "有指纹",
+	HaveFP : "有指纹(人脸)",
 	RegCardDetail : "注册卡号明细",
 	TempRegToCon : "模板注册到设备",
 	RegTempExplan : "<br/><B>[覆盖注册]</B>表示用模板数据覆盖原注册卡号，即先全部清空原注册卡号，再注册（注意：清空仅清空服务器设备数据，不清空硬件上的数据）；<br /><br />&nbsp;&nbsp;&nbsp;<B>[追加注册]</B>表示将模板数据追加到设备上（注意：不会产生重复数据，已注册的卡号，不做任何修改）",
@@ -302,6 +358,8 @@ var con={
 	ValidateModeVal1 : "1 - 指纹",
 	ValidateModeVal2 : "2 - 卡＋指纹",
 	ValidateModeVal3 : "3 - 卡＋密码",
+	ValidateModeVal5 : "5 - 人脸",
+	ValidateModeVal6 : "6 - 卡+人脸",
 	RegCardTemp : "注册卡号模板",
 	AllEmp0 : "0 - 所有职员",
 	RegToCon : "注册到设备",
@@ -344,7 +402,10 @@ var con={
 	EmpList: '职员列表',
 	OnlyByCond:'仅按此条件', 
 	OnlyByCondDesc:'勾选后设备只注册上述条件人员，不符合上述条件的人员将删除；否则追加注册',
-	TempNotice: '部门列表或职员列表为“或”的关系'
+	TempNotice: '部门列表或职员列表为“或”的关系',
+	ControllerIdType:'设备类型',
+	ControllerIdSerail:'设备序列号',
+	SerailIllegal:'序列号非法'
 }
 
 var rep={

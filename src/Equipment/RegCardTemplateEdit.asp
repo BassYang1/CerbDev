@@ -12,6 +12,7 @@ Dim strSQL,strOper, strRecordID, strTemplateName,strEmployeeDesc,strEmployeeCode
 Dim strDepartmentName, strEmployeeName
 Dim isEditEmpCode,arr
 Dim strConditionSql
+Dim oldstrValidateMode,isDelOldEmployee
 strOper = Request.Form("oper")
 strRecordID = Replace(Request.Form("id"),"'","''")
 strTemplateName = Replace(Request.Form("TemplateName"),"'","''")
@@ -33,8 +34,7 @@ strUserId = session("UserId")
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
 	response.End()
-end if
-
+end if 
 if GetOperRole("RegCardTemplate",strOper) <> true then 
 	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
 	response.End()
@@ -79,6 +79,16 @@ if	strSQL<>"" then
 	end if
 end if
 
+'20170601 mike  修改模板时，判断验证方式是否有变化，如果有变化，则调用模板注册时，要先删除再注册
+isDelOldEmployee = 0
+if strOper = "edit" then 
+	strSQL = "Select left(ISNULL(ValidateMode,''),1) from ControllerTemplates where  TemplateId = "&strRecordID
+	oldstrValidateMode = GetFieldValueBySql(strSQL)
+	if Left(Trim(strValidateMode),1) <> oldstrValidateMode and strOnlyByCondition="1" then 
+		isDelOldEmployee = 1
+	end if
+end if
+
 Dim ctrlObj
 set ctrlObj = new Controller
 ctrlObj.DBConnection = Conn
@@ -113,7 +123,7 @@ if	strSQL<>"" then
 	Select Case strOper
 		Case "add": 'Add Record
 			On Error Resume Next
-			strSQL = "SELECT TemplateId AS Id FROM ControllerTemplates WHERE TemplateType='4' AND TemplateName='" & strTemplateName & "'"
+			strSQL = "SELECT @@IDENTITY AS  Id"
 			Rs.Open strSQL, Conn, 1, 1
 			If Not Rs.eof Then
 				strRecordID = cstr(Rs.fields("Id").value)
@@ -128,7 +138,7 @@ if	strSQL<>"" then
 			end if
 
 			if strRecordID <> "" then
-				ctrlObj.RegTemplateCard strRecordID, "0" //注册卡号
+				ctrlObj.RegTemplateCard strRecordID, "0" 	'//注册卡号
 			end if
 
 			strActions = GetCerbLbl("strLogAdd")
@@ -136,7 +146,11 @@ if	strSQL<>"" then
 			Call AddLogEvent(GetEquLbl("ConManage")&"-"&GetEquLbl("RegCard")&"-"&GetEquLbl("TempMode"),cstr(strActions),cstr(strActions)&GetEquLbl("RegCardTemp")&","&GetEquLbl("TempName")&"["&strTemplateName&"]")
 		Case "edit": 'Edit Record
 			if strRecordID <> "" then
-				ctrlObj.RegTemplateCard strRecordID, "0" //注册卡号
+				if isDelOldEmployee = 1 then
+					ctrlObj.RegTemplateCard strRecordID, "1" 	'//20170601 注册卡号
+				else
+					ctrlObj.RegTemplateCard strRecordID, "0" 	'//注册卡号
+				end if
 			end if
 
 			strActions = GetCerbLbl("strLogEdit")

@@ -166,6 +166,74 @@ Function CheckUserName( strUserName, strUserPswd, strUserId, strEmId, strOperPer
 	Rs.close
 End Function
 
+'考勤申请是否走工作流'
+Sub CheckWorkflowApproval
+	dim strApproverEmpId, strApproverEmpName
+	dim strSQL, strOption, arrOptions
+
+	session("WorkflowApproverEmpId") = ""
+	session("WorkflowApproverEmpName") = ""
+	session("IsApprovalWorkflow") = 0
+
+	On Error Resume Next
+	strSQL = "select ISNULL(VariableValue, '') from Options where VariableName='StrWorkflowApproval' and VariableType='str'"
+	Rs.open strSQL, Conn, 1, 1
+
+	if err.number <> 0 then
+		On Error GoTo 0
+		exit sub
+	end if
+
+	'IsApproval,ApproverEmpId'
+	if not Rs.EOF then
+		strOption = Rs.fields("VariableValue").value		
+	end if
+	Rs.close
+
+	if strOption = "" then
+		exit sub
+	end if
+
+	arrOptions = split(strOption, ",")
+
+	if isarray(arrOptions) = 0 and ubound(arrOptions) < 1 then
+		exit sub
+	end if
+
+	'是否使用流程'
+	if arrOptions(0) = "1" then 
+		session("NeedApprovWorkflow") = 1
+	end if
+
+	strApproverEmpId = arrOptions(1) '流程审批人'
+
+	If strApproverEmpId <> "" Then 
+		strSQL = "select Name from Employees where Left(IncumbencyStatus,1) <> '1' and EmployeeId=" & strApproverEmpId
+		Rs.open strSQL, Conn, 1, 1
+
+		if err.number <> 0 then
+			On Error GoTo 0
+			exit sub
+		end if
+
+		if not Rs.EOF then
+			session("WorkflowApproverEmpId") =strApproverEmpId
+			session("WorkflowApproverEmpName") = Rs.fields("Name").value
+		end if
+
+		Rs.close
+	End If 
+End Sub
+
+'登录用户是否有审批权限'
+Function CheckApprovalPermission()	
+	CheckApprovalPermission = 0
+
+	if session("NeedApprovWorkflow") = 1 and session("WorkflowApproverEmpId") <> "" and session("WorkflowApproverEmpId") = session("EmId")  then
+		CheckApprovalPermission = 1
+	end if
+End Function
+
 Function AddLogEvent(strModules , strActions , strObjects )
 	AddLogEvent=0
 	if strModules = "" or strActions = "" then

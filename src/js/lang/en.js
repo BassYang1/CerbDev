@@ -1,4 +1,9 @@
 ﻿var strloadtext= "Loading, please wait...";
+var strapplytext = "Apply";
+var strrevoketext = "Revoke";
+var strrevokemsg = "Do you revode the record？";
+var strapprovetext = "Approve";
+var strrefusetext = "Refuse";
 var stredittext = "Edit";
 var straddtext = "Add";
 var strviewtext = "View";
@@ -151,6 +156,58 @@ var hr={
 	TransposalDate: "Adjust Date",
 	HolidayDesc: "Holiday Description",
 	ChooseTemp: "Please choose the template...",
+	hrefLeave : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ask for Leave",
+	LeaveList: "Ask for Leave",
+	LeaveType: "Leave Type",
+	StartTime: "Start Time",
+	EndTime: "End Time",
+	Status : "Status",
+	LeaveStatus : "Status",
+	Note : "Description",
+	ApproveDesc: "Remark",
+	Private : "Private Leave",
+	Sick : "Sick Leave",
+	Annual : "Annual Leave",
+	Compensatory : "Compensatory Leave",
+	Maternity : "Maternity Leave",
+	Matrimony : "Matrimony Leave",
+	Visit : "Visit Leave",
+	Lactation : "Lactation Leave",
+	Funeral : "Funeral Leave",
+	OtherLeave : "Other Leave",
+	Hour: "Hour",
+	Day: "Day",
+	Year: "Year",
+	Month: "Month",
+	IsAllDay: "Whole Day",
+	FlowData_My: "My Data",
+	FlowData_Processing: "Processing Pending Data",
+	FlowData_Processed: "Processed Data",
+	FlowStatus_All_A: "All",
+	FlowStatus_Applied_0: "Applied",
+	FlowStatus_Reviewing_1: "Reviewing",
+	FlowStatus_Reviewed_1: "Reviewed",
+	FlowStatus_Approving_2: "Approving",
+	FlowStatus_Approved_2: "Approved",
+	FlowStatus_Refused_3: "Refused",
+	FlowStatus_Reviewing_With_Revoke_4: "Review Withdrawal",
+	FlowStatus_Approving_With_Revoke_5: "Approval Withdrawal",
+	FlowStatus_Ceased_C: "Ceased",
+	YearLeave: "Yearly Due Days",
+	AppliedLeave: "Days Claimed",
+	ApplingLeave: "Days Applied for",
+	RemainLeave: "Days Remained",
+	hrefTrip: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Trip",
+	TripList: "Trip",
+	TripDes: "Trip Destination",
+	TripThing: "Matter",
+	hrefSign: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sign Card",
+	BrushTime: "Brush Time",
+	SingReason: "Reason",
+	SignList: "Sing Card", 
+	hrefOvertime: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overtime",
+	OvertimeList: "Overtime",
+	OTReason: "Reason",
 }
 
 
@@ -283,7 +340,7 @@ var con={
 	Schedule : "Schedule",
 	InOutDoor : "Door",//进出门
 	HavePhoto : "Have Photo",//有照片
-	HaveFP : "Have Fingerprint",//有指纹
+	HaveFP : "Have Fingerprint(Face)",//有指纹
 	RegCardDetail : "Card registration details",//注册卡号明细
 	TempRegToCon : "Template to controller",//模板注册到设备
 	RegTempExplan : "<B> [Covering Registration] </B> template data overwrite the original card registration , which is to clear all the original card registration, and new add (Note: Empty server controller data only, not empty hardware data );<br />&nbsp;&nbsp;&nbsp;<B> [Additional Registration] </B> templates that will append data to the controller (note: on't make duplicate data, the cards has been registered, without any modification)",
@@ -301,6 +358,8 @@ var con={
 	ValidateModeVal1 : "1 - Fingerprint",	//1 - 指纹
 	ValidateModeVal2 : "2 - Card＋Fingerprint",	//2 - 卡＋指纹
 	ValidateModeVal3 : "3 - Card＋Password",	//3 - 卡＋密码
+	ValidateModeVal5 : "5 - Face",
+	ValidateModeVal6 : "6 - Card+Face",
 	RegCardTemp : "Card Registration Template",//注册卡号模板
 	AllEmp0 : "0 - All Employees",//0 - 所有职员
 	RegToCon : "Registration to controller",//注册到设备
@@ -343,7 +402,10 @@ var con={
 	EmpList: 'Employee List',
 	OnlyByCond:'Unique Condition', 
 	OnlyByCondDesc:'If the option is checked, the employees based on the condition will be registered and the old registration data will be cleared. Or the employees will only be appended and registered.' ,
-	TempNotice: 'The conditions Department List and Employee List are the OR relationship.'
+	TempNotice: 'The conditions Department List and Employee List are the OR relationship.',
+	ControllerIdType:'Controller Type',//設備類型
+	ControllerIdSerail:'Controller Serail',//設備序號
+	SerailIllegal:'Controller Serail Illegal '	//序列号非法
 }
 
 var rep={

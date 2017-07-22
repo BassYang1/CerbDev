@@ -81,6 +81,8 @@ strEmpId = Cstr(Trim(Request.QueryString("EmployeeID")))
 		  <option value="<%=GetEquLbl("ValidateModeVal1")%>"><%=GetEquLbl("ValidateModeVal1")%></option>
 		  <option value="<%=GetEquLbl("ValidateModeVal2")%>"><%=GetEquLbl("ValidateModeVal2")%></option>
 		  <option value="<%=GetEquLbl("ValidateModeVal3")%>"><%=GetEquLbl("ValidateModeVal3")%></option>
+          <option value="<%=GetEquLbl("ValidateModeVal5")%>"><%=GetEquLbl("ValidateModeVal5")%></option>
+          <option value="<%=GetEquLbl("ValidateModeVal6")%>"><%=GetEquLbl("ValidateModeVal6")%></option>
 		</select>
 		</div></td>
 		<td colspan=2 align="center" style="width:12%"><div id="divFloorName"><%=GetEquLbl("Floor")%><!--楼层(信箱)：--></div></td>

@@ -1,4 +1,9 @@
 ﻿var strloadtext= "正在獲取，請稍後...";
+var strapplytext = "申請";
+var strrevoketext = "撤銷";
+var strrevokemsg = "撤銷所選記錄？";
+var strapprovetext = "批準";
+var strrefusetext = "拒絕";
 var stredittext = "修改";
 var straddtext = "增加";
 var strviewtext = "查看";
@@ -151,6 +156,58 @@ var hr={
 	TransposalDate: "調換日期",
 	HolidayDesc: "假期說明",
 	ChooseTemp: "請選擇模板...",
+	hrefLeave : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;請假",
+	LeaveList: "請假",
+	LeaveType: "請假類型",
+	StartTime: "開始時間",
+	EndTime: "結束時間",
+	Status : "狀態",
+	LeaveStatus : "休假狀態",
+	Note : "說明",
+	ApproveDesc: "批註",
+	Private : "事假",
+	Sick : "病假",
+	Annual : "年假",
+	Compensatory : "補假",
+	Maternity : "產假",
+	Matrimony : "婚假",
+	Visit : "探親假",
+	Lactation : "哺乳假",
+	Funeral : "喪假",
+	OtherLeave : "其它",
+	Hour: "小時",
+	Day: "天",
+	Year: "年",
+	Month: "月",
+	IsAllDay: "是否整天",
+	FlowData_My: "我的資料",
+	FlowData_Processing: "待辦資料",
+	FlowData_Processed: "已辦資料",
+	FlowStatus_All_A: "全部",
+	FlowStatus_Applied_0: "申請",
+	FlowStatus_Reviewing_1: "待審",
+	FlowStatus_Reviewed_1: "已審",
+	FlowStatus_Approving_2: "待批",
+	FlowStatus_Approved_2: "已批",
+	FlowStatus_Refused_3: "拒絕",
+	FlowStatus_Reviewing_With_Revoke_4: "待撤審",
+	FlowStatus_Approving_With_Revode_5: "待撤批",
+	FlowStatus_Ceased_C: "中止",
+	YearLeave: "全年應休日數",
+	AppliedLeave: "已休日數",
+	ApplingLeave: "本次申請",
+	RemainLeave: "剩余年假",
+	hrefTrip: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出差",
+	TripList: "出差",
+	TripDes: "出差地點",
+	TripThing: "擬辦事項",
+	hrefSign: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;補卡",
+	BrushTime: "時間",
+	SingReason: "原因",
+	SignList: "補卡", 
+	hrefOvertime: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加班",
+	OvertimeList: "加班",
+	OTReason: "原因",
 }
 
 
@@ -283,7 +340,7 @@ var con={
 	Schedule : "時間表",
 	InOutDoor : "進出門",
 	HavePhoto : "有照片",
-	HaveFP : "有指紋",
+	HaveFP : "有指紋(人臉)",
 	RegCardDetail : "註冊卡號明細",
 	TempRegToCon : "範本註冊到設備",
 	RegTempExplan : "<br /><B>[覆蓋註冊]</B>表示用範本資料覆蓋原註冊卡號，即先全部清空原註冊卡號，再註冊（注意：清空僅清空伺服器設備資料，不清空硬體上的資料）；<br /><br />&nbsp;&nbsp;&nbsp;<B>[追加註冊]</B>表示將範本資料追加到設備上（注意：不會產生重復資料，已註冊的卡號，不做任何修改）",
@@ -301,6 +358,8 @@ var con={
 	ValidateModeVal1 : "1 - 指紋",
 	ValidateModeVal2 : "2 - 卡＋指紋",
 	ValidateModeVal3 : "3 - 卡＋密碼",
+	ValidateModeVal5 : "5 - 人臉",
+	ValidateModeVal6 : "6 - 卡+人臉",
 	RegCardTemp : "註冊卡號範本",
 	AllEmp0 : "0 - 所有職員",
 	RegToCon : "註冊到設備",
@@ -343,7 +402,10 @@ var con={
 	EmpList: '職員列表',
 	OnlyByCond:'僅按此條件', 
 	OnlyByCondDesc:'勾選後設備只註冊上述條件人員，不符合上述條件的人員將刪除；否則追加註冊',
-	TempNotice: '部門列表或職員列表為“或”的關系'
+	TempNotice: '部門列表或職員列表為“或”的關系',
+	ControllerIdType:'設備類型',
+	ControllerIdSerail:'設備序號',
+	SerailIllegal:'序號非法'
 }
 
 var rep={

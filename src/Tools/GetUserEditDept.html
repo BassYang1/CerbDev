@@ -45,9 +45,8 @@ var strUserId = Request(location.href, "userId");
 var strView = Request(location.href, "view");
 var oper = Request(location.href, "oper");
 var templateId = Request(location.href, "templateId");
-var id = Request(location.href, "id");
 
-if(oper && (oper == "regcard" || oper == "shiftadjustment" || oper == "shiftrules")){
+if(oper){
 	$("#treeDemo").css({'height':'155px'});
 	$("#treeDemo").css({'width':'400px'});
 }
@@ -56,7 +55,7 @@ else{
 	$("#treeDemo").css({'width':'240px'});
 }
 
-var strUrl = '../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&templateId=' + templateId + '&id=' + id + '&userId='+strUserId;
+var strUrl = '../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&templateId=' + templateId + '&userId='+strUserId;
 var htmlObj = $.ajax({type:"post", url:strUrl, data:{oper: oper}, async:false});
 var zNodes = "";
 try{
@@ -153,6 +152,34 @@ function GetCheckDepts()
 	if(zNodes.length == chkNum){
 		return {Ids: "0 - " + getlbl("con.AllDept"), Names: getlbl("con.AllDept")}; //0 - 所有部门
 	}
+
+	if(Ids != ""){
+		Ids = Ids.substring(0,Ids.length-1);
+		Names = Names.substring(0,Names.length-1);
+	}
+
+	return {Ids: Ids, Names: Names};
+}
+
+//获取所以选择的节点ID   此方法不返回 0-XXXX
+function GetCheckDepts2()
+{
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes = treeObj.getCheckedNodes(true);
+	var Ids = "", Names = "";
+	var chkNum = 0;
+
+	for(var i=0; i<nodes.length; i++){
+		if(nodes[i].id != 999999999){
+			Ids = Ids + nodes[i].id + ",";
+			Names = Names + nodes[i].name + ",";
+			chkNum++;
+		}
+	}
+	/*
+	if(zNodes.length == chkNum){
+		return {Ids: "0 - " + getlbl("con.AllDept"), Names: getlbl("con.AllDept")}; //0 - 所有部门
+	}*/
 
 	if(Ids != ""){
 		Ids = Ids.substring(0,Ids.length-1);

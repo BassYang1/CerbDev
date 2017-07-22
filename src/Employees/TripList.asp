@@ -67,15 +67,6 @@ If (strSearchOn = "true") Then
 	strField = request.QueryString("searchField")
 	strFieldData = request.QueryString("searchString")
 	strSearchOper = request.QueryString("searchOper")
-
-	If strField = "AskForLeaveType" Then		 
-		Select Case strSearchOper
-			Case "eq" : 'Equal
-				strWhere = "and LEFT(AskForLeaveType, 1) = " + left(strFieldData, 1) + " "
-			Case "ne": 'Not Equal
-				strWhere = "and LEFT(AskForLeaveType, 1) != " + left(strFieldData, 1) + " "
-		End Select
-	End if
 End If
 
 'server.ScriptTimeout=9000
@@ -83,11 +74,11 @@ fConnectADODB()
 'fConnectADOCE()
 dim a
 set a=new JSONClass
-strSQL = "SELECT L.AskForLeaveId,D.DepartmentName,E.Name,'' AS DepartmentCode, '' AS EmployeeCode, '' AS OtherCode, L.AskForLeaveType, AllDay, convert(varchar(19),StartTime,121) as StartTime, convert(varchar(19),EndTime,121) as EndTime, Status, Note "
+strSQL = "SELECT L.AskForLeaveId,D.DepartmentName,E.Name,'' AS DepartmentCode, '' AS EmployeeCode, '' AS OtherCode, Note, TransactThing, AllDay, convert(varchar(19),StartTime,121) as StartTime, convert(varchar(19),EndTime,121) as EndTime, Status "
 strSQL = strSQL & "FROM AttendanceAskForLeave L "
 strSQL = strSQL & "INNER JOIN Employees E ON E.EmployeeId = L.EmployeeId "
 strSQL = strSQL & "INNER JOIN Departments D ON E.DepartmentID = D.DepartmentID "
-strSQL = strSQL & "WHERE LEFT(L.AskForLeaveType, 1) <> '0' " '0-出差'
+strSQL = strSQL & "WHERE LEFT(L.AskForLeaveType, 1) = '0' " '0-出差'
 strSQL = strSQL & strWhere & " order by "& sidx & " " & sord
 
 'response.write strSQL
@@ -95,11 +86,11 @@ strSQL = strSQL & strWhere & " order by "& sidx & " " & sord
 a.Sqlstring=strSQL
 
 '导出
-strExportSql = "SELECT L.AskForLeaveId,D.DepartmentName,E.Name,L.AskForLeaveType, AllDay, convert(varchar(19),StartTime,121) as StartTime, convert(varchar(19),EndTime,121) as EndTime, Status, Note "
+strExportSql = "SELECT L.AskForLeaveId,D.DepartmentName,E.Name, Note, TransactThing, AllDay, convert(varchar(19),StartTime,121) as StartTime, convert(varchar(19),EndTime,121) as EndTime, Status "
 strExportSql = strExportSql & "FROM AttendanceAskForLeave L "
 strExportSql = strExportSql & "INNER JOIN Employees E ON E.EmployeeId = L.EmployeeId "
 strExportSql = strExportSql & "INNER JOIN Departments D ON E.DepartmentID = D.DepartmentID "
-strExportSql = strExportSql & "WHERE LEFT(L.AskForLeaveType, 1) <> '0' " '0-出差'
+strExportSql = strExportSql & "WHERE LEFT(L.AskForLeaveType, 1) = '0' " '0-出差'
 strExportSql = strExportSql & strWhere & " order by "& sidx & " " & sord
 
 'response.write strExportSql

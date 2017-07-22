@@ -7,7 +7,7 @@
 Call CheckLoginStatus("parent.location.href='../login.html'")
 Call CheckOperPermissions()
 
-Dim strSQL,strOper, strRecordID, strLeaveType,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strAllDay,strStartTime,strEndTime,strLeaveNum,strNote, strEmpId, strDescription
+Dim strSQL,strOper, strRecordID,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strAllDay,strStartTime,strEndTime,strLeaveNum,strNote, strEmpId, strDescription
 Dim strSumTotal, strTimeTemp, strAskDay, strStatus
 Dim strFields, strValues
 Dim strDepartmentName, strEmployeeName
@@ -20,11 +20,10 @@ strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
 strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
 strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
 
-strLeaveType = Replace(Request.Form("LeaveType"),"'","''")
-strAllDay = Replace(Request.Form("AllDay"),"'","''")
+'strAllDay = Replace(Request.Form("AllDay"),"'","''")
+strAllDay = 0 '非整天'
 strStartTime = Replace(Request.Form("StartTime"),"'","''")
 strEndTime = Replace(Request.Form("EndTime"),"'","''")
-strLeaveNum = Replace(Request.Form("LeaveNum"),"'","''")
 strNote = Replace(Request.Form("Note"),"'","''")
 strEmpId = Replace(Request.Form("EmpId"),"'","''")
 
@@ -56,7 +55,7 @@ if oper = "del" then
 	'取合计时间 ---- strSumTotal
 	If strAllDay = "0" Then  '非整天	
 		If DateDiff("n",CDate(strStartTime),CDate(strEndTime)) > 1440 Then 
-			Call ReturnErrMsg(GetEmpLbl("Leave_Time_Over_24_Hour"))	'"非整天请假不能超过24小时"
+			Call ReturnErrMsg(GetEmpLbl("Time_Over_24_Hour"))	'"加班时间不能超过24小时"
 		End If
 
 		strTimeTemp = CStr( DateDiff( "n", CDate(strStartTime), CDate(strEndTime) ) )
@@ -69,11 +68,11 @@ if oper = "del" then
 				strSumTotal = strSumTotal + CStr(FormatNumber((strTimeTemp mod 1440)/60, 1, -1))+ "h"
 			End if
 		End if
-	Else                       '整天
-		strStartTime = Left(strStartTime, 10) + " 00:00:00"
-		strEndTime   = Left(strEndTime, 10) + " 23:59:59"
-		strAskDay = DateDiff( "d", CDate(strTimeStart), CDate(strEndTime) ) + 1
-		strSumTotal = CStr( DateDiff( "d", CDate(strTimeStart), CDate(strEndTime) ) + 1 ) + "d"
+	'Else                       '整天
+		'strStartTime = Left(strStartTime, 10) + " 00:00:00"
+		'strEndTime   = Left(strEndTime, 10) + " 23:59:59"
+		'strAskDay = DateDiff( "d", CDate(strTimeStart), CDate(strEndTime) ) + 1
+		'strSumTotal = CStr( DateDiff( "d", CDate(strTimeStart), CDate(strEndTime) ) + 1 ) + "d"
 	End If
 
 	If Err.number <> 0 Then
@@ -83,6 +82,14 @@ if oper = "del" then
 	If DateDiff( "s", CDate(strTimeStart), CDate(strEndTime) ) <= 300 then
 		Call ReturnErrMsg(GetEmpLbl("Leave_Time_Interval_5_Minute"))	'"开始时间不能大于等于截止时间,且间隔需大于等于5分钟"
 	End If
+
+	If strNote = "" Then 
+		Call ReturnErrMsg(GetEmpLbl("OT_Reason_Not_Null"))	'"加班原因不能为空"
+	end if
+
+	If Len(strNote) > 50 Then 
+		Call ReturnErrMsg(GetEmpLbl("OT_Reason_More_50_Char"))	'"加班原因只允许50个字符！"
+	End if
 end if
 
 Call fConnectADODB()
@@ -120,24 +127,24 @@ Select Case strOper
 			strStatus = getEmpLbl("FlowStatus_Approved_2")	
 		end if
 
-		strFields = " EmployeeId, StartTime, EndTime, AskForLeaveType, AllDay, SumTotal, TransactThing, Note, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName, DeputizeId, DeputizeName "
-		strValues = cstr(strEmpId)+", '"+cstr(strStartTime)+"','"+CStr(strEndTime)+"','"+CStr(strLeaveType)
-		strValues = strValues + "',"+CStr(strAllDay)+",'"+cstr(strSumTotal)+"', '', '"+CStr(strNote)+"', '" + strStatus + " ', 0"
-		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"', 0, ''"
-		strSQL = "Insert into AttendanceAskForLeave(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceAskForLeave where AskforleaveId=(select Max(AskforleaveId) from AttendanceAskForLeave)"
+		strFields = " EmployeeId, StartTime, EndTime, AllDay, SumTotal, Note, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName "
+		strValues = cstr(strEmpId)+", '"+cstr(strStartTime)+"','"+CStr(strEndTime)
+		strValues = strValues + "',"+CStr(strAllDay)+",'"+cstr(strSumTotal)+"', '"+CStr(strNote)+"', '" + strStatus + " ', 0"
+		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"' "
+		strSQL = "Insert into AttendanceOT(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceOT where OTId=(select Max(OTId) from AttendanceOT)"
 	Case "edit": 'Edit Record		
 		strDescription = Replace(Request.Form("Description"),"'","''")
 		If Len(strDescription) > 50 Then 
 			Call fCloseADO()
 			Call ReturnErrMsg(GetEmpLbl("FlowApprove_Desc_Length_50"))	'"批注/说明最多长度为50个字符！"
 		End if
-		strSQL = "update AttendanceAskForLeave set Status='" + getEmpLbl("FlowStatus_Approved_2") + "' where askforleaveid=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave where AskforleaveId=" + strRecordID
+		strSQL = "update AttendanceOT set Status='" + getEmpLbl("FlowStatus_Approved_2") + "' where OTId=" + CStr(strRecordID)
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceOT where OTId=" + strRecordID
 	Case "del": 'Delete Record
 		strStatus = getEmpLbl("FlowStatus_Ceased_C")	
-		strSQL = "update AttendanceAskForLeave set Status='" + strStatus + "' where askforleaveid=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave L where AskforleaveId=" + strRecordID
+		strSQL = "update AttendanceOT set Status='" + strStatus + "' where OTId=" + CStr(strRecordID)
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceOT L where OTId=" + strRecordID
 End Select
 
 'response.write strSQL
@@ -158,15 +165,15 @@ if	strSQL<>"" then
 
 			strActions = GetCerbLbl("strLogApply")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,模板名称["&strTemplateName&"]")
-			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Leave"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Leave")&","&strEmpId)
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Overtime"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Overtime")&","&strEmpId)
 		Case "edit": 'Edit Record
 			strActions = GetCerbLbl("strLogApproval")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"],修改后模板名称["&strTemplateName&"]")			
-			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Leave"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Leave")&","&strRecordID)
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Overtime"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Overtime")&","&strRecordID)
 		Case "del": 'Delete Record
 			strActions = GetCerbLbl("strLogCease")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"]")		
-			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Leave"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Leave")&","&strRecordID)
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Overtime"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Overtime")&","&strRecordID)
 	End Select
 	
 	Call fCloseADO()

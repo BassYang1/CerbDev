@@ -152,7 +152,30 @@ function GetCheckCtrlIDs()
 
 	return Ids;
 }
+//获取所以选择的节点ID  此方法不返回 0-
+function GetCheckCtrlIDs2()
+{
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes = treeObj.getCheckedNodes(true);
+	var Ids = "";
+	var chkNum = 0;
 
+	for(var i=0; i<nodes.length; i++){
+		if(nodes[i].id != 999999999){
+			Ids = Ids + nodes[i].id + ",";
+			chkNum++;
+		}
+	}
+	/*
+	if(zNodes.length == chkNum){
+		return "0 - " + getlbl("con.AllCon") ;
+	}*/
+	
+	if(Ids != ""){
+		Ids = Ids.substring(0,Ids.length-1);
+	}
+	return Ids;
+}
 function CheckAll()
 {
 	alert("aa");

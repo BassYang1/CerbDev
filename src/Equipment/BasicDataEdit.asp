@@ -6,13 +6,15 @@
 Call CheckLoginStatus("parent.location.href='../login.html'")
 Call CheckOperPermissions()
 
-Dim strSQL,strOper, strRecordID, strControllerId, strControllerNumber, strControllerName,strLocation,strIP,strMASK,strGateWay,strDNS,strDNS2,strEnableDHCP,strWorkType,strServerIP,strStorageMode,strIsFingerprint,strAntiPassBackType,strCardReader1,strCardReader2,strSystemPassword,strDataUpdateTime,strWaitTime,strCloseLightTime,strDownPhoto,strDownFingerprint,strSound,strBoardType
+Dim strSQL,strOper, strRecordID, strControllerId,strControllerType,strControllerSerail, strControllerNumber, strControllerName,strLocation,strIP,strMASK,strGateWay,strDNS,strDNS2,strEnableDHCP,strWorkType,strServerIP,strStorageMode,strIsFingerprint,strAntiPassBackType,strCardReader1,strCardReader2,strSystemPassword,strDataUpdateTime,strWaitTime,strCloseLightTime,strDownPhoto,strDownFingerprint,strSound,strBoardType
 Dim iNewId,strActions
 
 strOper = request.Form("oper")
 strRecordID = Replace(request.Form("id"),"'","''")
 strControllerId = Replace(request.Form("ControllerId"),"'","''")
 strControllerNumber = Replace(request.Form("ControllerNumber"),"'","''")
+strControllerType = Replace(request.Form("ControllerType"),"'","''")
+strControllerSerail = Replace(request.Form("ControllerSerail"),"'","''")
 strControllerName = Replace(request.Form("ControllerName"),"'","''")
 strLocation = Replace(request.Form("Location"),"'","''")
 strIP = Replace(request.Form("IP"),"'","''")
@@ -47,6 +49,7 @@ if GetOperRole("BasicData",strOper) <> true then
 	response.End()
 end if
 
+if strControllerType = "" then strControllerType="1" end if 
 if strEnableDHCP = "" then strEnableDHCP =0 end if
 if strIsFingerprint= "" then strIsFingerprint =0 end if
 if strAntiPassBackType = "" then strAntiPassBackType = 0 end if
@@ -64,6 +67,19 @@ if strEnableDHCP=1 then
 	strDNS = ""
 	strDNS2 = ""
 end if
+if left(strControllerType,1) = "0" then 
+	'指纹机
+	strIsFingerprint = "1"
+	strDownFingerprint = "1"
+elseif left(strControllerType,1) = "1" then
+	'刷卡机
+	strIsFingerprint = "0"
+	strDownFingerprint = "0"
+else
+	strIsFingerprint = "0"
+	strDownFingerprint = "0"
+end if
+
 
 Call fConnectADODB()
 
@@ -99,6 +115,24 @@ if	strSQL<>"" then
 	end if
 end if
 
+'判断设备序列号是否存在 
+if left(strControllerType,1) = "2" then 
+	strSQL=""
+	Select Case strOper
+		Case "add": 'Add Record
+		strSQL = "Select 1 from Controllers where ControllerSerail='"&strControllerSerail&"'"
+		Case "edit": 'Edit Record
+		strSQL = "Select 1 from Controllers where ControllerSerail='"&strControllerSerail&"' and ControllerId <> "&strRecordID
+	End Select
+	if	strSQL<>"" then 
+		if IsExistsValue(strSQL) = true then 
+			Call fCloseADO()
+			Call ReturnMsg("false",GetEquLbl("ConSerailUsed"),0)	'设备序列号已使用
+			response.End()
+		end if
+	end if
+end if
+
 '判断IP是否存在 
 if strEnableDHCP <> "1" then 
 	strSQL=""
@@ -120,7 +154,7 @@ end if
 strSQL=""
 Select Case strOper
 	Case "add": 'Add Record
-	strSQL = "insert into Controllers(ControllerNumber,ControllerName,Location,IP,MASK,GateWay,DNS,DNS2,EnableDHCP,WorkType,ServerIP,StorageMode,IsFingerprint,AntiPassBackType,DoorType,CardReader1,CardReader2,SystemPassword,DataUpdateTime,WaitTime,CloseLightTime,DownPhoto,DownFingerprint,Sound,BoardType) Values("&"'"&strControllerNumber&"','"&strControllerName&"','"&strLocation&"','"&strIP&"','"&strMASK&"','"&strGateWay&"','"&strDNS&"','"&strDNS2&"',"&strEnableDHCP&",'"&strWorkType&"','"&strServerIP&"','"&strStorageMode&"',"&strIsFingerprint&","&strAntiPassBackType&",'2','"&strCardReader1&"','"&strCardReader2&"','"&strSystemPassword&"',"&strDataUpdateTime&","&strWaitTime&","&strCloseLightTime&","&strDownPhoto&","&strDownFingerprint&","&strSound&",'"&strBoardType&"') "
+	strSQL = "insert into Controllers(ControllerType,ControllerSerail,ControllerNumber,ControllerName,Location,IP,MASK,GateWay,DNS,DNS2,EnableDHCP,WorkType,ServerIP,StorageMode,IsFingerprint,AntiPassBackType,DoorType,CardReader1,CardReader2,SystemPassword,DataUpdateTime,WaitTime,CloseLightTime,DownPhoto,DownFingerprint,Sound,BoardType) Values("&"'"&strControllerType&"','"&strControllerSerail&"','"&strControllerNumber&"','"&strControllerName&"','"&strLocation&"','"&strIP&"','"&strMASK&"','"&strGateWay&"','"&strDNS&"','"&strDNS2&"',"&strEnableDHCP&",'"&strWorkType&"','"&strServerIP&"','"&strStorageMode&"',"&strIsFingerprint&","&strAntiPassBackType&",'2','"&strCardReader1&"','"&strCardReader2&"','"&strSystemPassword&"',"&strDataUpdateTime&","&strWaitTime&","&strCloseLightTime&","&strDownPhoto&","&strDownFingerprint&","&strSound&",'"&strBoardType&"') "
 	On Error Resume Next
 	Conn.Execute strSQL
 	if err.number <> 0 then
@@ -221,7 +255,7 @@ Select Case strOper
 	end if
 		
 	Case "edit": 'Edit Record
-	strSQL = "Update Controllers Set ControllerNumber ='"&strControllerNumber&"',ControllerName = '"&strControllerName&"', Location = '"&strLocation&"', IP = '"&strIP&"', MASK = '"&strMASK&"', GateWay = '"&strGateWay&"', DNS = '"&strDNS&"', DNS2 = '"&strDNS2&"', EnableDHCP = '"&strEnableDHCP&"', WorkType = '"&strWorkType&"', ServerIP = '"&strServerIP&"', StorageMode = '"&strStorageMode&"', IsFingerprint = '"&strIsFingerprint&"', AntiPassBackType = '"&strAntiPassBackType&"', DoorType = '2', CardReader1 = '"&strCardReader1&"', CardReader2 = '"&strCardReader2&"', SystemPassword = '"&strSystemPassword&"', DataUpdateTime = '"&strDataUpdateTime&"', WaitTime = '"&strWaitTime&"', CloseLightTime = '"&strCloseLightTime&"', DownPhoto = '"&strDownPhoto&"', DownFingerprint = '"&strDownFingerprint&"', Sound = '"&strSound&"', BoardType = '"&strBoardType&"' Where ControllerId = "&strRecordID
+	strSQL = "Update Controllers Set ControllerType ='"&strControllerType&"',ControllerSerail ='"&strControllerSerail&"',ControllerNumber ='"&strControllerNumber&"',ControllerName = '"&strControllerName&"', Location = '"&strLocation&"', IP = '"&strIP&"', MASK = '"&strMASK&"', GateWay = '"&strGateWay&"', DNS = '"&strDNS&"', DNS2 = '"&strDNS2&"', EnableDHCP = '"&strEnableDHCP&"', WorkType = '"&strWorkType&"', ServerIP = '"&strServerIP&"', StorageMode = '"&strStorageMode&"', IsFingerprint = '"&strIsFingerprint&"', AntiPassBackType = '"&strAntiPassBackType&"', DoorType = '2', CardReader1 = '"&strCardReader1&"', CardReader2 = '"&strCardReader2&"', SystemPassword = '"&strSystemPassword&"', DataUpdateTime = '"&strDataUpdateTime&"', WaitTime = '"&strWaitTime&"', CloseLightTime = '"&strCloseLightTime&"', DownPhoto = '"&strDownPhoto&"', DownFingerprint = '"&strDownFingerprint&"', Sound = '"&strSound&"', BoardType = '"&strBoardType&"' Where ControllerId = "&strRecordID
 	strSQL = strSQL+"; Update ControllerDataSync set SyncStatus=0,Synctime=Getdate(),TrueTimeInfo='Web' where ControllerID="&strRecordID&" and SyncType='controller' "
 	On Error Resume Next
 	Conn.Execute strSQL

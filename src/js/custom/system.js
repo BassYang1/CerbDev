@@ -1,6 +1,7 @@
 ﻿// JavaScript Document
 
 var cookieUserId = "Cerb%5FUserId"; // 用户Id Cookie : Cerb_UserId
+var cookieEmId = "Cerb%5FEmId"; // 用户Id Cookie : Cerb_EmId
 
 //去除字符串首尾空格
 String.prototype.trim = function()
@@ -97,6 +98,23 @@ function CheckLoginStatusForRoot()
 			}
 		}
 	});
+}
+
+//获取员工考勤JSON数据
+function getEmpAttendJSON(){
+	var empId = "";
+	if(arguments.length > 0){
+		empId = arguments[0];
+	}
+
+	var year = "";
+	if(arguments.length > 1){
+		year = arguments[1];
+	}
+
+	var result = $.ajax({type:'post',url:'../Common/GetEmployeeAttendJSON.asp?nd='+getRandom() + '&empId=' + empId + '&year=' + year,data:null,async:false});
+	var data = result.responseText;
+	return data ? ($.parseJSON(data) || {}) : {};
 }
 
 //获取员工JSON数据

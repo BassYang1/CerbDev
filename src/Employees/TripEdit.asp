@@ -20,7 +20,7 @@ strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
 strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
 strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
 
-strLeaveType = Replace(Request.Form("LeaveType"),"'","''")
+strTripThing = Replace(Request.Form("TransactThing"),"'","''")
 strAllDay = Replace(Request.Form("AllDay"),"'","''")
 strStartTime = Replace(Request.Form("StartTime"),"'","''")
 strEndTime = Replace(Request.Form("EndTime"),"'","''")
@@ -121,11 +121,11 @@ Select Case strOper
 		end if
 
 		strFields = " EmployeeId, StartTime, EndTime, AskForLeaveType, AllDay, SumTotal, TransactThing, Note, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName, DeputizeId, DeputizeName "
-		strValues = cstr(strEmpId)+", '"+cstr(strStartTime)+"','"+CStr(strEndTime)+"','"+CStr(strLeaveType)
-		strValues = strValues + "',"+CStr(strAllDay)+",'"+cstr(strSumTotal)+"', '', '"+CStr(strNote)+"', '" + strStatus + " ', 0"
+		strValues = cstr(strEmpId)+", '"+cstr(strStartTime)+"','"+CStr(strEndTime)+"','0-"+getEmpLbl("Attend_Trip")
+		strValues = strValues + "',"+CStr(strAllDay)+",'"+cstr(strSumTotal)+"', '" + strTripThing + "', '"+CStr(strNote)+"', '" + strStatus + " ', 0"
 		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"', 0, ''"
 		strSQL = "Insert into AttendanceAskForLeave(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceAskForLeave where AskforleaveId=(select Max(AskforleaveId) from AttendanceAskForLeave)"
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Trip_1") + "', AskForLeaveId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceAskForLeave where AskforleaveId=(select Max(AskforleaveId) from AttendanceAskForLeave)"
 	Case "edit": 'Edit Record		
 		strDescription = Replace(Request.Form("Description"),"'","''")
 		If Len(strDescription) > 50 Then 
@@ -133,11 +133,11 @@ Select Case strOper
 			Call ReturnErrMsg(GetEmpLbl("FlowApprove_Desc_Length_50"))	'"批注/说明最多长度为50个字符！"
 		End if
 		strSQL = "update AttendanceAskForLeave set Status='" + getEmpLbl("FlowStatus_Approved_2") + "' where askforleaveid=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave where AskforleaveId=" + strRecordID
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Trip_1") + "', AskForLeaveId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave where AskforleaveId=" + strRecordID
 	Case "del": 'Delete Record
 		strStatus = getEmpLbl("FlowStatus_Ceased_C")	
 		strSQL = "update AttendanceAskForLeave set Status='" + strStatus + "' where askforleaveid=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave L where AskforleaveId=" + strRecordID
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Trip_1") + "', AskForLeaveId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave L where AskforleaveId=" + strRecordID
 End Select
 
 'response.write strSQL
@@ -158,15 +158,15 @@ if	strSQL<>"" then
 
 			strActions = GetCerbLbl("strLogApply")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,模板名称["&strTemplateName&"]")
-			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Leave"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Leave")&","&strEmpId)
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Trip"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Trip")&","&strEmpId)
 		Case "edit": 'Edit Record
 			strActions = GetCerbLbl("strLogApproval")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"],修改后模板名称["&strTemplateName&"]")			
-			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Leave"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Leave")&","&strRecordID)
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Trip"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Trip")&","&strRecordID)
 		Case "del": 'Delete Record
 			strActions = GetCerbLbl("strLogCease")
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"]")		
-			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Leave"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Leave")&","&strRecordID)
+			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Trip"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Trip")&","&strRecordID)
 	End Select
 	
 	Call fCloseADO()

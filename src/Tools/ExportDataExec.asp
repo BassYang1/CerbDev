@@ -91,6 +91,18 @@ else if(strexportType == "shiftrules"){
 else if(strexportType == "legalholiday"){
 	strSheetName = "<%=GetToolLbl("Holiday")%>";//法定假期
 }
+else if(strexportType == "askforleave"){
+	strSheetName = "<%=GetToolLbl("AskForLeave")%>";//请假
+}
+else if(strexportType == "ontrip"){
+	strSheetName = "<%=GetToolLbl("OnTrip")%>";//出差
+}
+else if(strexportType == "signcard"){
+	strSheetName = "<%=GetToolLbl("SignCard")%>";//补卡
+}
+else if(strexportType == "overtime"){
+	strSheetName = "<%=GetToolLbl("OverTime")%>";//加班
+}
 else
 {
 	strSheetName = "Sheet1";

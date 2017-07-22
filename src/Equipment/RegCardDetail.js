@@ -78,7 +78,7 @@ jQuery("#DataGrid").jqGrid({
 	imgpath:'/images',
 	multiselect: false,
 	rowNum:20,
-	rowList:[10,16,20,30],
+	rowList:[10,16,50,100,500,1000],
 	prmNames: {search: "_search"},  
 	//jsonReader: { repeatitems: false },
 	pager: '#pager',

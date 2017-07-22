@@ -1,12 +1,13 @@
 ﻿<!--#include file="Page.asp" -->
 <!--#include file="..\Conn\conn.asp" -->
 <%
-dim strUserId, strDeptIds, strOper, templateId, strId
-dim strSQL,strJS,strPid,strDepartmentCode,strName,strCheck
+dim strUserId, strDeptIds, strOper, templateId
+dim strSQL,strJS,strId,strPid,strDepartmentCode,strName,strCheck
 
 strDeptIds = Cstr(Trim(Request.Form("deptIds")))
 strOper = Cstr(Trim(Request.Form("oper")))
 strUserId = Cstr(Trim(Request.QueryString("userId")))
+templateId = Cstr(Trim(Request.QueryString("templateId")))
 strId = Cstr(Trim(Request.QueryString("id")))
 if strUserId = "" then strUserId = "0" end if
 

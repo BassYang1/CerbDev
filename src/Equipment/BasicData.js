@@ -19,10 +19,25 @@ jQuery("#DataGrid").jqGrid({
 		url:'BasicDataList.asp',
 		editurl:"BasicDataEdit.asp",
 		datatype: "json",
-		//colNames:['设备ID','设备编号','设备名称','位置','设备IP','子网掩码','网关','DNS','DNS2','启用DHCP','防遣返','工作类型','服务器','存储方式','指纹模块','门类型','读卡器1（彩屏机）','读卡器2','设备密码','数据上传间隔','屏保等待时间','屏幕关闭时间','下载相片','下载指纹','音量','BoardType','屏保图片1','屏保图片2','同步状态','在线状态'],
-		colNames:[getlbl("con.ControllerId"),getlbl("con.ControllerIdNum"),getlbl("con.ControllerIdName"),getlbl("con.Location"),getlbl("con.IP"),getlbl("con.MASK"),getlbl("con.GateWay"),getlbl("con.DNS"),getlbl("con.DNS2"),getlbl("con.DHCP"),getlbl("con.AntiPassBackType"),getlbl("con.WorkType"),getlbl("con.ServerIP2"),getlbl("con.StorageMode"),getlbl("con.IsFingerprint"),getlbl("con.DoorType"),getlbl("con.CardReader1"),getlbl("con.CardReader2"),getlbl("con.SystemPassword"),getlbl("con.DataUpdateTime"),getlbl("con.WaitTime"),getlbl("con.CloseLightTime"),getlbl("con.DownPhoto"),getlbl("con.DownFingerprint"),getlbl("con.Sound"),'BoardType',getlbl("con.ScreenFile1"),getlbl("con.ScreenFile2"),getlbl("con.SyncStatus"),getlbl("con.ConnStatus")],
+		//colNames:['设备ID','设备类型','设备序列号','设备编号','设备名称','位置','设备IP','子网掩码','网关','DNS','DNS2','启用DHCP','防遣返','工作类型','服务器','存储方式','指纹模块','门类型','读卡器1（彩屏机）','读卡器2','设备密码','数据上传间隔','屏保等待时间','屏幕关闭时间','下载相片','下载指纹','音量','BoardType','屏保图片1','屏保图片2','同步状态','在线状态'],
+		colNames:[getlbl("con.ControllerId"),getlbl("con.ControllerIdType"),getlbl("con.ControllerIdSerail"),getlbl("con.ControllerIdNum"),getlbl("con.ControllerIdName"),getlbl("con.Location"),getlbl("con.IP"),getlbl("con.MASK"),getlbl("con.GateWay"),getlbl("con.DNS"),getlbl("con.DNS2"),getlbl("con.DHCP"),getlbl("con.AntiPassBackType"),getlbl("con.WorkType"),getlbl("con.ServerIP2"),getlbl("con.StorageMode"),getlbl("con.IsFingerprint"),getlbl("con.DoorType"),getlbl("con.CardReader1"),getlbl("con.CardReader2"),getlbl("con.SystemPassword"),getlbl("con.DataUpdateTime"),getlbl("con.WaitTime"),getlbl("con.CloseLightTime"),getlbl("con.DownPhoto"),getlbl("con.DownFingerprint"),getlbl("con.Sound"),'BoardType',getlbl("con.ScreenFile1"),getlbl("con.ScreenFile2"),getlbl("con.SyncStatus"),getlbl("con.ConnStatus")],
 		colModel :[
-			{name:'ControllerId',index:'ControllerId',width:120,align:'center',viewable:true,formoptions:{rowpos:1,colpos:1},stype:"text", searchoptions:{ sopt:["eq","ne"]},},
+			{name:'ControllerId',index:'ControllerId',width:100,align:'center',viewable:true,formoptions:{rowpos:1,colpos:1},stype:"text", searchoptions:{ sopt:["eq","ne"]},},
+			{name:'ControllerType',index:'ControllerType',align:'center',editable:true,editrules:{required:true},
+				edittype:'select', editoptions:{dataUrl: '../Common/GetTableFieldCode.asp?type=controllertype',
+					dataInit: function (elem) {
+						$(elem).css("width", "120");
+						$(elem).change(function(){
+							var Val = $(this).children('option:selected').val();
+							ControllerTypeChange(Val);
+						});
+					}
+				}, 
+				stype:"select", searchoptions:{ dataUrl:"../Common/GetTableFieldCode.asp?type=controllertype",sopt:["eq","ne"],},
+				formoptions:{rowpos:1,colpos:1}},  
+			{name:'ControllerSerail',index:'ControllerSerail',align:'center',hidden:true,editable:true,
+				stype:"text", searchoptions:{ sopt:["eq","ne",'cn','nc']},
+				formoptions:{elmsuffix:"<font color=#FF0000>*</font>",rowpos:1,colpos:2}}, 
 			{name:'ControllerNumber',index:'ControllerNumber',align:'center',editable:true,editrules:{required:true},
 				stype:"text", searchoptions:{ sopt:["eq","ne",'cn','nc']},
 				formoptions:{elmsuffix:"<font color=#FF0000>*</font>",rowpos:2,colpos:1}}, 
@@ -54,9 +69,8 @@ jQuery("#DataGrid").jqGrid({
 				formoptions:{elmsuffix:"<font color=#FF0000>*</font>",rowpos:7,colpos:2},viewable:true},
 			{name:'StorageMode',index:'StorageMode',editable:true,hidden:true,editrules:{required:true,edithidden:true},search:false,
 				edittype:'select', editoptions:{value:getlbl("con.StorageMode0")+":"+getlbl("con.StorageMode0")+";"+getlbl("con.StorageMode1")+":"+getlbl("con.StorageMode1")},formoptions:{rowpos:8,colpos:1}}, // 0 - 所有刷卡:0 - 所有刷卡;1 - 仅注册卡:1 - 仅注册卡
-			{name:'IsFingerprint',index:'IsFingerprint',search:false,hidden:true,
-				editable:true,editrules:{edithidden:true},
-				edittype:'checkbox',editoptions: {value:"1:0"},formoptions:{rowpos:8,colpos:2},viewable:true},
+			{name:'IsFingerprint',index:'IsFingerprint',search:false,hidden:true,viewable:false,editable:false,
+				edittype:'checkbox',editoptions: {value:"1:0"},formoptions:{rowpos:8,colpos:2}},
 			
 			{name:'DoorType',index:'DoorType',hidden:true,editable:false,editrules:{edithidden:false},search:false,
 				edittype:'select', editoptions:{value:getlbl("con.DoorType0")+":"+getlbl("con.DoorType0")+";"+getlbl("con.DoorType1")+":"+getlbl("con.DoorType1")},},//"0 - 单门:0 - 单门;1 - 双门:1 - 双门"
@@ -79,11 +93,10 @@ jQuery("#DataGrid").jqGrid({
 			{name:'DownPhoto',index:'DownPhoto',search:false,hidden:true,
 				editable:true,editrules:{edithidden:true},
 				edittype:'checkbox',editoptions: {value:"1:0"},formoptions:{rowpos:12,colpos:1}},
-			{name:'DownFingerprint',index:'DownFingerprint',search:false,hidden:true,
-				editable:true,editrules:{edithidden:true},
+			{name:'DownFingerprint',index:'DownFingerprint',search:false,hidden:true,viewable:false,editable:false,
 				edittype:'checkbox',editoptions: {value:"1:0"},formoptions:{rowpos:12,colpos:2}},
 			{name:'Sound',index:'Sound',hidden:true,editable:true,editrules:{required:true,edithidden:true},search:false,
-				edittype:'select', editoptions:{value:"0:0;1:1;2:2;3:3;4:4;5:5;6:6;7:7;8:8;9:9;10:10"},formoptions:{elmsuffix:" "+getlbl("con.SoundVal"),rowpos:13,colpos:1}},//档
+				edittype:'select', editoptions:{value:"0:0;1:1;2:2;3:3;4:4;5:5;6:6;7:7;8:8;9:9;10:10"},formoptions:{elmsuffix:" "+getlbl("con.SoundVal"),rowpos:12,colpos:2}},//档
 			{name:'BoardType',index:'BoardType',search:false,hidden:true,formoptions:{rowpos:13,colpos:2},viewable:false},
 			{name:'ScreenFile11',index:'ScreenFile11',hidden:true,editable:true,
 				editrules:{required:true,edithidden:true},search:false,
@@ -98,7 +111,7 @@ jQuery("#DataGrid").jqGrid({
 		imgpath:'/images',
 		multiselect: false,
 		rowNum:irowNum,
-		rowList:[10,16,20,30],
+		rowList:[10,16,50,100,500,1000],
 		prmNames: {search: "_search"},  
 		//jsonReader: { repeatitems: false },
 		pager: '#pager',
@@ -184,6 +197,9 @@ jQuery("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 		beforeShowForm:function(form){
 			//return;
 		},
+		beforeInitData : function(formid) {
+			//alert("com");
+		},
 		afterShowForm:function(formid){
 			//初始化窗体
 			var rowid = $("#DataGrid").jqGrid('getGridParam', 'selrow'); //获取选择行ID
@@ -218,6 +234,11 @@ jQuery("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 				else if($("#DNS2").val()!="" && CheckIP($("#DNS2").val()) == false){
 					$('#DNS2').focus();
 					return[false,getlbl("con.DNS2Illegal")]; //DNS2非法
+				}
+			}
+			if( $('#tr_ControllerType').children().eq(3).is(":hidden") == false){
+				if($('#ControllerSerail').val().length < 6 ){
+					return[false,getlbl("con.SerailIllegal")]; //序列号非法
 				}
 			}
 			return[true,''];
@@ -336,6 +357,11 @@ jQuery("#DataGrid").jqGrid('navGrid','#DataGrid_toppager',
 				else if($("#DNS2").val()!="" && CheckIP($("#DNS2").val()) == false){
 					$('#DNS2').focus();
 					return[false,getlbl("con.DNS2Illegal")]; //DNS2非法
+				}
+			}
+			if( $('#tr_ControllerType').children().eq(3).is(":hidden") == false){
+				if($('#ControllerSerail').val().length < 6 ){
+					return[false,getlbl("con.SerailIllegal")]; //序列号非法
 				}
 			}
 			return[true,''];
@@ -465,6 +491,8 @@ function InitEditForm(oper,rowid)
 			//alert("未选中");
 		}
 	});
+	
+
 	$("#IsFingerprint").click(function(){
 		if($("#IsFingerprint").get(0).checked == true){
 			$('#DownFingerprint').get(0).checked = true;
@@ -489,6 +517,12 @@ function InitEditForm(oper,rowid)
 			$('#tr_CardReader2').show();
 		}
 	});
+	/*
+	//不能放这里，因为执行到这里时,ControllerType可能还没有创建，直接放在dataInit中处理
+	$("#ControllerType").change(function(){
+		var Val = $(this).children('option:selected').val();
+		ControllerTypeChange(Val);
+	});*/
 
 	if(oper == "add")
 		rowid = 0;
@@ -498,11 +532,48 @@ function InitEditForm(oper,rowid)
 	$("#EnableDHCP").click();
 	$("#EnableDHCP").click();
 	$("#WorkType").change();
-
+	//$("#ControllerType").change();
+	
+	if(oper != "add"){
+		var ret = $("#DataGrid").jqGrid("getRowData", rowid);//根据ID，获取行数据
+		//alert("a"+ret.ControllerType);
+		ControllerTypeChange(ret.ControllerType);
+	}
+	else{
+		ControllerTypeChange("0");
+	}
+	
 	$("#pData").hide();
 	$("#nData").hide();
 }
 
+function ControllerTypeChange(Val){
+	if(Val != null && Val.length > 1)
+		Val = Val.substring(0,1);
+	if(Val == "2"){
+		//人脸机
+		$('#tr_ScreenFile11').hide(); 
+		$('#tr_StorageMode').hide();
+		$('#tr_SystemPassword').hide();
+		$('#tr_WaitTime').hide();
+		$('#tr_EnableDHCP').hide();
+		$('#tr_DownPhoto').children().eq(2).hide();
+		$('#tr_DownPhoto').children().eq(3).hide();
+		$('#tr_ControllerType').children().eq(2).show();//序列号，人脸机才显示 
+		$('#tr_ControllerType').children().eq(3).show();
+	}else{
+		//指纹与刷卡机
+		$('#tr_ScreenFile11').show(); 
+		$('#tr_StorageMode').show();
+		$('#tr_SystemPassword').show();
+		$('#tr_WaitTime').show();
+		$('#tr_EnableDHCP').show();
+		$('#tr_DownPhoto').children().eq(2).show();
+		$('#tr_DownPhoto').children().eq(3).show();
+		$('#tr_ControllerType').children().eq(2).hide();
+		$('#tr_ControllerType').children().eq(3).hide();
+	}
+}
 function GetSyncStatus(){
 	GetConnStatus();
 	var Ids;

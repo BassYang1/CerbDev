@@ -15,7 +15,8 @@ Class Controller
 	Public Function RegTemplateCard(strTempId, isClearOld)
 		Dim strConWhere, strEmpWhere, strSQL
 		Dim strTemplateName, strActions
-		isClearOld = 0 '页面同步默认都传0，因为存储过程会通过接口(Job)执行，数据会不停删除并重新同步
+		'20170601 mike 注销下面一句代码
+		'isClearOld = 0 '页面同步默认都传0，因为存储过程会通过接口(Job)执行，数据会不停删除并重新同步
 
 		strSQL = "select TemplateName, ISNULL(OnlyByCondition, 0) AS OnlyByCondition from ControllerTemplates where TemplateId="+strTempId
 		Rs.Open strSQL, Conn, 1, 1
