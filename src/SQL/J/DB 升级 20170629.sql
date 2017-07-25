@@ -20,7 +20,6 @@ BEGIN
 END
 GO
 
-
 --修改LabelText字段类型
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'LabelText') AND XType = N'U')
 	AND EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'LabelText') AND name = N'LabelEnText')
@@ -448,5 +447,57 @@ SELECT 'Tool', NULL, 'SignCard', '补卡', '補卡', 'Sign Card', ''
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', NULL, 'OverTime', '加班', '加班', 'Over Time', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'OverTime');
-					
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Late_Min_Not_Numeric', '迟到规则时间需填写数值！', '遲到規則時間需填寫數值！', 'The late minute is not a numeric!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Late_Min_Not_Numeric');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Early_Min_Not_Numeric', '早退规则时间需填写数值！', '遲到規則時間需填寫數值！', 'The early minute is not a numeric!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Early_Min_Not_Numeric');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Ot_Over_Min_Not_Numeric', '加班超时时间需填写数值！', '加班超時時間需填寫數值！', 'The OT over time is not a numeric!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Ot_Over_Min_Not_Numeric');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Auto_Total_Time_Not_Valid', '自动统计时间无效！', '自動統計時間無效！', 'The total time is invalid!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Auto_Total_Time_Not_Valid');
+		
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Workflow_Approver_Empty', '未填写流程审批人工号！', '未填寫流程審批人工號！', 'The total time is invalid!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Workflow_Approver_Empty');
+		
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Workflow_Approver_Invalid', '流程审批人无效', '流程審批人無效！', 'The workflow approver is invalid!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Workflow_Approver_Invalid');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Annual_Day_Not_Numeric', '年假天数需填写数值！', '年假天數需填寫數值！', 'The annual day is not a numeric!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Annual_Day_Not_Numeric');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Annual_Year_Not_Numeric', '增加年限需填写数值！', '增加年限需填寫數值！', 'The annual year is not a numeric!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Annual_Year_Not_Numeric');
+		
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'AttendOption', 'Holiday_Work_Time_Not_Numeric', '休息日所计工时需填写数值！', '休息日所計工時需填寫數值！', 'The work time is not a numeric!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Holiday_Work_Time_Not_Numeric');
+	
+GO
+
+
+--修改Options.VariableValue字段长度
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'Options') AND XType = N'U')
+	AND EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'Options') AND name = N'VariableValue')
+	ALTER TABLE Options ALTER COLUMN VariableValue NVARCHAR(MAX) NULL
+
+--添加流程审批配置
+INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) VALUES ('strWorkflowApproval', N'启用流程审批，配置流程审批人', 'str', '0,0,,0')
+INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) VALUES ('strAnnalDeptEmps', N'按部门设置可休年假员工', 'str', '0 - All')
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', 'Options', 'Options', '选项', '選項', 'Options', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Options');
+		
 GO

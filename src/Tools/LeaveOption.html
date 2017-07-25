@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Attend Total</title>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/jquery-ui-1.10.2.redmond.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css"/>
+<link rel="stylesheet" type="text/css" href="../css/ui.multiselect.css"/>
+<!--[if IE]><link type="text/css" rel="stylesheet" href="ie.css"/><![endif]-->
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/lang/lang.js"></script>
+<script>
+	document.write("<script type='text/javascript' src='../js/lang/"+getLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/i18n/"+getJgLan()+"'><\/script>");
+	document.write("<script type='text/javascript' src='../js/My97DatePicker/"+getDpLan()+"'><\/script>");
+</script>
+<script type="text/javascript" src="../js/jquery.jqGrid.src.js"></script>
+<script type="text/javascript" src="../js/custom/jqGridSet.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.core.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="../js/ui/jquery.ui.progressbar.js"></script>
+
+<script src="../js/ui/jquery.ui.mouse.js"></script>
+<script src="../js/ui/jquery.ui.button.js"></script>
+<script src="../js/ui/jquery.ui.draggable.js"></script>
+<script src="../js/ui/jquery.ui.position.js"></script>
+<script src="../js/ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../css/demos.css">
+
+<style>
+.ui-border {
+	border-top:1px solid #a6c9e2 !important;
+	border-left:1px solid #a6c9e2 !important;
+	padding: 6px;
+}
+.ui-border-LB {
+	border-bottom:1px solid #a6c9e2 !important;
+	border-left:1px solid #a6c9e2 !important;
+	padding: 6px;
+}
+.ui-border-R {
+	border-right:1px solid #a6c9e2 !important;
+	padding: 6px;
+}
+.ui-NoneRightBorder {
+}
+</style>	
+</head>
+<body>
+<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_DataGrid"
+    dir="ltr" style="width: 750px;">
+    <div class="ui-jqgrid-view" id="gview_DataGrid" style="width: 750px;">
+      <div class="ui-jqdialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+          id="edithdDataGrid" style="cursor: move;">
+          <span class="ui-jqgrid-titlebar ui-jqgrid-caption ui-widget-header ui-corner-top ui-helper-clearfix" style="float: left;" id="frm_Caption">Attendance Option</span></div>
+      <div class="ui-jqdialog-content ui-widget-content" id="editcntDataGrid">
+          <div>
+              <form name="FormPost" id="FrmGrid_DataGrid" class="FormGrid" onsubmit="return false;"
+              style="width: auto; overflow: auto; position: relative; height: auto;">
+              <table id="TblGrid_DataGrid" class="EditTable" cellspacing="0" cellpadding="0" border="0">
+                  <tbody>
+                      <tr id="FormError" style="display: none">
+                          <td class="ui-state-error" colspan="2">
+                          </td>
+                      </tr>
+                      <tr style="display: none" class="tinfo">
+                          <td class="topinfo" colspan="2">
+                          </td>
+                      </tr>
+                      <tr rowpos="1" class="FormData" id="tr_StrAnnalEmp">
+                          <td class="CaptionTD" style="width: 10%;"></td>
+                          <td class="DataTD">&nbsp;</td>
+                      </tr>
+                      <tr rowpos="1" class="FormData" id="tr_StrAnnal">
+                          <td class="CaptionTD"></td>
+                          <td class="DataTD">&nbsp;</td>
+                      </tr>
+                      <tr rowpos="1" class="FormData" id="tr_StrLeaveType">
+                          <td class="CaptionTD"></td>
+                          <td class="DataTD">&nbsp;</td>
+                      </tr>
+                  </tbody>
+              </table>
+              </form>
+              <table border="0" cellspacing="0" cellpadding="0" class="EditTable" id="TblGrid_DataGrid_2">
+                  <tbody>
+                      <tr>
+                          <td colspan="2">
+                              <hr class="ui-widget-content" style="margin: 1px">
+                          </td>
+                      </tr>
+                      <tr id="Act_Buttons">
+                          <td class="EditButton">
+                              <a id="sData" class="fm-button ui-state-default ui-corner-all fm-button-icon-left">提交<span
+                                  class="ui-icon ui-icon-disk"></span></a>
+                          </td>
+                      </tr>
+                      <tr style="display: none" class="binfo">
+                          <td class="bottominfo" colspan="2">
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+</div>
+</body>
+</html>
+<script language="javascript">
+$(document).ready(function(){  
+	$("#AttendTotal").html(getlbl("tool.spanNavTotal"));
+	$("#TotalMonth").html(getlbl("tool.TotalMonth"));
+	$("#TotalDimission").html(getlbl("tool.TotalDimission"));
+	$("#TotalDialogPrompt").html(getlbl("tool.TotalDialogPrompt"));
+	$("#dialog-confirm").attr("title",getlbl("tool.spanNavTotal"));	//考勤统计
+});
+</script>
+
+<script type="text/javascript" src="LeaveOption.js"></script>

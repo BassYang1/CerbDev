@@ -14,6 +14,7 @@ var stralerttext = "請選擇需要操作的資料行!";
 var strsearchcaption ="查找";
 
 var comm = {
+	Save: "保存",
 	Confirm: "確定",
 	Cancel: "取消"
 }
@@ -527,7 +528,45 @@ var tool={
 	OperPermDescVal2 : "一般職員",
 	UserList : "用戶列表",
 	OperPermDescVal1Msg : "[系統管理員]擁有增加、修改、刪除等操作許可權",
-	OperPermDescVal2Msg : "[一般職員]僅能查看資料，不能操作"
+	OperPermDescVal2Msg : "[壹般職員]僅能查看數據，不能操作",
+	spanNavOption: "選項配置",
+	hrefAttendOption: "考勤",
+	hrefLeaveOption: "休假",
+	AttendOption: "考勤選項",
+	StrLate: "遲到規則",
+	StrLateDetail: "<div>&nbsp;大於{{textbox}}分，則視為遲到</div><div>&nbsp;{{checkbox}}計算遲到時包含此段時間</div>",
+	StrEarly: "早退規則",
+	StrEarlyDetail: "<div>&nbsp;小於{{textbox}}分，則視為早退</div><div>&nbsp;{{checkbox}}計算早退時包含此段時間</div>",
+	StrLeaveOT: "請假超時",
+	StrLeaveOTDetail: "<div>&nbsp;{{checkbox}}當天請假超過{{textbox}}分未返，則發短信</div>",
+	StrAbsent: "超時未上班",
+	StrAbsentDetail: "<div>&nbsp;{{checkbox}}沒有請假或出差的情況下，超過{{textbox}}分未上班，則發送短</div>",
+	StrAbnormity: "異常處理",
+	StrAbnormityDetail: "<div>&nbsp;{{checkbox}}視為曠工</div>",
+	StrOtApply: "申請加班",
+	StrOtApplyDetail: "<div>&nbsp;{{checkbox}}刷上班卡&nbsp;&nbsp;{{checkbox}}刷下班卡</div>",
+	StrOtOver: "超時加班",
+	StrOtOverDetail: "<div>&nbsp;{{checkbox}}提前上班屬於加班&nbsp;&nbsp;{{checkbox}}延時下班屬於加班</div><div>&nbsp;{{radiobox}}按提前或延後的所有工時計為加班&nbsp;&nbsp;{{radiobox}}按整數倍方式計為加班，基數：{{textbox}}分",
+	StrAnalyseOffDuty: "分析下班刷卡",
+	StrAnalyseOffDutyDetail: "<div>&nbsp;{{radiobox}}第壹次刷卡&nbsp;&nbsp;{{radiobox}}最後壹次刷卡",
+	StrWorkDay: "出勤天數",
+	StrWorkDayDetail: "<div>&nbsp;{{radiobox}}實際出勤&nbsp;&nbsp;{{radiobox}}實際工時",
+	StrWorkflow: "流程審批",
+	StrWorkflowDetail: "<div>&nbsp;{{checkbox}}使用流程審批</div><div>&nbsp;{{radiobox}}指定審批人工號{{textbox}}&nbsp;{{radiobox}}管理員審批</div>",
+	StrAutoTotal: "自動統計",
+	StrAutoTotalDetail: "<div>&nbsp;{{checkbox}}自動統計的時間：{{textbox}}:{{textbox}}&nbsp;＊ HH:MM",
+	StrTotalCycle: "結算周期",
+	StrTotalCycleDetail: "<div>&nbsp;{{dropdownlist}}{{dropdownlist}}&nbsp;到&nbsp;{{dropdownlist}}{{dropdownlist}}",
+	CurrentMonth: "本月",
+	LastMonth: "上月",
+	LeaveOption: "休假選項",
+	StrAnnalEmp: "可休年假職員",
+	StrAnnalEmpDetail: "<div>&nbsp;{{dropdownlist}}</div>",
+	StrAnnal: "年假規則",
+	StrAnnalDetail: "<div>&nbsp;可休年假的天數：{{textbox}}</div><div>&nbsp;{{radiobox}}入職{{textbox}}年後每年遞增：{{textbox}}天&nbsp;&nbsp;{{radiobox}}入職{{textbox}}年後{{textbox}}天，{{textbox}}年後{{textbox}}天</div><div>&nbsp;{{checkbox}}可延續到下壹年度</div><div>&nbsp;最多不超過：{{textbox}}天</div>",
+	StrSkipHoliday: "請假期間的[休息日、法定假]<br />仍計為[休息日、法定假]",
+	StrSkipHolidayDetail: "<div>&nbsp;{{checkbox}}事假&nbsp;{{checkbox}}病假&nbsp;{{checkbox}}補假&nbsp;{{checkbox}}產假&nbsp;{{checkbox}}婚假&nbsp;{{checkbox}}哺乳假&nbsp;{{checkbox}}其他</div><div>&nbsp;{{checkbox}}出差&nbsp;{{checkbox}}年假&nbsp;{{checkbox}}法定假&nbsp;{{checkbox}}工傷&nbsp;{{checkbox}}喪假&nbsp;{{checkbox}}探親假</div><div>&nbsp;如果請假期間的［休息日］仍計為相應的假別,則休息日按{{textbox}}工時計為壹個工作</div>",
+	
 }
 
 var mon={

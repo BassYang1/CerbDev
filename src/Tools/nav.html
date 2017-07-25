@@ -62,6 +62,13 @@ window.onload = function() {
 				window.parent.mainFrame.location.href="Total.html";
 			}
 		}catch(exception){}
+	}); 
+	$("#spanNavOption").click(function(){  
+		try{
+			if($("#divNavOption").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="AttendOption.html";
+			}
+		}catch(exception){}
 	});  
 
 	try{
@@ -110,6 +117,11 @@ window.onload = function() {
 		<span id="spanNavTotal">Attendance statistics</span>
 		<a id="hrefTotal" href="Total.html" target="mainFrame">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Statistics</a>
 	</div>
+	<div id="divNavOption" class="collapsed">
+		<span id="spanNavOption">Attendance Options</span>
+		<a id="hrefAttendOption" href="AttendOption.html" target="mainFrame">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attendance Options</a>
+		<a id="hrefLeaveOption" href="LeaveOption.html" target="mainFrame">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leave Options</a>
+	</div>
 </div>
 </body>
 </html>
@@ -126,6 +138,9 @@ $(document).ready(function(){
 	$("#aSetCode").html(getlbl("tool.aSetCode"));
 	$("#spanNavTotal").html(getlbl("tool.spanNavTotal"));
 	$("#hrefTotal").html(getlbl("tool.aTotal"));
+	$("#spanNavOption").html(getlbl("tool.spanNavOption"));
+	$("#hrefAttendOption").html(getlbl("tool.hrefAttendOption"));
+	$("#hrefLeaveOption").html(getlbl("tool.hrefLeaveOption"));
 	window.parent.document.getElementsByTagName("frameset")[1].cols="167,*";
 	window.parent.document.getElementsByTagName("frameset")[0].rows="93,*";
 });

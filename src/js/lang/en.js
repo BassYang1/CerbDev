@@ -14,6 +14,7 @@ var stralerttext = "Please select the data rows need to operate!";
 var strsearchcaption ="Search";
 
 var comm = {
+	Save: "Save",
 	Confirm: "Ok",
 	Cancel: "Concel"
 }
@@ -527,7 +528,45 @@ var tool={
 	OperPermDescVal2 : "General Employees",//一般职员
 	UserList : "Users List",//用户列表
 	OperPermDescVal1Msg : "[System Administrator] have to add, modify, and delete permissions",//[系统管理员]拥有增加、修改、删除等操作权限
-	OperPermDescVal2Msg : "[General Employees] can only view the data, you can not operate"//[一般职员]仅能查看数据，不能操作
+	OperPermDescVal2Msg : "[General Employees] can only view the data, you can not operate",//[一般职员]仅能查看数据，不能操作
+	spanNavOption: "Options",
+	hrefAttendOption: "Attendance",
+	hrefLeaveOption: "Vacation",
+	AttendOption: "Attendance Options",
+	StrLate: "Rule on Late Attendance",
+	StrLateDetail: "<div>&nbsp;For over{{textbox}}minutes is regarded as late attendance.</div><div>&nbsp;{{checkbox}}The time period is included.</div>",
+	StrEarly: "Rule on Early Leave",
+	StrEarlyDetail: "<div>&nbsp;For less than{{textbox}}minutes is regarded as early leave.</div><div>&nbsp;{{checkbox}}The time period is included.</div>",
+	StrLeaveOT: "Leave Overtime",
+	StrLeaveOTDetail: "<div>&nbsp;{{checkbox}}Leave overtime for{{textbox}}minutes for the current day,send SMS</div>",
+	StrAbsent: "Absence Overtime",
+	StrAbsentDetail: "<div>&nbsp;{{checkbox}}Without leave or trip，absence for over{{textbox}}minutes,send SMS</div>",
+	StrAbnormity: "Abnormity",
+	StrAbnormityDetail: "<div>&nbsp;{{checkbox}}Regarded as absence.</div>",
+	StrOtApply: "Application for Overtime",
+	StrOtApplyDetail: "<div>&nbsp;{{checkbox}}On Duty Punching&nbsp;&nbsp;{{checkbox}}Off Duty Punching</div>",
+	StrOtOver: "OT",
+	StrOtOverDetail: "<div>&nbsp;{{checkbox}}Advance clock in is OT.&nbsp;&nbsp;{{checkbox}}Late clock out is OT.</div><div>&nbsp;{{radiobox}}OT calculation based on work hours for advance clock in and late clock out.&nbsp;&nbsp;{{radiobox}}OT calculation based on integer folds.Base:{{textbox}} Minute",
+	StrAnalyseOffDuty: "Analysis on Brushing Card for Clock out",
+	StrAnalyseOffDutyDetail: "<div>&nbsp;{{radiobox}}The First Brushing Card&nbsp;&nbsp;{{radiobox}}The Last Brushing Card",
+	StrWorkDay: "Attendance Days",
+	StrWorkDayDetail: "<div>&nbsp;{{radiobox}}Actual Attendance&nbsp;&nbsp;{{radiobox}}Actual Work Hours",
+	StrWorkflow: "Workflow",
+	StrWorkflowDetail: "<div>&nbsp;{{checkbox}}Enabel the workflow approval</div><div>&nbsp;{{radiobox}}the number of the approver{{textbox}}&nbsp;{{radiobox}}the administrator approval</div>",
+	StrAutoTotal: "Automatic Counting",
+	StrAutoTotalDetail: "<div>&nbsp;{{checkbox}}Automatic Counting Time: {{textbox}}:{{textbox}}&nbsp;* HH:MM",
+	StrTotalCycle: "Calculation Cycle",
+	StrTotalCycleDetail: "<div>&nbsp;{{dropdownlist}}{{dropdownlist}}&nbsp;to&nbsp;{{dropdownlist}}{{dropdownlist}}",
+	CurrentMonth: "The Current Month",
+	LastMonth: "The Previous Month",
+	LeaveOption: "Vacation Options",
+	StrAnnalEmp: "Employees Due for Annual Leave",
+	StrAnnalEmpDetail: "<div>&nbsp;{{dropdownlist}}</div>",
+	StrAnnal: "Rule on Annual Leave",
+	StrAnnalDetail: "<div>&nbsp;Due Annual Leave Days：{{textbox}}</div><div>&nbsp;{{radiobox}}Joining after {{textbox}} Years,increase by {{textbox}} days each year&nbsp;&nbsp;{{radiobox}}Joining after {{textbox}} Years, {{textbox}} Days. After {{textbox}} Years, {{textbox}} Days</div><div>&nbsp;{{checkbox}}Extendable to the Next Year</div><div>&nbsp;For Maximum {{textbox}} Days</div>",
+	StrSkipHoliday: "[Day-off and Holiday] in the Leave Period <br /> Considered Still as [Day-off and Holiday]",
+	StrSkipHolidayDetail: "<div>&nbsp;{{checkbox}}Private&nbsp;{{checkbox}}Sick&nbsp;{{checkbox}}Compensatory&nbsp;{{checkbox}}Maternity&nbsp;{{checkbox}}Matrimony&nbsp;{{checkbox}}Lactation&nbsp;{{checkbox}}Other</div><div>&nbsp;{{checkbox}}Trip&nbsp;{{checkbox}}Annual&nbsp;{{checkbox}}Holiday&nbsp;{{checkbox}}Injury&nbsp;{{checkbox}}Funeral&nbsp;{{checkbox}}Visit</div><div>&nbsp;Should [day-off] in the leave period be considered the relevant Leave,the day-off with {{textbox}} hours is regarded a work day.</div>",
+
 }
 
 var mon={

@@ -33,7 +33,7 @@ $(document).ready(function () {
             },
             { name: 'OtherCode', index: 'OtherCode', align: 'center', width: 40, editable: false, edittype: 'none', hidden: true, viewable: false, search: false },        
             { name: 'BrushTime', index: 'BrushTime', align: 'center', editable: true, editrules: { required: true, date: false, edithidden: true },
-                width: 150, search: false, formatter: 'date', sorttype: 'date',
+                width: 170, search: false, formatter: 'date', sorttype: 'date',
                 formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }, datefmt: 'Y-m-d',
                 editoptions: {
                     size:20,maxlengh:20,
@@ -44,7 +44,7 @@ $(document).ready(function () {
                 formoptions: { rowpos: 1, colpos: 1, elmsuffix:"<font color=#FF0000>*</font>" }
             },
             {
-                name: 'Remark', index: 'Remark', edittype: 'textarea', width: 350, editable: true, editrules: { required: false }, 
+                name: 'Remark', index: 'Remark', edittype: 'textarea', width: 450, editable: true, editrules: { required: false }, 
                 search: false, sortable: false, formoptions: { rowpos: 2, colpos: 1 },
                 editoptions: { rows: 3, cols: 65, dataInit: null },
                 formoptions: { rowpos: 2, colpos: 1 },
