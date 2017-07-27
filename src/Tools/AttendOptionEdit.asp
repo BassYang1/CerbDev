@@ -70,16 +70,12 @@ strEndDay = Trim(Replace(Request.Form("EndDay"),"'","''"))
 strTotalCycle = Cstr(strStartMonth) + "," + Cstr(strStartDay) + "," + Cstr(strEndMonth) + "," + Cstr(strEndDay)
 
 '分析下班刷卡'
-Dim strAnalyseOffDuty, strFirstOff, strLastOff
-strFirstOff = Trim(Replace(Request.Form("IsFirstOff"),"'","''"))
-strLastOff = Trim(Replace(Request.Form("IsLastOff"),"'","''"))
-strAnalyseOffDuty = Cstr(strFirstOff) + "," + Cstr(strLastOff)
+Dim strAnalyseOffDuty
+strAnalyseOffDuty = Trim(Replace(Request.Form("AnalyseOffDuty"),"'","''"))
 
 '出勤天数'
-Dim strAnalyseWorkDay, strWorkDay, strWorkHour
-strWorkDay = Trim(Replace(Request.Form("IsWorkDay"),"'","''"))
-strWorkHour = Trim(Replace(Request.Form("IsWorkHour"),"'","''"))
-strAnalyseWorkDay = Cstr(strWorkDay) + "," + Cstr(strWorkHour)
+Dim blnAnalyseWorkDay
+blnAnalyseWorkDay = Trim(Replace(Request.Form("AnalyseWorkDay"),"'","''"))
 
 '流程审批'
 Dim strWorkflowApproval, strApproval, strEmp, strEmpCode, strAdmin
@@ -154,7 +150,7 @@ strSQL = strSQL + "update options set VariableValue='"+cstr(strTotalCycle)+"' wh
 strSQL = strSQL + "update options set VariableValue='"+cstr(strAnalyseOffDuty)+"' where VariableName='strAnalyseOffDuty';"
 
 '出勤天数'
-strSQL = strSQL + "update options set VariableValue='"+cstr(strAnalyseWorkDay)+"' where VariableName='blnAnalyseWorkDay';"
+strSQL = strSQL + "update options set VariableValue='"+cstr(blnAnalyseWorkDay)+"' where VariableName='blnAnalyseWorkDay';"
 
 '流程审批'
 strSQL = strSQL + "update options set VariableValue='"+cstr(strWorkflowApproval)+"' where VariableName='strWorkflowApproval';"

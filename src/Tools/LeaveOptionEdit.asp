@@ -76,7 +76,19 @@ end if
 
 '请假期间的[休息日、法定假]仍计为[休息日、法定假]'
 Dim strSkipHoliday
-strSkipHoliday = Trim(Replace(Request.Form("IsPrivate"),"'","''")) + "," + Trim(Replace(Request.Form("IsSick"),"'","''")) + "," + Trim(Replace(Request.Form("IsCompensatory"),"'","''")) + "," + Trim(Replace(Request.Form("IsMaternity"),"'","''")) + "," + Trim(Replace(Request.Form("IsMatrimony"),"'","''")) + "," + Trim(Replace(Request.Form("IsLactation"),"'","''")) + "," + Trim(Replace(Request.Form("IsOther"),"'","''")) + "," + Trim(Replace(Request.Form("IsTrip"),"'","''")) + "," + Trim(Replace(Request.Form("IsAnnual"),"'","''")) + "," + Trim(Replace(Request.Form("IsHolidy"),"'","''")) + "," + Trim(Replace(Request.Form("IsInjury"),"'","''")) + "," + Trim(Replace(Request.Form("IsFuneral"),"'","''")) + "," + Trim(Replace(Request.Form("IsVisit"),"'","''"))
+strSkipHoliday = "PersonalLeave"+Trim(Replace(Request.Form("IsPrivate"),"'","''")) + "," 
+strSkipHoliday = strSkipHoliday + "SickLeave"+Trim(Replace(Request.Form("IsSick"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "CompensatoryLeave"+Trim(Replace(Request.Form("IsCompensatory"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "MaternityLeave"+Trim(Replace(Request.Form("IsMaternity"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "WeddingLeave"+Trim(Replace(Request.Form("IsMatrimony"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "LactationLeave"+Trim(Replace(Request.Form("IsLactation"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "OtherLeave"+Trim(Replace(Request.Form("IsOther"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "OnTrip"+Trim(Replace(Request.Form("IsTrip"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "AnnualVacation"+Trim(Replace(Request.Form("IsAnnual"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "PublicHoliday"+Trim(Replace(Request.Form("IsHolidy"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "InjuryLeave"+Trim(Replace(Request.Form("IsInjury"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "FuneralLeave"+Trim(Replace(Request.Form("IsFuneral"),"'","''")) + ","
+strSkipHoliday = strSkipHoliday + "VisitLeave"+Trim(Replace(Request.Form("IsVisit"),"'","''"))
 
 '休息日所计工时'
 Dim strWorkTime

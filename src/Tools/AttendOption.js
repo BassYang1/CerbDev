@@ -128,19 +128,19 @@
 	
 	//分析下班刷卡
 	var strAnalyseOffDuty = getOptionValue("strAnalyseOffDuty", optObj);
-	var arrAnalyseOffDuty = (strAnalyseOffDuty ? strAnalyseOffDuty : "").split(",");
+	var isFirstOff = (strAnalyseOffDuty && strAnalyseOffDuty == "0" ? true : false);
 	html = getlbl("tool.StrAnalyseOffDutyDetail");
-	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (arrAnalyseOffDuty.length > 0 && arrAnalyseOffDuty[0] == "1" ? "checked" : "") + " id='IsFirstOff' name='AnalyseOffDuty' role='radiobox' class='FormElement'>");
-	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (arrAnalyseOffDuty.length > 1 && arrAnalyseOffDuty[1] == "1" ? "checked" : "") + " id='IsLastOff' name='AnalyseOffDuty' role='radiobox' class='FormElement'>");
+	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (isFirstOff ? "checked" : "") + " id='IsFirstOff' name='AnalyseOffDuty' role='radiobox' class='FormElement'>");
+	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (isFirstOff ? "" : "checked") + " id='IsLastOff' name='AnalyseOffDuty' role='radiobox' class='FormElement'>");
 	$("#tr_StrAnalyseOffDuty").children(".CaptionTD").text(getlbl("tool.StrAnalyseOffDuty"));
 	$("#tr_StrAnalyseOffDuty").children(".DataTD").html(html);
 
 	//出勤天数
 	var blnAnalyseWorkDay = getOptionValue("blnAnalyseWorkDay", optObj);
-	var arrAnalyseWorkDay = (blnAnalyseWorkDay ? blnAnalyseWorkDay : "").split(",");
+	var isWorkDay = (blnAnalyseWorkDay && blnAnalyseWorkDay == "0" ? true : false);
 	html = getlbl("tool.StrWorkDayDetail");
-	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (arrAnalyseWorkDay.length > 0 && arrAnalyseWorkDay[0] == "1" ? "checked" : "") + " id='IsWorkDay' name='WorkTime' role='radiobox' class='FormElement'>");
-	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (arrAnalyseWorkDay.length > 1 && arrAnalyseWorkDay[1] == "1" ? "checked" : "") + " id='IsWorkHour' name='WorkTime' role='radiobox' class='FormElement'>");
+	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (isWorkDay ? "checked" : "") + " id='IsWorkDay' name='WorkTime' role='radiobox' class='FormElement'>");
+	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (isWorkDay ? "" : "checked") + " id='IsWorkHour' name='WorkTime' role='radiobox' class='FormElement'>");
 	$("#tr_StrWorkDay").children(".CaptionTD").text(getlbl("tool.StrWorkDay"));
 	$("#tr_StrWorkDay").children(".DataTD").html(html);
 
@@ -276,12 +276,10 @@ function fGetFormData(){
 	data.EndDay = $("#EndDay").val();
 
 	//分析下班刷卡
-	data.IsFirstOff = $("#IsFirstOff").is(":checked") ? "1" : "0";
-	data.IsLastOff = $("#IsLastOff").is(":checked") ? "1" : "0";
+	data.AnalyseOffDuty = $("#IsLastOff").is(":checked") ? "1" : "0";
 
 	//出勤天数
-	data.IsWorkDay = $("#IsWorkDay").is(":checked") ? "1" : "0";
-	data.IsWorkHour = $("#IsWorkHour").is(":checked") ? "1" : "0";
+	data.AnalyseWorkDay = $("#IsWorkHour").is(":checked") ? "1" : "0";
 
 	//流程审批
 	data.IsApproval = $("#IsApproval").is(":checked") ? "1" : "0";
