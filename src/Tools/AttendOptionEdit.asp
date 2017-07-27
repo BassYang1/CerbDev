@@ -177,6 +177,10 @@ if	strSQL<>"" then
 	end if
 
 	strActions = GetCerbLbl("strLogEdit")		
+
+	'考勤申请是否走工作流
+	Call CheckWorkflowApproval()
+
 	Call AddLogEvent(GetToolLbl("Tool")&"-"&GetToolLbl("Options"),cstr(strActions),cstr(strActions)&GetToolLbl("Options")&","&GetToolLbl("UserID")&":"&strUserId)
 	
 	Call fCloseADO()

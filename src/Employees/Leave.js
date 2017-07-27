@@ -10,8 +10,26 @@ $(document).ready(function () {
     }
 
     //获取操作权限
-    var role = GetOperRole("employees");
-    initList(role.iapprove); //初使化列表数据
+    var role = GetOperRole("employees");    
+    var iapply = false, iapprove = false, irevoke = false, ipend = false, iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
+    try {
+        iapply = role.apply;
+        iapprove = role.approve;
+        irevoke = role.approve;
+        ipend = role.apply;
+        iedit = role.edit;
+        iadd = role.add;
+        idel = role.del;
+        iview = role.view;
+        irefresh = role.refresh;
+        isearch = role.search;
+        iexport = role.exportdata;
+    }
+    catch (exception) {
+        alert(exception);
+    }
+
+    initList(iapprove); //初使化列表数据
 
     //登录员工考勤数据
     var empId = getCookie(cookieEmId); 
@@ -96,8 +114,9 @@ $(document).ready(function () {
                 },
                 formoptions: { rowpos: 6, colpos: 1, elmsuffix:"<font color=#FF0000>*</font>" }
             },
-            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false,
+            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false, hidden: !iapprove,
                 editable: true, edittype: 'none', 
+                editrules: { edithidden: true },
                 formoptions: { rowpos: 7, colpos: 1 },
                 formatter: function (cellvalue, options, rowObject) { 
                     if (cellvalue && cellvalue.indexOf("-") >= 0) { 
@@ -148,27 +167,9 @@ $(document).ready(function () {
         },
     });
 
-    var iapply = false, iapprove = false, irevoke = false, ipend = false, iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
-    try {
-        iapply = role.apply;
-        iapprove = role.approve;
-        irevoke = role.approve;
-        ipend = role.apply;
-        iedit = role.edit;
-        iadd = role.add;
-        idel = role.del;
-        iview = role.view;
-        irefresh = role.refresh;
-        isearch = role.search;
-        iexport = role.exportdata;
-    }
-    catch (exception) {
-        alert(exception);
-    }
-
     jQuery("#DataGrid").jqGrid('navGrid', '#DataGrid_toppager',
         {
-            edit: iapprove, add: iapply, del: irevoke, view: iview, refresh: irefresh, search: isearch, edittext: strapprovetext, addtext: strapplytext, deltext: strrevoketext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
+            edit: iapprove, add: iapply, del: irevoke, view: iview, refresh: irefresh, search: isearch, edittext: strapprovetext, addtext: iapprove ? strapplytext : straddtext, deltext: strrevoketext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
             alerttext: stralerttext,
         },
         {

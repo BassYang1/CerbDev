@@ -173,10 +173,10 @@ Sub CheckWorkflowApproval
 
 	session("WorkflowApproverEmpId") = ""
 	session("WorkflowApproverEmpName") = ""
-	session("IsApprovalWorkflow") = 0
+	session("NeedApprovWorkflow") = 0
 
 	On Error Resume Next
-	strSQL = "select ISNULL(VariableValue, '') from Options where VariableName='StrWorkflowApproval' and VariableType='str'"
+	strSQL = "select ISNULL(VariableValue, '') AS VariableValue from Options where VariableName='strWorkflowApproval' and VariableType='str'"
 	Rs.open strSQL, Conn, 1, 1
 
 	if err.number <> 0 then
@@ -184,7 +184,6 @@ Sub CheckWorkflowApproval
 		exit sub
 	end if
 
-	'IsApproval,ApproverEmpId'
 	if not Rs.EOF then
 		strOption = Rs.fields("VariableValue").value		
 	end if
@@ -194,21 +193,24 @@ Sub CheckWorkflowApproval
 		exit sub
 	end if
 
+	'是否启用流程审批,指定员工审批,员工工号,指定管理员审批'
 	arrOptions = split(strOption, ",")
 
-	if isarray(arrOptions) = 0 and ubound(arrOptions) < 1 then
+	if isarray(arrOptions) = 0 or ubound(arrOptions) < 3 then
 		exit sub
 	end if
 
-	'是否使用流程'
+	'启用流程审批'
 	if arrOptions(0) = "1" then 
 		session("NeedApprovWorkflow") = 1
-	end if
 
-	strApproverEmpId = arrOptions(1) '流程审批人'
+		'指定员工审批,员工工号'
+		if ubound(arrOptions) >= 2 and arrOptions(1) = "1" and arrOptions(2) <> "" then 
+			strSQL = "select EmployeeId, Name from Employees where Left(IncumbencyStatus,1) <> '1' and Number='" & arrOptions(2) & "'"
+		Else '指定管理员审批'
+			strSQL = "select EmployeeId, Name from Employees where Left(IncumbencyStatus,1) <> '1' and EmployeeId=(select top 1 EmployeeId from users where LoginName = 'admin')"
+		End If 
 
-	If strApproverEmpId <> "" Then 
-		strSQL = "select Name from Employees where Left(IncumbencyStatus,1) <> '1' and EmployeeId=" & strApproverEmpId
 		Rs.open strSQL, Conn, 1, 1
 
 		if err.number <> 0 then
@@ -217,12 +219,12 @@ Sub CheckWorkflowApproval
 		end if
 
 		if not Rs.EOF then
-			session("WorkflowApproverEmpId") =strApproverEmpId
+			session("WorkflowApproverEmpId") = Rs.fields("EmployeeId").value
 			session("WorkflowApproverEmpName") = Rs.fields("Name").value
 		end if
 
 		Rs.close
-	End If 
+	End if
 End Sub
 
 '登录用户是否有审批权限'

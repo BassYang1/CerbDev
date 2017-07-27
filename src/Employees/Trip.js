@@ -11,7 +11,25 @@ $(document).ready(function () {
 
     //获取操作权限
     var role = GetOperRole("employees");
-    initList(role.iapprove); //初使化列表数据
+    var iapply = false, iapprove = false, irevoke = false, ipend = false, iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
+    try {
+        iapply = role.apply;
+        iapprove = role.approve;
+        irevoke = role.approve;
+        ipend = role.apply;
+        iedit = role.edit;
+        iadd = role.add;
+        idel = role.del;
+        iview = role.view;
+        irefresh = role.refresh;
+        isearch = role.search;
+        iexport = role.exportdata;
+    }
+    catch (exception) {
+        alert(exception);
+    }
+
+    initList(iapprove); //初使化列表数据
 
     //登录员工考勤数据
     var empId = getCookie(cookieEmId); 
@@ -36,7 +54,7 @@ $(document).ready(function () {
             },
             { name: 'OtherCode', index: 'OtherCode', align: 'center', width: 40, editable: false, edittype: 'none', hidden: true, viewable: false, search: false },
             {
-                name: 'Note', index: 'Note', align: 'center', width: 140, editable: true, hidden: false, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                name: 'Note', index: 'Note', align: 'center', width: 250, editable: true, hidden: false, editrules: { required: false, edithidden: true }, viewable: false, search: false,
                 formoptions: { rowpos: 1, colpos: 1 },
             },
             {
@@ -91,7 +109,7 @@ $(document).ready(function () {
                 },
                 formoptions: { rowpos: 5, colpos: 1, elmsuffix:"<font color=#FF0000>*</font>" }
             },
-            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false,
+            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false, hidden: !iapprove, 
                 editable: false, edittype: 'none', 
             },
         ],
@@ -128,27 +146,9 @@ $(document).ready(function () {
         },
     });
 
-    var iapply = false, iapprove = false, irevoke = false, ipend = false, iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
-    try {
-        iapply = role.apply;
-        iapprove = role.approve;
-        irevoke = role.approve;
-        ipend = role.apply;
-        iedit = role.edit;
-        iadd = role.add;
-        idel = role.del;
-        iview = role.view;
-        irefresh = role.refresh;
-        isearch = role.search;
-        iexport = role.exportdata;
-    }
-    catch (exception) {
-        alert(exception);
-    }
-
     jQuery("#DataGrid").jqGrid('navGrid', '#DataGrid_toppager',
         {
-            edit: iapprove, add: iapply, del: irevoke, view: iview, refresh: irefresh, search: false, edittext: strapprovetext, addtext: strapplytext, deltext: strrevoketext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
+            edit: iapprove, add: iapply, del: irevoke, view: iview, refresh: irefresh, search: false, edittext: strapprovetext, addtext: iapprove ? strapplytext : straddtext, deltext: strrevoketext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
             alerttext: stralerttext,
         },
         {

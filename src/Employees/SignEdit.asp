@@ -87,7 +87,7 @@ Select Case strOper
 			strStatus = getEmpLbl("FlowStatus_Approved_2")	
 		end if
 
-		strFields = " EmployeeId, StartTime, EndTime, Note, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName "
+		strFields = " EmployeeId, BrushTime, Remark, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName "
 		strValues = cstr(strEmpId)+", '"+cstr(strBrushTime)+"', '"+CStr(strRemark)+"', '" + strStatus + " ', 0"
 		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"' "
 		strSQL = "Insert into AttendanceSignIn(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
