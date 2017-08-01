@@ -5,10 +5,9 @@
 <!--#include file="..\Conn\GetLbl.asp"-->
 <%
 Call CheckLoginStatus("parent.location.href='../login.html'")
-Call CheckOperPermissions()
 
 Dim strSQL,strOper, strRecordID,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strAllDay,strStartTime,strEndTime,strLeaveNum,strNote, strEmpId, strDescription
-Dim strSumTotal, strTimeTemp, strAskDay, strStatus
+Dim strSumTotal, strTimeTemp, strAskDay, strStatus, blnRefuse
 Dim strFields, strValues
 Dim strDepartmentName, strEmployeeName
 Dim isEditEmpCode,arr
@@ -19,6 +18,12 @@ strRecordID = Replace(Request.Form("id"),"'","''")
 strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
 strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
 strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
+
+blnRefuse = Replace(Request.Form("Refuse"),"'","''")
+
+if strOper = "edit" and blnRefuse = "" then
+	Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+end if
 
 'strAllDay = Replace(Request.Form("AllDay"),"'","''")
 strAllDay = 0 '非整天'
@@ -36,13 +41,14 @@ strTransactorName = session("WorkflowApproverEmpName")
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
 	response.End()
-end if 
-if GetOperRole("AskForLeave",strOper) <> true then 
+end if
+
+if CheckWorkflowPermission(strOper) <> true then 
 	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
 	response.End()
 end if
 
-if oper = "del" then
+if strOper <> "del" then
 	If strStartTime = "" Then 
 		Call ReturnErrMsg(GetEmpLbl("Leave_Start_Date_Not_Null"))	'"开始时间不能为空"
 	end if
@@ -96,17 +102,33 @@ Call fConnectADODB()
 
 '判断模板名称是否存在
 strSQL=""
+'是否申请请假出差'
 Select Case strOper
 	Case "add": 'Add Record
-		strSQL = "select 1 from AttendanceAskForLeave where EmployeeId="+CStr(strEmpId)+" and ( (StartTime<='"+CStr(strStartTime)+"' and EndTime>='"+CStr(strStartTime)+"') or (StartTime<='"+CStr(strEndTime)+"' and EndTime>='"+CStr(strEndTime)+"') or (  StartTime>='"+CStr(strStartTime)+"' and EndTime<='"+CStr(strEndTime)+"') )"
+		strSQL = "select 1 from AttendanceAskForLeave where EmployeeId="+CStr(strEmpId)+" and ( (StartTime<='"+CStr(strStartTime)+"' and EndTime>='"+CStr(strStartTime)+"') or (StartTime<='"+CStr(strEndTime)+"' and EndTime>='"+CStr(strEndTime)+"') or (  StartTime>='"+CStr(strStartTime)+"' and EndTime<='"+CStr(strEndTime)+"') ) and left(Status,1) in ('0', '2')"
 	Case "edit": 'Edit Record
-		strSQL = "select 1 from AttendanceAskForLeave where AskForLeaveId<>"+CStr(strRecordID)+" and EmployeeId="+CStr(strEmpId)+"  and ( (StartTime<='"+CStr(strStartTime)+"' and EndTime>='"+CStr(strStartTime)+"') or (StartTime<='"+CStr(strEndTime)+"' and EndTime>='"+CStr(strEndTime)+"') or (  StartTime>='"+CStr(strStartTime)+"' and EndTime<='"+CStr(strEndTime)+"') )"
+		strSQL = "select 1 from AttendanceAskForLeave where AskForLeaveId<>"+CStr(strRecordID)+" and EmployeeId="+CStr(strEmpId)+"  and ( (StartTime<='"+CStr(strStartTime)+"' and EndTime>='"+CStr(strStartTime)+"') or (StartTime<='"+CStr(strEndTime)+"' and EndTime>='"+CStr(strEndTime)+"') or (  StartTime>='"+CStr(strStartTime)+"' and EndTime<='"+CStr(strEndTime)+"') ) and left(Status,1) in ('0', '2')"
 End Select
 
 if	strSQL<>"" then 
 	if IsExistsValue(strSQL) = true then 
 		Call fCloseADO()
 		Call ReturnErrMsg(GetEmpLbl("Re_Ask_For_Leave_On_Date"))	'"时间段内已被申请过请假,不能再申请！"
+	end if
+end if
+
+'是否申请加班'
+Select Case strOper
+	Case "add": 'Add Record
+		strSQL = "select 1 from AttendanceOT where EmployeeId="+CStr(strEmpId)+" and ( (StartTime<='"+CStr(strStartTime)+"' and EndTime>='"+CStr(strStartTime)+"') or (StartTime<='"+CStr(strEndTime)+"' and EndTime>='"+CStr(strEndTime)+"') or (  StartTime>='"+CStr(strStartTime)+"' and EndTime<='"+CStr(strEndTime)+"') ) and left(Status,1) in ('0', '2')"
+	Case "edit": 'Edit Record
+		strSQL = "select 1 from AttendanceOT where OTId<>"+CStr(strRecordID)+" and EmployeeId="+CStr(strEmpId)+"  and ( (StartTime<='"+CStr(strStartTime)+"' and EndTime>='"+CStr(strStartTime)+"') or (StartTime<='"+CStr(strEndTime)+"' and EndTime>='"+CStr(strEndTime)+"') or (  StartTime>='"+CStr(strStartTime)+"' and EndTime<='"+CStr(strEndTime)+"') ) and left(Status,1) in ('0', '2')"
+End Select
+
+if	strSQL<>"" then 
+	if IsExistsValue(strSQL) = true then 
+		Call fCloseADO()
+		Call ReturnErrMsg(GetEmpLbl("Re_Ask_For_OT_On_Date"))	'"时间段内已被申请过加班,不能再申请！"
 	end if
 end if
 
@@ -133,18 +155,32 @@ Select Case strOper
 		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"' "
 		strSQL = "Insert into AttendanceOT(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceOT where OTId=(select Max(OTId) from AttendanceOT)"
-	Case "edit": 'Edit Record		
+	Case "edit": 'Edit Record	
+		if strRecordID = "" or not isnumeric(strRecordID) then
+			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+		end if
+
+		if blnRefuse = "0" then
+			strStatus = getEmpLbl("FlowStatus_Approved_2")	
+		else
+			strStatus = getEmpLbl("FlowStatus_Refused_3")	
+		end if
+
 		strDescription = Replace(Request.Form("Description"),"'","''")
 		If Len(strDescription) > 50 Then 
 			Call fCloseADO()
 			Call ReturnErrMsg(GetEmpLbl("FlowApprove_Desc_Length_50"))	'"批注/说明最多长度为50个字符！"
 		End if
-		strSQL = "update AttendanceOT set Status='" + getEmpLbl("FlowStatus_Approved_2") + "' where OTId=" + CStr(strRecordID)
+		strSQL = "update AttendanceOT set Status='" + strStatus + "', TransactorId=" + CStr(strTransactorId) + ", TransactorName='" + cstr(strTransactorName) + "' where OTId=" + CStr(strRecordID)
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceOT where OTId=" + strRecordID
 	Case "del": 'Delete Record
+		if strRecordID = "" then
+			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+		end if
+
 		strStatus = getEmpLbl("FlowStatus_Ceased_C")	
-		strSQL = "update AttendanceOT set Status='" + strStatus + "' where OTId=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceOT L where OTId=" + strRecordID
+		strSQL = "update AttendanceOT set Status='" + strStatus + "' where OTId in (" + CStr(strRecordID) + ");"
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Overtime_2") + "', OTId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceOT L where OTId in (" + CStr(strRecordID) + ");"
 End Select
 
 'response.write strSQL
@@ -167,7 +203,11 @@ if	strSQL<>"" then
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,模板名称["&strTemplateName&"]")
 			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Overtime"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Overtime")&","&strEmpId)
 		Case "edit": 'Edit Record
-			strActions = GetCerbLbl("strLogApproval")
+			if blnRefuse = "0" then
+				strActions = GetCerbLbl("strLogApproval")
+			else
+				strActions = GetCerbLbl("strLogRefuse")
+			end if
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"],修改后模板名称["&strTemplateName&"]")			
 			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_Overtime"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_Overtime")&","&strRecordID)
 		Case "del": 'Delete Record

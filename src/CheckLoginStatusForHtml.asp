@@ -6,6 +6,9 @@ if session("UserName") = "" or session("UserId") = "" or session("EmId") = "" th
 	session("UserId") = ""
 	session("EmId") = ""
 	session("OperPermissions") = ""
+	session("WorkflowApproverEmpId") = ""
+	session("WorkflowApproverEmpName") = ""
+	session("NeedApprovWorkflow") = 0
 		
 	Response.Cookies("Cerb_UserName") = ""
 	Response.Cookies("Cerb_UserId") = ""

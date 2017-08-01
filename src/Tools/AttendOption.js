@@ -1,4 +1,15 @@
 ﻿$(function(){
+	initEditForm();
+
+	var role = GetOperRole("options"); //权限
+	if(!(role && role.add)){
+		$("#sData").hide();
+		$("input,textarea,select").attr("disabled", true);
+	}
+});
+
+//初使化
+function initEditForm(){
 	var userId = getCookie(cookieUserId); 
 	var strUrl = "AttendOptionList.asp?nd=" + getRandom() + "&userId=" + userId;
 	var optObj = null;
@@ -150,7 +161,7 @@
 	html = getlbl("tool.StrWorkflowDetail");
 	html = html.replace(/{{checkbox}}/, "<input type='checkbox' " + (arrWorkflowApproval.length > 0 && arrWorkflowApproval[0] == "1" ? "checked" : "") + " id='IsApproval' name='IsApproval' role='radiobox' class='FormElement'>");
 	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (arrWorkflowApproval.length > 1 && arrWorkflowApproval[1] == "1" ? "checked" : "") + " id='IsEmp' name='Approver' role='radiobox' class='FormElement'>");
-	html = html.replace(/{{textbox}}/, "<input type='text' id='EmpCode' name='EmpCode' value='" + (arrWorkflowApproval.length > 2 && !isNaN(arrWorkflowApproval[2]) ? arrWorkflowApproval[2] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 120px;'>");
+	html = html.replace(/{{textbox}}/, "<input type='text' id='EmpCode' name='EmpCode' value='" + (arrWorkflowApproval.length > 2 ? arrWorkflowApproval[2] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 120px;'>");
 	html = html.replace(/{{radiobox}}/, "<input type='radio' id='IsAdmin' " + (arrWorkflowApproval.length > 3 && arrWorkflowApproval[3] == "1" ? "checked" : "") + " name='Approver' role='radiobox' class='FormElement'>");
 	$("#tr_StrWorkflow").children(".CaptionTD").text(getlbl("tool.StrWorkflow"));
 	$("#tr_StrWorkflow").children(".DataTD").html(html);
@@ -231,7 +242,7 @@
 	$(".DataTD").css({"margin": "5px 0px"});
 	$(".DataTD").find("input:checkbox").css({"vertical-align": "-3px"});
 	$(".DataTD").find("input:radio").css({"vertical-align": "-3px"});
-});
+}
 
 //获取数据
 function fGetFormData(){

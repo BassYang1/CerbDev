@@ -249,8 +249,12 @@ SELECT 'Employees', NULL, 'EmpDescription', '员工说明', '員工說明', 'Employees D
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'EmpDescription');
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
-SELECT 'Employees', NULL, 'Re_Ask_For_Leave_On_Date', '时间段内已被申请过请假,不能再申请！', '時間段內已被申請過請假,不能再申請！', 'The time period has been asked for leave, can not apply again!', '' 
+SELECT 'Employees', NULL, 'Re_Ask_For_Leave_On_Date', '时间段内已被申请过请假或出差,不能再申请！', '時間段內已被申請過請假或出差,不能再申請！', 'The time period has been asked for leave or trip, can not apply again!', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Re_Ask_For_Leave_On_Date');	
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', NULL, 'Re_Ask_For_OT_On_Date', '时间段内已被申请过加班,不能再申请！', '時間段內已被申請加班,不能再申請！', 'The time period has been asked for OT, can not apply again!', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'Re_Ask_For_OT_On_Date');	
 	
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', NULL, 'Leave_Start_Date_Not_Null', '开始时间不能为空！', '開始時間不能為空！', 'The start time cannot be empty!', '' 
@@ -379,6 +383,14 @@ SELECT 'Employees', 'WorkflowStatus', 'FlowStatus_Approved_2', '2 - 已批', '2 - 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', 'WorkflowStatus', 'FlowStatus_Refused_3', '3 - 拒绝', '3 - 拒絕', '3 - Refused', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'FlowStatus_Refused_3');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', 'WorkflowStatus', 'FlowStatus_Review_Pending', '4 - 待撤审', '4 - 待撤審', '4 - Review withdrawal pending', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'FlowStatus_Review_Pending');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Employees', 'WorkflowStatus', 'FlowStatus_Approve_Pending', '5 - 待撤批', '5 - 待撤批', '5 - Approval withdrawal pending', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Employees' AND LabelId = 'FlowStatus_Approve_Pending');
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Employees', 'WorkflowStatus', 'FlowStatus_Ceased_C', 'C - 中止', 'C - 中止', 'C - Ceased', '' 

@@ -236,6 +236,15 @@ Function CheckApprovalPermission()
 	end if
 End Function
 
+'检查用户流程操作权限'
+Function CheckWorkflowPermission(strOper)	
+	CheckWorkflowPermission = false
+
+	if strOper = "add" or strOper = "del" or (CheckApprovalPermission() = 1 and strOper = "edit") then
+		CheckWorkflowPermission = true
+	end if
+End Function
+
 Function AddLogEvent(strModules , strActions , strObjects )
 	AddLogEvent=0
 	if strModules = "" or strActions = "" then

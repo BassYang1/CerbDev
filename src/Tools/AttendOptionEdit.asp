@@ -116,11 +116,11 @@ Call fConnectADODB()
 strSQL=""
 
 if strEmp = "1" and strEmpCode <> "" then
-	strSQL = "select 1 from Employees where Number = '" + CStr(strEmpCode) + "' and Left(IncumbencyStatus,1)<>'1'"
+	strSQL = "select 1 from Employees E inner join Users U on E.EmployeeId = U.EmployeeId where E.Number = '" + CStr(strEmpCode) + "' and Left(E.IncumbencyStatus,1)<>'1' and ISNULL(U.OperPermissions, 2) = 1"
 end if
 
 if	strSQL<>"" then 
-	if IsExistsValue(strSQL) = true then 
+	if IsExistsValue(strSQL) = false then 
 		Call fCloseADO()
 		Call ReturnErrMsg(GetEmpLbl("Workflow_Approver_Invalid"))	'"流程审批人无效"
 	end if

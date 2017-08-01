@@ -10,13 +10,13 @@ $(document).ready(function () {
     }
 
     //获取操作权限
-    var role = GetOperRole("employees");
-    var iapply = false, iapprove = false, irevoke = false, ipend = false, iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
+    var role = GetOperRole("employees");    
+    var iapply = false, iapprove = false, irevoke = false;
+    var iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
     try {
-        iapply = role.apply;
-        iapprove = role.approve;
-        irevoke = role.approve;
-        ipend = role.apply;
+        iapply = role.apply; //是否流程处理
+        iapprove = role.approve; //登录用户是否用审批权限
+        irevoke = role.apply;
         iedit = role.edit;
         iadd = role.add;
         idel = role.del;
@@ -29,7 +29,7 @@ $(document).ready(function () {
         alert(exception);
     }
 
-    initList(iapprove); //初使化列表数据
+    initListPage(iapprove); //初使化列表页面
 
     jQuery("#DataGrid").jqGrid({
         url: 'SignList.asp',
@@ -52,7 +52,7 @@ $(document).ready(function () {
             { name: 'OtherCode', index: 'OtherCode', align: 'center', width: 40, editable: false, edittype: 'none', hidden: true, viewable: false, search: false },        
             { name: 'BrushTime', index: 'BrushTime', align: 'center', editable: true, editrules: { required: true, date: false, edithidden: true },
                 width: 170, search: false, formatter: 'date', sorttype: 'date',
-                formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }, datefmt: 'Y-m-d',
+                formatoptions: { srcformat: 'Y-m-d H:m:s', newformat: 'Y-m-d H:m:s' }, datefmt: 'Y-m-d H:m:s',
                 editoptions: {
                     size:20,maxlengh:20,
                     dataInit:function(element){
@@ -67,7 +67,7 @@ $(document).ready(function () {
                 editoptions: { rows: 3, cols: 65, dataInit: null },
                 formoptions: { rowpos: 2, colpos: 1 },
             },
-            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false, hidden: !iapprove,
+            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false, hidden: !iapply,
                 editable: false, edittype: 'none', 
                 formatter: function (cellvalue, options, rowObject) { 
                     if (cellvalue && cellvalue.indexOf("-") >= 0) { 
@@ -114,7 +114,8 @@ $(document).ready(function () {
 
     jQuery("#DataGrid").jqGrid('navGrid', '#DataGrid_toppager',
         {
-            edit: iapprove, add: iapply, del: irevoke, view: iview, refresh: irefresh, search: isearch, edittext: strapprovetext, addtext: iapprove ? strapplytext : straddtext, deltext: strrevoketext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
+            edit: iapprove || iedit, add: iapply || iadd, del: irevoke || idel, view: iview, refresh: irefresh, search: isearch, 
+            edittext: iapprove ? strchecktext : stredittext, addtext: iapply ? strapplytext : straddtext, deltext: iapply ? strrevoketext : strdeltext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
             alerttext: stralerttext,
         },
         {
@@ -167,9 +168,9 @@ $(document).ready(function () {
         },  //  default settings for add
         {
             top: 0,            
-            caption: strrevoketext,
-            msg: strrevokemsg,
-            bSubmit: strrevoketext,
+            caption: iapply ? strrevoketext : strdeltext,
+            msg: iapply ? strrevokemsg : strdelmsg,
+            bSubmit: iapply ? strrevoketext : strdeltext,
             bCancel: getlbl("comm.Cancel"),
             reloadAfterSubmit: true,
             afterSubmit: getDelafterSubmit
@@ -204,6 +205,8 @@ $(document).ready(function () {
             //position:"first"
         });
     }
+
+    changeNavEx();
 });
 
 function initEditForm(rowObject) {
@@ -217,6 +220,21 @@ function initEditForm(rowObject) {
         $("#Remark").val(rowObject.Remark);
     }
 
+    if(rowObject && rowObject.SignId){ //审批
+        $("#FrmGrid_DataGrid").find("input,textarea").attr("disabled", true);
+        $("#sData").html(strapprovetext + "<span class='ui-icon ui-icon-disk'>");
+        $("#sData").after("<input type='hidden' id='hdRefuse' /><a id='fData' class='fm-button ui-state-default ui-corner-all fm-button-icon-left'>" + strrefusetext + "<span class='ui-icon ui-icon-disk'></span></a>");
+        $("#tr_Remark").after("<tr rowpos='9' class='FormData' id='tr_Description'><td class='CaptionTD'>" + getlbl('hr.ApproveDesc') + "</td><td class='DataTD'>&nbsp;<textarea rows='3' cols='65' id='Description' name='Description' role='textbox' multiline='true' class='FormElement ui-widget-content ui-corner-all'></textarea></td></tr>");
+        $("#Description").focus();
+        $("#fData").click(function(){
+            $("#hdRefuse").val("1");
+            $("#sData").click();
+        });
+    }
+    else{
+        $("#sData").html(strapplytext + "<span class='ui-icon ui-icon-disk'>");
+    }
+
     //加载部门
     //initDepartments(id); 
     //加载员工
@@ -225,6 +243,10 @@ function initEditForm(rowObject) {
 
 function fGetFormData() {
     var data = {};
+
+    //是否执行拒绝
+    var irefuse = $("#hdRefuse").val();
+    data.Refuse = irefuse && irefuse == "1" ? "1" : "0";
 
     //补卡时间
     data.BrushTime = $("#BrushTime").val();

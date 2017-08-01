@@ -11,11 +11,12 @@ $(document).ready(function () {
 
     //获取操作权限
     var role = GetOperRole("employees");
-    var iapply = false, iapprove = false, irevoke = false, ipend = false, iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
+    var iapply = false, iapprove = false, irevoke = false;
+    var iedit = false, iadd = false, idel = false, iview = false, irefresh = false, isearch = false, iexport = false;
     try {
-        iapply = role.apply;
-        iapprove = role.approve;
-        irevoke = role.approve;
+        iapply = role.apply; //是否流程处理
+        iapprove = role.approve; //登录用户是否用审批权限
+        irevoke = role.apply;
         ipend = role.apply;
         iedit = role.edit;
         iadd = role.add;
@@ -29,7 +30,7 @@ $(document).ready(function () {
         alert(exception);
     }
 
-    initList(iapprove); //初使化列表数据
+    initListPage(iapprove); //初使化列表页面
 
     //登录员工考勤数据
     var empId = getCookie(cookieEmId); 
@@ -64,13 +65,11 @@ $(document).ready(function () {
                             if($(element).is(":checked")){
                                 $("#StartTime, #EndTime").unbind('focus').bind('focus', function(){
                                     WdatePicker({isShowClear:true,dateFmt:'yyyy-MM-dd'});
-                                    getDuration();
                                 });
                             }
                             else{
                                 $("#StartTime, #EndTime").unbind('focus').bind('focus', function(){
                                     WdatePicker({isShowClear:true,dateFmt:'yyyy-MM-dd HH:mm:ss'});
-                                    getDuration();
                                 });
                             }
                         });
@@ -85,7 +84,7 @@ $(document).ready(function () {
             },
             { name: 'StartTime', index: 'StartTime', align: 'center', editable: true, editrules: { required: true, date: false, edithidden: true },
                 width: 150, search: false, formatter: 'date', sorttype: 'date',
-                formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }, datefmt: 'Y-m-d',
+                formatoptions: { srcformat: 'Y-m-d H:m:s', newformat: 'Y-m-d H:m:s' }, datefmt: 'Y-m-d H:m:s',
                 editoptions: {
                     size:20,maxlengh:20,
                     dataInit:function(element){
@@ -96,7 +95,7 @@ $(document).ready(function () {
             },
             { name: 'EndTime', index: 'EndTime', align: 'center', editable: true, editrules: { required: true, date: false, edithidden: true },
                 width: 150, search: false, formatter: 'date', sorttype: 'date',
-                formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }, datefmt: 'Y-m-d',
+                formatoptions: { srcformat: 'Y-m-d H:m:s', newformat: 'Y-m-d H:m:s' }, datefmt: 'Y-m-d H:m:s',
                 editoptions: {
                     size:20,maxlengh:20,
                     dataInit:function(element){
@@ -105,7 +104,7 @@ $(document).ready(function () {
                 },
                 formoptions: { rowpos: 6, colpos: 1, elmsuffix:"<font color=#FF0000>*</font>" }
             },
-            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false, hidden: !iapprove,
+            { name: 'Status', index: 'Status', width: 100, align: 'center', viewable: true, search: false, hidden: !iapply,
                 editable: false, edittype: 'none', 
                 formoptions: { rowpos: 7, colpos: 1 },
                 formatter: function (cellvalue, options, rowObject) { 
@@ -153,7 +152,8 @@ $(document).ready(function () {
 
     jQuery("#DataGrid").jqGrid('navGrid', '#DataGrid_toppager',
         {
-            edit: iapprove, add: iapply, del: irevoke, view: iview, refresh: irefresh, search: isearch, edittext: strapprovetext, addtext: iapprove ? strapplytext : straddtext, deltext: strrevoketext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
+            edit: iapprove || iedit, add: iapply || iadd, del: irevoke || idel, view: iview, refresh: irefresh, search: isearch, 
+            edittext: iapprove ? strchecktext : stredittext, addtext: iapply ? strapplytext : straddtext, deltext: iapply ? strrevoketext : strdeltext, searchtext: strsearchtext, refreshtext: strrefreshtext, viewtext: strviewtext,
             alerttext: stralerttext,
         },
         {
@@ -206,9 +206,9 @@ $(document).ready(function () {
         },  //  default settings for add
         {
             top: 0,            
-            caption: strrevoketext,
-            msg: strrevokemsg,
-            bSubmit: strrevoketext,
+            caption: iapply ? strrevoketext : strdeltext,
+            msg: iapply ? strrevokemsg : strdelmsg,
+            bSubmit: iapply ? strrevoketext : strdeltext,
             bCancel: getlbl("comm.Cancel"),
             reloadAfterSubmit: true,
             afterSubmit: getDelafterSubmit
@@ -243,14 +243,12 @@ $(document).ready(function () {
             //position:"first"
         });
     }
+
+    changeNavEx();
 });
 
 function initEditForm(rowObject) {
     var id = rowObject && rowObject.OTId ? rowObject.OTId : "";
-
-    //绑定事件
-    $("#StartTime, #EndTime").bind("focus", getDuration);
-
 
     if(rowObject && rowObject.StartTime && rowObject.EndTime){
         $("#StartTime").val(rowObject.StartTime);
@@ -265,6 +263,19 @@ function initEditForm(rowObject) {
         $("#Note").val(rowObject.Note);
     }
 
+    if(rowObject && rowObject.OTId){
+        $("#FrmGrid_DataGrid").find("input,textarea").attr("disabled", true);
+        $("#sData").html(strapprovetext + "<span class='ui-icon ui-icon-disk'>");
+        $("#sData").after("<input type='hidden' id='hdRefuse' /><a id='fData' class='fm-button ui-state-default ui-corner-all fm-button-icon-left'>" + strrefusetext + "<span class='ui-icon ui-icon-disk'></span></a>");
+        $("#tr_Note").after("<tr rowpos='9' class='FormData' id='tr_Description'><td class='CaptionTD'>" + getlbl('hr.ApproveDesc') + "</td><td class='DataTD'>&nbsp;<textarea rows='3' cols='65' id='Description' name='Description' role='textbox' multiline='true' class='FormElement ui-widget-content ui-corner-all'></textarea></td></tr>");
+        $("#fData").click(function(){
+            $("#hdRefuse").val("1");
+            $("#sData").click();
+        });
+    }
+    else{
+        $("#sData").html(strapplytext + "<span class='ui-icon ui-icon-disk'>");
+    }
     //加载部门
     //initDepartments(id); 
     //加载员工
@@ -273,6 +284,10 @@ function initEditForm(rowObject) {
 
 function fGetFormData() {
     var data = {};
+
+    //是否执行拒绝
+    var irefuse = $("#hdRefuse").val();
+    data.Refuse = irefuse && irefuse == "1" ? "1" : "0";
 
     //是否整天
     data.AllDay = $("#AllDay").is(":checked") ? "1" : "0";

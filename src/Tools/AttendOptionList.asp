@@ -5,17 +5,17 @@
 <!--#include file="..\Conn\GetLbl.asp"-->
 <%
 Call CheckLoginStatus("parent.location.href='../login.html'")
-Call CheckOperPermissions()
+'Call CheckOperPermissions()
 
 Dim strSQL, strJS
 
 dim strUserId
 strUserId = session("UserId")
 
-if GetOperRole("Options",strOper) <> true then 
-	Call ReturnMsg("false", GetEmpLbl("NoRight"), 0)'您无权操作！
-	response.End()
-end if
+'if GetOperRole("Options","edit") <> true then 
+''	Call ReturnMsg("false", GetEmpLbl("NoRight"), 0)'您无权操作！
+''	response.End()
+'end if
 
 Call fConnectADODB()
 

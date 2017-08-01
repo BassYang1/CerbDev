@@ -46,17 +46,24 @@ if strHead = "0" then  '我的资料
 	Else
 		strWhere = strWhere + " and substring(L.Status,1,1)='"+strStatus+"' and L.EmployeeId="+cstr(strEmpId)
 	End If
-ElseIf strHead = "2" then  '已办资料
-	strWhere = "L.TransactorId="+CStr(strEmpId) + " "
+ElseIf strHead = "1" then  '待办资料
+	'strWhere = " and L.TransactorId="+CStr(strEmpId) + " "
 	strWhere = strWhere + "and substring(L.Status,1,1) in ('0') " '0 - 申请'
-Else       '待办资料
-	strWhere = "L.TransactorId="+CStr(strEmpId) + " "
-	strWhere = strWhere + "and substring(L.Status,1,1) in ('2', '3') " '2 - 已批, 3 - 拒绝'
+Else       '已办资料
+	'strWhere = " and L.TransactorId="+CStr(strEmpId) + " "
+
+	if strStatus = "2" then
+		strWhere = strWhere + "and substring(L.Status,1,1) in ('2') " '2 - 已批,
+	elseif strStatus = "3" then
+		strWhere = strWhere + "and substring(L.Status,1,1) in (3') " '3 - 拒绝'
+	else
+		strWhere = strWhere + "and substring(L.Status,1,1) in ('2', '3') " '2 - 已批, 3 - 拒绝'
+	end if
 	
 end If
 
 If strHead <> "0" and strDept <> "" Then
-	strWhere = strWhere + "and L.EmployeeId in (select EmployeeId from Employees where DeparmentId in (select DeparmentId from Departments where DepartmentCode LIKE '" + strDept + "%')) "
+	strWhere = strWhere + " and L.EmployeeId in (select EmployeeId from Employees where DepartmentId in (select DepartmentId from Departments where DepartmentCode LIKE '" + strDept + "%')) "
 End If
 
 if strDate <> "" then

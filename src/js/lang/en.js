@@ -4,10 +4,12 @@ var strrevoketext = "Revoke";
 var strrevokemsg = "Do you revode the record？";
 var strapprovetext = "Approve";
 var strrefusetext = "Refuse";
+var strchecktext = "Check";
 var stredittext = "Edit";
 var straddtext = "Add";
 var strviewtext = "View";
 var strdeltext = "Delete";
+var strdelmsg = "Do you delete the record？";
 var strsearchtext="Search";
 var strrefreshtext="Refresh";
 var stralerttext = "Please select the data rows need to operate!";
@@ -176,6 +178,7 @@ var hr={
 	Lactation : "Lactation Leave",
 	Funeral : "Funeral Leave",
 	OtherLeave : "Other Leave",
+	Minute: "Minute",
 	Hour: "Hour",
 	Day: "Day",
 	Year: "Year",

@@ -2,12 +2,14 @@
 var strapplytext = "申請";
 var strrevoketext = "撤銷";
 var strrevokemsg = "撤銷所選記錄？";
+var strchecktext = "審核";
 var strapprovetext = "批準";
 var strrefusetext = "拒絕";
 var stredittext = "修改";
 var straddtext = "增加";
 var strviewtext = "查看";
 var strdeltext = "刪除";
+var strdelmsg = "刪除所選記錄？";
 var strsearchtext="查找";
 var strrefreshtext="刷新";
 var stralerttext = "請選擇需要操作的資料行!";
@@ -176,7 +178,8 @@ var hr={
 	Lactation : "哺乳假",
 	Funeral : "喪假",
 	OtherLeave : "其它",
-	Hour: "小時",
+	Minute: "分",
+	Hour: "時",
 	Day: "天",
 	Year: "年",
 	Month: "月",

@@ -1,7 +1,7 @@
 ﻿// JavaScript Document
  
 //初使化列表
-function initList(iapprove){
+function initListPage(iapprove){
     var html = "<option value='0'>0 - " + getlbl("hr.FlowData_My") + "</option>";
 
     //iapprove = false;
@@ -21,8 +21,9 @@ function initList(iapprove){
     $("#selHead").change("change", function(){
         var ihead = $(this).val()
         initStatus(ihead);
+        changeNavEx();
 
-        if(ihead != 1){
+        if(ihead != "0"){
             $("#selDept").removeAttr("disabled");
         }
         else{
@@ -33,10 +34,10 @@ function initList(iapprove){
     });
 }
 
-function initStatus(status){
+function initStatus(ihead){
     var html = "";
 
-    if(status == undefined || status == "0"){        
+    if(ihead == undefined || ihead == "0"){        
         html = "<option value='A'>A - " + getlbl("hr.FlowStatus_All_A") + "</option>";
         html += "<option value='0'>1 - " + getlbl("hr.FlowStatus_Applied_0") + "</option>";
         //html += "<option value='1'>" + getlbl("hr.FlowStatus_Reviewed_1") + "</option>";
@@ -46,11 +47,11 @@ function initStatus(status){
         //html += "<option value='5'>" + getlbl("hr.FlowStatus_Approve_With_Pend_5") + "</option>";
         html += "<option value='C'>C - " + getlbl("hr.FlowStatus_Ceased_C") + "</option>";
     }
-    else if(status == "1"){
+    else if(ihead == "1"){
         html = "<option value='A'>A - " + getlbl("hr.FlowStatus_All_A") + "</option>";
         html += "<option value='1'>1 - " + getlbl("hr.FlowStatus_Approving_2") + "</option>";
     }
-    else if(status == "2"){
+    else if(ihead == "2"){
         html = "<option value='A'>A - " + getlbl("hr.FlowStatus_All_A") + "</option>";
         html += "<option value='2'>1 - " + getlbl("hr.FlowStatus_Approved_2") + "</option>";
         html += "<option value='3'>2 - " + getlbl("hr.FlowStatus_Refused_3") + "</option>";
@@ -65,44 +66,36 @@ function initStatus(status){
 
 //获取申请时长
 function getDuration(){
-    var startTime, endTime;
-    var time, days = 0, hours = 0;
-
-    try{
-        startTime = new Date($("#StartTime").val());
-        endTime = new Date($("#EndTime").val());
-
-        time = endTime.getTime() - startTime.getTime();
-    }
-    catch(e){
-        time = 0;
-    }
-
-    if(time > 0){
-        hours=Math.floor(time / (3600 * 1000));
-        days = hours / 24;
-        hours = hours % 24;
-    }
-
     var timeHtml = "";
-    if(time <= 0 || isNaN(time)){
-        timeHtml = "0" + getlbl("hr.Hour");
+    var startTime, endTime;
+    var vluStart = $("#StartTime").val(), vluEnd = $("#EndTime").val();
+    var diffTime = 0, days = 0, hours = 0;
+    
+    try{
+        if(vluStart != "" &&  vluEnd != ""){
+            startTime = new Date(vluStart);
+            endTime = new Date(vluEnd);
+            diffTime = endTime.getTime() - startTime.getTime();
+        }
+    }
+    catch(ex){          
+    }
+            
+    if($("#AllDay").is(":checked") == true){
+        days = Math.ceil((diffTime + 1)/ (3600000 * 24));
+        timeHtml = days + getlbl("hr.Day");
+    }
+    else {          
+        diffTime = Math.ceil(diffTime / 60000);  //1h = 60m * 1000ms
+        timeHtml = parseInt(diffTime / 60) + getlbl("hr.Hour") + (diffTime % 60) + getlbl("hr.Minute");
+    }
+
+    if(vluStart != "" &&  vluEnd != ""){
+        $("#tr_Status").children("td.DataTD").find("#leaveNum").html(timeHtml);
     }
     else{
-        if(days > 0){
-            timeHtml = days + getlbl("hr.Day");
-        }
-
-        if(hours > 0){
-            timeHtml += hours + getlbl("hr.Hour");
-        }
+        $("#tr_Status").children("td.DataTD").find("#leaveNum").html("");
     }
-        
-    if($("#AllDay").is(":checked") && days == 0){
-        timeHtml = "1" + getlbl("hr.Day");
-    }
-
-    $("#tr_Status").children("td.DataTD").find("#leaveNum").html(timeHtml);
 }
 
 //初使化日期年月
@@ -182,4 +175,23 @@ function initListDepartments(){
     $("#selDept").change(function(){
         gridReload();
     });
+}
+
+//导航条扩展
+function changeNavEx(){   
+    var ihead = $("#selHead").val();
+    ihead = ihead ? ihead : "0";
+
+    //显示审批按钮
+    if(ihead == "0"){ //我的资料            
+        $("#add_DataGrid_top, #del_DataGrid_top").show();
+        $("#edit_DataGrid_top").hide();
+    }
+    else if(ihead == "1"){ //审批资料
+        $("#add_DataGrid_top, #del_DataGrid_top").hide();
+        $("#edit_DataGrid_top").show();
+    }
+    else { //已审资料
+        $("#edit_DataGrid_top, #add_DataGrid_top, #del_DataGrid_top").hide();
+    }
 }

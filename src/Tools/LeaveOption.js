@@ -1,4 +1,16 @@
 ﻿$(function(){
+	initEditForm();
+
+	var role = GetOperRole("options"); //权限
+	if(!(role && role.add)){
+		$("#sData").hide();
+		$("input,textarea,select").attr("disabled", true);
+		//$("#depframe").find("input,textarea,select").attr("disabled", true);
+	}
+});
+
+//初使化
+function initEditForm(){
 	var userId = getCookie(cookieUserId); 
 	var strUrl = "LeaveOptionList.asp?nd=" + getRandom() + "&userId=" + userId;
 	var optObj = null;
@@ -136,7 +148,7 @@
 	$(".DataTD").css({"margin": "5px 0px"});
 	$(".DataTD").find("input:checkbox").css({"vertical-align": "-3px"});
 	$(".DataTD").find("input:radio").css({"vertical-align": "-3px"});
-});
+}
 
 //获取数据
 function fGetFormData(){

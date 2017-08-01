@@ -5,10 +5,9 @@
 <!--#include file="..\Conn\GetLbl.asp"-->
 <%
 Call CheckLoginStatus("parent.location.href='../login.html'")
-Call CheckOperPermissions()
 
 Dim strSQL,strOper, strRecordID, strLeaveType,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strBrushTime,strRemark, strEmpId
-Dim strStatus
+Dim strStatus, blnRefuse
 Dim strFields, strValues
 Dim strDepartmentName, strEmployeeName
 Dim isEditEmpCode,arr
@@ -19,6 +18,12 @@ strRecordID = Replace(Request.Form("id"),"'","''")
 strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
 strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
 strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
+
+blnRefuse = Replace(Request.Form("Refuse"),"'","''")
+
+if strOper = "edit" and blnRefuse = "" then
+	Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+end if
 
 strBrushTime = Replace(Request.Form("BrushTime"),"'","''")
 strRemark = Replace(Request.Form("Remark"),"'","''")
@@ -33,22 +38,23 @@ strTransactorName = session("WorkflowApproverEmpName")
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
 	Call ReturnMsg("false",GetEmpLbl("PartError"),0)'"参数错误"
 	response.End()
-end if 
-if GetOperRole("AskForLeave",strOper) <> true then 
+end if
+
+if CheckWorkflowPermission(strOper) <> true then 
 	Call ReturnMsg("false",GetEmpLbl("NoRight"),0)'您无权操作！
 	response.End()
 end if
 
-if oper = "del" then
+if strOper <> "del" then
 	If strBrushTime = "" Then 
 		Call ReturnErrMsg(GetEmpLbl("Brush_Date_Not_Null"))	'"补卡时间不能为空"
 	end if
 
-	If strDescription = "" Then 
+	If strRemark = "" Then 
 		Call ReturnErrMsg(GetEmpLbl("SignCard_Reason_Not_Null"))	'"补卡原因不能为空"
 	end if
 
-	If Len(strDescription) > 50 Then 
+	If Len(strRemark) > 50 Then 
 		Call ReturnErrMsg(GetEmpLbl("Reason_More_50_Char"))	'"补卡原因只允许50个字符！"
 	End if
 end if
@@ -92,14 +98,28 @@ Select Case strOper
 		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"' "
 		strSQL = "Insert into AttendanceSignIn(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceSignIn where SignId=(select Max(SignId) from AttendanceSignIn)"
-	Case "edit": 'Edit Record		
+	Case "edit": 'Edit Record
+		if strRecordID = "" or not isnumeric(strRecordID) then
+			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+		end if
+
+		if blnRefuse = "0" then
+			strStatus = getEmpLbl("FlowStatus_Approved_2")	
+		else
+			strStatus = getEmpLbl("FlowStatus_Refused_3")	
+		end if
+
 		strDescription = Replace(Request.Form("Description"),"'","''")
-		strSQL = "update AttendanceSignIn set Status='" + getEmpLbl("FlowStatus_Approved_2") + "' where SignId=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave where SignId=" + strRecordID
+		strSQL = "update AttendanceSignIn set Status='" + strStatus + "', TransactorId=" + CStr(strTransactorId) + ", TransactorName='" + cstr(strTransactorName) + "' where SignId=" + CStr(strRecordID)
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceSignIn where SignId=" + strRecordID
 	Case "del": 'Delete Record
+		if strRecordID = "" then
+			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
+		end if
+
 		strStatus = getEmpLbl("FlowStatus_Ceased_C")	
-		strSQL = "update AttendanceSignIn set Status='" + strStatus + "' where SignId=" + CStr(strRecordID)
-		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave L where SignId=" + strRecordID
+		strSQL = "update AttendanceSignIn set Status='" + strStatus + "' where SignId in (" + CStr(strRecordID) + ");"
+		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, L.EmployeeId, (select Name from Employees where EmployeeId= L.EmployeeId) AS TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceSignIn L where SignId in (" + CStr(strRecordID) + ");"
 End Select
 
 'response.write strSQL
@@ -122,7 +142,12 @@ if	strSQL<>"" then
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,模板名称["&strTemplateName&"]")
 			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_SignCard"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_SignCard")&","&strEmpId)
 		Case "edit": 'Edit Record
-			strActions = GetCerbLbl("strLogApproval")
+			if blnRefuse = "0" then
+				strActions = GetCerbLbl("strLogApproval")
+			else
+				strActions = GetCerbLbl("strLogRefuse")
+			end if
+			
 			'Call AddLogEvent("设备管理-注册卡号表-模板方式",cstr(strActions),cstr(strActions)&"注册卡号模板,ID["&strRecordID&"],修改后模板名称["&strTemplateName&"]")			
 			Call AddLogEvent(GetEmpLbl("Emp")&"-"&GetEmpLbl("Attend")&"-"&GetEmpLbl("Attend_SignCard"),cstr(strActions),cstr(strActions)&GetEmpLbl("Attend_SignCard")&","&strRecordID)
 		Case "del": 'Delete Record

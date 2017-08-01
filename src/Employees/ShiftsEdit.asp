@@ -689,7 +689,7 @@ Select Case strOper
 	Case "add": 'Add Record
 		if cint(strStretchShift) = 0 then   '固定班次
 			if cint(strDegree) = 1 then     '时间段1
-				strFields = "ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime,"
+				strFields = "ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
 				strValues = "'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+","+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
 
 				strFieldsTemp = "ShiftType,AdjustDate,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
