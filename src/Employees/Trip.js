@@ -246,7 +246,7 @@ $(document).ready(function () {
         });
     }
 
-    changeNavEx();
+    changeNavEx(iapprove);
 });
 
 function initEditForm(rowObject) {

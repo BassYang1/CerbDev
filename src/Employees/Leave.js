@@ -261,7 +261,7 @@ $(document).ready(function () {
         });
     }
 
-    changeNavEx();
+    changeNavEx(iapprove);
 });
 
 function initEditForm(attendData, rowObject) {

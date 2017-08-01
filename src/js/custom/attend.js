@@ -6,7 +6,7 @@ function initListPage(iapprove){
 
     //iapprove = false;
 
-    if(iapprove){
+    if(iapprove || isAdmin()){
         html += "<option value='1'>1 - " + getlbl("hr.FlowData_Processing") + "</option>";
         html += "<option value='2'>2 - " + getlbl("hr.FlowData_Processed") + "</option>";
     }
@@ -21,7 +21,7 @@ function initListPage(iapprove){
     $("#selHead").change("change", function(){
         var ihead = $(this).val()
         initStatus(ihead);
-        changeNavEx();
+        changeNavEx(iapprove);
 
         if(ihead != "0"){
             $("#selDept").removeAttr("disabled");
@@ -178,7 +178,7 @@ function initListDepartments(){
 }
 
 //导航条扩展
-function changeNavEx(){   
+function changeNavEx(iapprove){   
     var ihead = $("#selHead").val();
     ihead = ihead ? ihead : "0";
 
@@ -189,7 +189,13 @@ function changeNavEx(){
     }
     else if(ihead == "1"){ //审批资料
         $("#add_DataGrid_top, #del_DataGrid_top").hide();
-        $("#edit_DataGrid_top").show();
+
+        if(iapprove){
+            $("#edit_DataGrid_top").show();
+        }
+        else{
+            $("#edit_DataGrid_top").hide();
+        }
     }
     else { //已审资料
         $("#edit_DataGrid_top, #add_DataGrid_top, #del_DataGrid_top").hide();

@@ -1,5 +1,6 @@
 ﻿// JavaScript Document
 
+var cookieUserName = "Cerb%5FUserName"; // 用户名字 Cookie : Cerb_UserName
 var cookieUserId = "Cerb%5FUserId"; // 用户Id Cookie : Cerb_UserId
 var cookieEmId = "Cerb%5FEmId"; // 用户Id Cookie : Cerb_EmId
 
@@ -196,6 +197,11 @@ function getCookie(name){
 		console.log(exception);
 		return "";
 	}
+}
+
+//是否是管理员
+function isAdmin(){
+	return (getCookie(cookieUserName) == "admin");
 }
 
 function getRandom()
