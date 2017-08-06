@@ -647,7 +647,7 @@ function getShiftList(shift, date, blankOption){
     }
 
     if(!(arrShifts)){
-        var result = $.ajax({type:'post',url:'../Common/GetShiftJSON.asp?nd='+getRandom(),data:null,async:false});
+        var result = $.ajax({type:'post',url:'../Common/GetShiftJSON.asp?nd='+getRandom() + "&oper=shiftlist",data:null,async:false});
         var data = result.responseText;
         arrShifts = data ? ($.parseJSON(data) || []) : [];
     }

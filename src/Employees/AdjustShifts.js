@@ -42,7 +42,7 @@ $(document).ready(function () {
             },
             {
                 name: 'StretchShift', index: 'StretchShift', align: 'center', editable: true, editrules: { required: false, edithidden: true },
-                edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
+                edittype: 'checkbox', editoptions: {value: getlbl("hr.Yes") + ":" + getlbl("hr.No")}, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
                 formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
                 formoptions: { rowpos: 9, colpos: 2 }
             },
@@ -59,7 +59,7 @@ $(document).ready(function () {
             },
             {
                 name: 'Night', index: 'Night', editable: true, align: 'center', editrules: { required: false, edithidden: true },
-                edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
+                edittype: 'checkbox', editoptions: {value: getlbl("hr.Yes") + ":" + getlbl("hr.No")}, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
                 formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
                 formoptions: { rowpos: 8, colpos: 1 }
             },
@@ -260,19 +260,25 @@ function mergeFormCells(element, options) {
 
 //加载班次列表
 function initShiftsList(element){
-    var result = $.ajax({type:'post',url:'../Common/GetShiftJSON.asp?nd='+getRandom(),data:null,async:false});
+    var result = $.ajax({type:'post',url:'../Common/GetShiftJSON.asp?nd='+getRandom() + "&oper=shiftlist",data:null,async:false});
     var data = result.responseText;
     var arrShifts = data ? ($.parseJSON(data) || []) : [];
 
     var $selObj = $(element);
     $selObj.attr({"id":"ShiftName", "name":"ShiftName"});
-    $selObj.append("<option value='0-" + getlbl("hr.Rest") + "'>0-" + getlbl("hr.Rest") + "</option>");
+    $selObj.append("<option value='0'>0-" + getlbl("hr.Rest") + "</option>");
 
     for(var i in arrShifts){
         $selObj.append("<option value='" + arrShifts[i].id + "'>" + arrShifts[i].name + "</option>");
     }
 
     $selObj.find("option:first").attr("selected","selected");
+
+    $selObj.change(function(){
+        changeShift($(this).val());
+    });
+
+    //$selObj.change();
 }
 
 //degree 上班时段
@@ -475,7 +481,6 @@ function initShiftDetail4View(rowObject) {
         html = html + "</tr>";
     }
 
-
     if (parseInt(degree) > 2) {
         html = html + "<tr id='trCOnDuty'>";
         html = html + "<td colspan='2' align='center' class='ui-border-LB'>3</td>";
@@ -622,6 +627,54 @@ function initEditForm(rowObject) {
 
     checkFirstOnDuty(rowObject && rowObject.FirstOnDuty ? rowObject.FirstOnDuty : "");
     $("#WdateDiv").hide();
+}
+
+function changeShift(shiftId){
+    shiftId = shiftId ? shiftId : "0";
+
+    if(shiftId != "0"){
+        $("#ShiftTime,#FirstOnDuty,#Degree,#Night,#StretchShift").removeAttr("disabled");
+        $("#tr_TimePeriod").find("input").removeAttr("disabled");
+
+        var strUrl = "../Common/GetShiftJSON.asp?nd=" + getRandom() + "&id=" + shiftId + "&oper=shiftdetail";
+        var detailObj = null;
+        $.ajax({
+                    type: "get", 
+                    url: strUrl,
+                    async: false,       
+                    success: function(data) {
+                        detailObj = $.parseJSON(data);
+                        initShiftDetail4Form(detailObj.Degree, detailObj);
+
+                        $("#ShiftTime").val(detailObj.ShiftTime);
+
+                        if(detailObj.Night == "1") {
+                            $("#Night").attr("checked", true);
+                        }
+                        else{
+                            $("#Night").attr("checked", false);
+                        }
+
+                        $("#FirstOnDuty").val(detailObj.FirstOnDuty);
+                        $("#Degree").val(detailObj.Degree);
+
+                        if(detailObj.StretchShift == "1") {
+                            $("#StretchShift").attr("checked", true);
+                        }
+                        else{
+                            $("#StretchShift").attr("checked", false);
+                        }
+                    },
+                    error:function(XmlHttpRequest,textStatus, errorThrown){
+                        //alert(errorThrown);
+                    }
+                });
+    }
+    else{
+        $("#ShiftTime,#FirstOnDuty,#Degree").val("").attr("disabled", true);
+        $("#Night,#StretchShift").attr({"disabled": true, "checked": false});
+        $("#tr_TimePeriod").find("input").val("").attr("disabled", true);
+    }
 }
 
 //初使化部门
