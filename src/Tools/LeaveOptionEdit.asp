@@ -20,58 +20,68 @@ end if
 
 '可休年假职员'
 Dim strAnnalDeptEmps
-AnnalDeptEmps = Trim(Replace(Request.Form("AnnalDeptEmps"),"'","''"))
+strAnnalDeptEmps = Trim(Replace(Request.Form("AnnalDeptEmps"),"'","''"))
 
 '年假规则	'
-Dim strBaseAnnualDay, strMaxAnnualDay, bContinueNext
+Dim strBasicAnnualDay, strMaxVacation, bContinueNext, strVacationType
+Dim strIncreasePerYear, strIncreaseYear, strIncreaseDay
 Dim strIncreaseType1, strIncreaseYear1, strIncreaseDay1
-Dim strIncreaseType2, strIncreaseYear2, strIncreaseDay2, strIncreaseYear3, strIncreaseDay3
-strBaseAnnualDay = Trim(Replace(Request.Form("BaseAnnualDay"),"'","''"))
-strIncreaseType1 = Trim(Replace(Request.Form("IncreaseType1"),"'","''"))
+dim strIncreaseType2, strIncreaseYear2, strIncreaseDay2
+strBasicAnnualDay = Trim(Replace(Request.Form("BasicAnnualDay"),"'","''"))
+strVacationType = Trim(Replace(Request.Form("VacationType"),"'","''"))
+if strVacationType = "" then strVacationType = "0"
+
+'年假递增方式1'
+strIncreaseYear = Trim(Replace(Request.Form("IncreaseYear"),"'","''"))
+strIncreaseDay = Trim(Replace(Request.Form("IncreaseDay"),"'","''"))
+
+if strVacationType = "0" then 
+	if strIncreaseYear1 <> "" and not ISNUMERIC(strIncreaseYear1) then
+		Call ReturnErrMsg(GetToolLbl("Annual_Year_Not_Numeric"))	'"增加年限需填写数值"
+	end if
+
+	if strIncreaseDay1 <> "" and not ISNUMERIC(strIncreaseDay1) then
+		Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"增加年假天数需填写数值"
+	end if
+
+	strIncreasePerYear = strIncreaseYear + "," + strIncreaseDay
+end if
+
 strIncreaseYear1 = Trim(Replace(Request.Form("IncreaseYear1"),"'","''"))
 strIncreaseDay1 = Trim(Replace(Request.Form("IncreaseDay1"),"'","''"))
-strIncreaseType2 = Trim(Replace(Request.Form("IncreaseType2"),"'","''"))
 strIncreaseYear2 = Trim(Replace(Request.Form("IncreaseYear2"),"'","''"))
 strIncreaseDay2 = Trim(Replace(Request.Form("IncreaseDay2"),"'","''"))
-strIncreaseYear3 = Trim(Replace(Request.Form("IncreaseYear3"),"'","''"))
-strIncreaseDay3 = Trim(Replace(Request.Form("IncreaseDay3"),"'","''"))
-strMaxAnnualDay = Trim(Replace(Request.Form("MaxAnnualDay"),"'","''"))
+
+if strVacationType = "1" then 
+	if strIncreaseYear1 <> "" and not ISNUMERIC(strIncreaseYear1) then
+		Call ReturnErrMsg(GetToolLbl("Annual_Year_Not_Numeric"))	'"增加年限需填写数值"
+	end if
+
+	if strIncreaseYear2 <> "" and not ISNUMERIC(strIncreaseYear2) then
+		Call ReturnErrMsg(GetToolLbl("Annual_Year_Not_Numeric"))	'"增加年限需填写数值"
+	end if
+
+	if strIncreaseDay1 <> "" and not ISNUMERIC(strIncreaseDay1) then
+		Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"增加年假天数需填写数值"
+	end if
+
+	if strIncreaseDay2 <> "" and not ISNUMERIC(strIncreaseDay2) then
+		Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"增加年假天数需填写数值"
+	end if
+
+	strIncreaseType1 = strIncreaseYear1 + "," + strIncreaseDay1 
+	strIncreaseType2 = strIncreaseYear2 + "," + strIncreaseDay2
+end if
+
+strMaxVacation = Trim(Replace(Request.Form("MaxVacation"),"'","''"))
 bContinueNext = Trim(Replace(Request.Form("ContinueNext"),"'","''"))
 
-if strBaseAnnualDay <> "" and not ISNUMERIC(strBaseAnnualDay) then
+if strBasicAnnualDay <> "" and not ISNUMERIC(strBasicAnnualDay) then
 	Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"可休年假天数需填写数值"
 end if
 
-if strMaxAnnualDay <> "" and not ISNUMERIC(strMaxAnnualDay) then
+if strMaxVacation <> "" and not ISNUMERIC(strMaxVacation) then
 	Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"最大年假天数需填写数值"
-end if
-
-if strIncreaseType1 = "1" then 
-	strIncreaseType2 = ""
-
-	if not ISNUMERIC(strIncreaseYear1) then
-		Call ReturnErrMsg(GetToolLbl("Annual_Year_Not_Numeric"))	'"增加年限需填写数值"
-	end if
-
-	if not ISNUMERIC(strIncreaseDay1) then
-		Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"增加年假天数需填写数值"
-	end if
-
-	strIncreaseType1 = strIncreaseType1 + "," + strIncreaseYear1 + "," + strIncreaseDay1
-end if
-
-if strIncreaseType2 = "1" then 
-	strIncreaseType1 = ""
-
-	if not ISNUMERIC(strIncreaseYear2) or not ISNUMERIC(strIncreaseYear3)then
-		Call ReturnErrMsg(GetToolLbl("Annual_Year_Not_Numeric"))	'"增加年限需填写数值"
-	end if
-
-	if not ISNUMERIC(strIncreaseDay2) or not ISNUMERIC(strIncreaseDay3) then
-		Call ReturnErrMsg(GetToolLbl("Annual_Day_Not_Numeric"))	'"增加年假天数需填写数值"
-	end if
-
-	strIncreaseType2 = strIncreaseType2 + "," + strIncreaseYear2 + "," + strIncreaseDay2 + "," + strIncreaseYear3 + "," + strIncreaseDay3
 end if
 
 '请假期间的[休息日、法定假]仍计为[休息日、法定假]'
@@ -106,16 +116,20 @@ On Error Resume NEXT
 strSQL = "update options set VariableValue='"+cstr(strAnnalDeptEmps)+"' where VariableName='strAnnalDeptEmps' ; "
 
 '基本年假天数'
-strSQL = strSQL + "update options set VariableValue='"+cstr(strBaseAnnualDay)+"' where VariableName='intBasicDay';"
+strSQL = strSQL + "update options set VariableValue='"+cstr(strBasicAnnualDay)+"' where VariableName='intBasicDay';"
+
+'年假递增方式'
+strSQL = strSQL + "update options set VariableValue='"+cstr(strVacationType)+"' where VariableName='strVacationType';"
 
 '年假递增方式1'
-strSQL = strSQL + "update options set VariableValue='"+cstr(strIncreaseType1)+"' where VariableName='strIncreaseType1';"
+strSQL = strSQL + "update options set VariableValue='"+cstr(strIncreasePerYear)+"' where VariableName='intIncreasePerYear';"
 
 '年假递增方式2'
+strSQL = strSQL + "update options set VariableValue='"+cstr(strIncreaseType1)+"' where VariableName='strIncreaseType1';"
 strSQL = strSQL + "update options set VariableValue='"+cstr(strIncreaseType2)+"' where VariableName='strIncreaseType2';"
 
 '最大年假天数'
-strSQL = strSQL + "update options set VariableValue='"+cstr(strMaxAnnualDay)+"' where VariableName='intMaxVacation';"
+strSQL = strSQL + "update options set VariableValue='"+cstr(strMaxVacation)+"' where VariableName='intMaxVacation';"
 
 '可延续到下一年'
 strSQL = strSQL + "update options set VariableValue='"+cstr(bContinueNext)+"' where VariableName='blnContinueNext';"

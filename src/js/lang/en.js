@@ -126,6 +126,7 @@ var hr={
 	End: "End",
 	hrefAdjustShift : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts Adjustment",
 	hrefShiftRules : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Rules",
+	AdjustShift: "Adjusted Shift",
 	AdjustDate: "Adjustment Date",
 	Description: "Adjustment Desc",
 	DeptList: 'Department List',

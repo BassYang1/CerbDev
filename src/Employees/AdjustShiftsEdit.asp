@@ -3,6 +3,7 @@
 <!--#include file="..\Common\Page.asp"-->
 <!--#include file="..\CheckLoginStatus.asp"-->
 <!--#include file="..\Conn\GetLbl.asp"-->
+<!--#include file="..\Equipment\SearchExec.asp"-->
 <%
 Call CheckLoginStatus("parent.location.href='../login.html'")
 Call CheckOperPermissions()
@@ -15,7 +16,8 @@ dim strAonDutyStart, strAonDutyEnd, strAoffDuty, strAoffDutyStart, strAoffDutyEn
 dim strBonDutyEnd, strBoffDuty, strBoffDutyStart, strBoffDutyEnd, strBrestTime, strConDuty, strConDutyStart, strConDutyEnd
 dim strCoffDuty, strCoffDutyStart, strCoffDutyEnd, strCrestTime
 dim strAdjustcheck, strAdjustDate
-dim strDepartmentCode, strEmployeeCode, strDepartmentName, strEmployeeName, strEmployeeDesc, strDescription
+dim strDepartmentCode, strEmployeeCode, strEmployeeExpress, strDepartmentName, strEmployeeName, strEmployeeDesc, strDescription
+dim strRelationship, strOtherCode, strOtherCond, arrOtherCode, strField,strSearchOper,strFieldData
 dim TempTime
 dim strRecordID
 
@@ -23,6 +25,7 @@ dim iChangeNameORNot
 Dim iHaveNight, iIsAdd '覆盖标识
 '//************************************************************//'"EmployeeWork"
 
+strRecordID = Replace(Request.Form("id"),"'","''")
 strOper = Request.Form("oper")
 
 if strOper<>"add" and strOper<>"edit" and strOper<>"del" then 
@@ -35,18 +38,32 @@ if GetOperRole("ShiftAdjustment",strOper) <> true then
 	response.End()
 end if
 
-strRecordID = Replace(Request.Form("id"),"'","''")
-
-strShiftId = Replace(Request.Form("ShiftId"),"'","''")
-strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
-strDepartmentName = Replace(Request.Form("DepartmentName"),"'","''")
-strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
-strEmployeeName = Replace(Request.Form("EmployeeName"),"'","''")
-strAdjustDate = Replace(Request.Form("AdjustDate"),"'","''")
-strDescription = Replace(Request.Form("Description"),"'","''")
-
 if strOper <> "del" then 
 	'//************************************判断权限*******************************************
+
+	strShiftId = Replace(Request.Form("ShiftId"),"'","''")
+	strDepartmentCode = Replace(Request.Form("DepartmentCode"),"'","''")
+	strDepartmentName = Replace(Request.Form("DepartmentName"),"'","''")
+	strEmployeeCode = Replace(Request.Form("EmployeeCode"),"'","''")
+	strEmployeeName = Replace(Request.Form("EmployeeName"),"'","''")
+
+	strRelationship = Replace(Request.Form("Relationship"),"'","''")
+	strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
+	strOtherCond = Replace(Request.Form("OtherCond"),"'","''")
+	arrOtherCode = split(strOtherCode, "|,")
+	if ubound(arrOtherCode) >= 0 then strField = arrOtherCode(0)
+	if ubound(arrOtherCode) >= 1 then strSearchOper = arrOtherCode(1)
+	if ubound(arrOtherCode) >= 2 then strFieldData = arrOtherCode(2)
+	
+	if strOtherCode <> "" then strOtherCond = strOtherCond + "|," + strOtherCode
+	strOtherCode = ""
+
+	if strField <> "" then
+		strOtherCode = Replace(GetSearchSQLWhere(strField, strSearchOper, strFieldData),"'","''")
+	end if
+
+	strAdjustDate = Replace(Request.Form("AdjustDate"),"'","''")
+	strDescription = Replace(Request.Form("Description"),"'","''")
 
 	if strDepartmentName <> "" then
 		strEmployeeDesc = strEmployeeDesc & "," & strDepartmentName
@@ -54,6 +71,34 @@ if strOper <> "del" then
 
 	if strEmployeeName <> "" then
 		strEmployeeDesc = strEmployeeDesc & "," & strEmployeeName
+	end if
+
+	if strOtherCond <> "" then
+		strEmployeeDesc = strEmployeeDesc & "," & split(strOtherCond, "|,")(0)
+	end if
+
+	if strEmployeeCode <> "" then
+		strEmployeeExpress = "(E.EmployeeId in (" + strEmployeeCode + "))"
+	end if
+
+	if strDepartmentCode <> "" and left(strDepartmentCode, 1) <> "0" then
+		if strEmployeeExpress <> "" then
+			strEmployeeExpress = "(" + strEmployeeExpress + " or (E.DepartmentId in (" + strDepartmentCode + ")))"
+		else
+			strEmployeeExpress = "(E.DepartmentId in (" + strDepartmentCode + "))"
+		end if
+	end if
+
+	if strOtherCode <> "" then
+		if strEmployeeExpress <> "" then
+			strEmployeeExpress = "((" + strEmployeeExpress + ") " + strRelationship + " (" + strOtherCode + "))"
+		else
+			strEmployeeExpress = " (" + strOtherCode + ")"
+		end if
+	end if
+
+	if strEmployeeExpress <> "" then
+		strEmployeeExpress = " EmployeeId in (select E.EmployeeId from Employees E where " + strEmployeeExpress + ") "
 	end if
 
 	if strEmployeeCode = "" and strDepartmentCode = "" and strEmployeeDesc = "" then	
@@ -696,18 +741,18 @@ Select Case strOper
 	Case "add": 'Add Record
 		if cint(strStretchShift) = 0 then   '固定班次
 			if cint(strDegree) = 1 then     '时间段1
-				strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
-				strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+				strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,Relationship,OtherCode,EmployeeExpress,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+				strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"','"+cstr(strRelationship)+"','"+cstr(strOtherCond)+"','"+cstr(strEmployeeExpress)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
 			ElseIf cint(strDegree) = 2 then     '时间段2
-				strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime"
-				strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)
+				strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,Relationship,OtherCode,EmployeeExpress,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStart, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime"
+				strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"','"+cstr(strRelationship)+"','"+cstr(strOtherCond)+"','"+cstr(strEmployeeExpress)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)
 			Else		
-				strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStartq AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime, ConDuty, ConDutyStart, ConDutyEnd, CoffDuty, CoffDutyStart, CoffDutyEnd, CcalculateLate,CcalculateEarly, CrestTime"
-				strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)+", "+cstr(strConDuty)+", "+cstr(strConDutyStart)+", "+cstr(strConDutyEnd)+","+cstr(strCoffDuty)+","+cstr(strCoffDutyStart)+","+cstr(strCoffDutyEnd)+","+cstr(strCcalculateLate)+","+CStr(strCcalculateEarly)+","+CStr(strCrestTime)
+				strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,Relationship,OtherCode,EmployeeExpress,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AonDutyEnd, AoffDuty, AoffDutyStartq AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime, BonDuty, BonDutyStart, BonDutyEnd, BoffDuty, BoffDutyStart, BoffDutyEnd, BcalculateLate,BcalculateEarly, BrestTime, ConDuty, ConDutyStart, ConDutyEnd, CoffDuty, CoffDutyStart, CoffDutyEnd, CcalculateLate,CcalculateEarly, CrestTime"
+				strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"','"+cstr(strRelationship)+"','"+cstr(strOtherCond)+"','"+cstr(strEmployeeExpress)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+","+cstr(strAonDutyStart)+", "+cstr(strAonDutyEnd)+","+cstr(strAoffDuty)+","+cstr(strAoffDutyStart)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)+", "+cstr(strBonDuty)+", "+cstr(strBonDutyStart)+", "+cstr(strBonDutyEnd)+","+cstr(strBoffDuty)+","+cstr(strBoffDutyStart)+","+cstr(strBoffDutyEnd)+","+cstr(strBcalculateLate)+","+CStr(strBcalculateEarly)+","+CStr(strBrestTime)+", "+cstr(strConDuty)+", "+cstr(strConDutyStart)+", "+cstr(strConDutyEnd)+","+cstr(strCoffDuty)+","+cstr(strCoffDutyStart)+","+cstr(strCoffDutyEnd)+","+cstr(strCcalculateLate)+","+CStr(strCcalculateEarly)+","+CStr(strCrestTime)
 			End if
 		Else
-			strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AoffDuty, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
-			strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAoffDuty)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
+			strFieldsTemp = "ShiftType,AdjustDate,Description,EmployeeDesc,DepartmentCode,EmployeeCode,Relationship,OtherCode,EmployeeExpress,ShiftId,ShiftName,StretchShift,Degree,Night, FirstOnDuty,ShiftTime, AonDuty,AonDutyStart,AoffDuty, AoffDutyEnd, AcalculateLate,AcalculateEarly, ArestTime"
+			strValuesTemp = cstr(strFirstOnDuty)+",'"+cstr(strAdjustDate)+"','"+cstr(strDescription)+"','"+cstr(strEmployeeDesc)+"','"+cstr(strDepartmentCode)+"','"+cstr(strEmployeeCode)+"','"+cstr(strRelationship)+"','"+cstr(strOtherCond)+"','"+cstr(strEmployeeExpress)+"',"+cstr(strShiftId)+",'"+cstr(strShiftName)+"', "+cstr(strStretchShift)+", "+cstr(strDegree)+", "+cstr(strNight)+", "+cstr(strFirstOnDuty)+","+cstr(strShiftTime)+","+cstr(strAonDuty)+", "+cstr(strAonDutyStart)+", "+cstr(strAoffDuty)+","+cstr(strAoffDutyEnd)+","+cstr(strAcalculateLate)+","+CStr(strAcalculateEarly)+","+CStr(strArestTime)
 		End If
 
  		strSQL = "INSERT INTO TempShifts(" & strFieldsTemp & ") VALUES(" & strValuesTemp & ") "
@@ -718,14 +763,14 @@ Select Case strOper
 
 		if cint(strStretchShift) = 0 then   '固定班次
 			if cint(strDegree) = 1 then     '时间段1
-				strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty=null, BonDutyStart=null, BonDutyEnd=null, BoffDuty=null, BoffDutyStart=null, BoffDutyEnd=null, BcalculateLate=null, BcalculateEarly=null, BrestTime=null, ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
+				strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',Relationship='"+cstr(strRelationship) + "',OtherCode='"+cstr(strOtherCond) + "',EmployeeExpress='"+cstr(strEmployeeExpress) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty=null, BonDutyStart=null, BonDutyEnd=null, BoffDuty=null, BoffDutyStart=null, BoffDutyEnd=null, BcalculateLate=null, BcalculateEarly=null, BrestTime=null, ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
 			ElseIf cint(strDegree) = 2 then     '时间段2
-				strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty="+cstr(strBonDuty)+", BonDutyStart="+cstr(strBonDutyStart)+", BonDutyEnd="+cstr(strBonDutyEnd)+", BoffDuty="+cstr(strBoffDuty)+", BoffDutyStart="+cstr(strBoffDutyStart)+", BoffDutyEnd="+cstr(strBoffDutyEnd)+", BcalculateLate="+cstr(strBcalculateLate)+", BcalculateEarly="+cstr(strBcalculateEarly)+", BrestTime="+cstr(strBrestTime)+", ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
+				strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',Relationship='"+cstr(strRelationship) + "',OtherCode='"+cstr(strOtherCond) + "',EmployeeExpress='"+cstr(strEmployeeExpress) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty="+cstr(strBonDuty)+", BonDutyStart="+cstr(strBonDutyStart)+", BonDutyEnd="+cstr(strBonDutyEnd)+", BoffDuty="+cstr(strBoffDuty)+", BoffDutyStart="+cstr(strBoffDutyStart)+", BoffDutyEnd="+cstr(strBoffDutyEnd)+", BcalculateLate="+cstr(strBcalculateLate)+", BcalculateEarly="+cstr(strBcalculateEarly)+", BrestTime="+cstr(strBrestTime)+", ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
 			Else
-				strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty="+cstr(strBonDuty)+", BonDutyStart="+cstr(strBonDutyStart)+", BonDutyEnd="+cstr(strBonDutyEnd)+", BoffDuty="+cstr(strBoffDuty)+", BoffDutyStart="+cstr(strBoffDutyStart)+", BoffDutyEnd="+cstr(strBoffDutyEnd)+", BcalculateLate="+cstr(strBcalculateLate)+", BcalculateEarly="+cstr(strBcalculateEarly)+", BrestTime="+cstr(strBrestTime)+", ConDuty="+cstr(strConDuty)+", ConDutyStart="+cstr(strConDutyStart)+", ConDutyEnd="+cstr(strConDutyEnd)+", CoffDuty="+cstr(strCoffDuty)+", CoffDutyStart="+cstr(strCoffDutyStart)+", CoffDutyEnd="+cstr(strCoffDutyEnd)+", CcalculateLate="+cstr(strCcalculateLate)+", CcalculateEarly="+cstr(strCcalculateEarly)+", CrestTime="+cstr(strCrestTime)
+				strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',Relationship='"+cstr(strRelationship) + "',OtherCode='"+cstr(strOtherCond) + "',EmployeeExpress='"+cstr(strEmployeeExpress) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd="+cstr(strAonDutyEnd)+", AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart="+cstr(strAoffDutyStart)+", AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty="+cstr(strBonDuty)+", BonDutyStart="+cstr(strBonDutyStart)+", BonDutyEnd="+cstr(strBonDutyEnd)+", BoffDuty="+cstr(strBoffDuty)+", BoffDutyStart="+cstr(strBoffDutyStart)+", BoffDutyEnd="+cstr(strBoffDutyEnd)+", BcalculateLate="+cstr(strBcalculateLate)+", BcalculateEarly="+cstr(strBcalculateEarly)+", BrestTime="+cstr(strBrestTime)+", ConDuty="+cstr(strConDuty)+", ConDutyStart="+cstr(strConDutyStart)+", ConDutyEnd="+cstr(strConDutyEnd)+", CoffDuty="+cstr(strCoffDuty)+", CoffDutyStart="+cstr(strCoffDutyStart)+", CoffDutyEnd="+cstr(strCoffDutyEnd)+", CcalculateLate="+cstr(strCcalculateLate)+", CcalculateEarly="+cstr(strCcalculateEarly)+", CrestTime="+cstr(strCrestTime)
 			End If
 		Else
-			strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd=null, AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart=null, AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty=null, BonDutyStart=null, BonDutyEnd=null, BoffDuty=null, BoffDutyStart=null, BoffDutyEnd=null, BcalculateLate=null, BcalculateEarly=null, BrestTime=null, ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
+			strFieldsTemp = "ShiftType="+cstr(strFirstOnDuty) + ",AdjustDate='"+cstr(strAdjustDate) + "',Description='" + cstr(strDescription)+ "',EmployeeDesc='"+cstr(strEmployeeDesc) + "',DepartmentCode='"+cstr(strDepartmentCode) + "',EmployeeCode='"+cstr(strEmployeeCode) + "',Relationship='"+cstr(strRelationship) + "',OtherCode='"+cstr(strOtherCond) + "',EmployeeExpress='"+cstr(strEmployeeExpress) + "',ShiftId="+cstr(strShiftId) + ",ShiftName='"+cstr(strShiftName) + "', StretchShift="+cstr(strStretchShift)+",Degree="+cstr(strDegree)+",Night="+cstr(strNight)+", FirstOnDuty="+cstr(strFirstOnDuty)+",ShiftTime="+cstr(strShiftTime)+ ", AonDuty="+cstr(strAonDuty)+",AonDutyStart="+cstr(strAonDutyStart)+",AonDutyEnd=null, AoffDuty="+cstr(strAoffDuty)+", AoffDutyStart=null, AoffDutyEnd="+cstr(strAoffDutyEnd)+", AcalculateLate="+cstr(strAcalculateLate)+", AcalculateEarly="+cstr(strAcalculateEarly)+", ArestTime="+cstr(strArestTime)+", BonDuty=null, BonDutyStart=null, BonDutyEnd=null, BoffDuty=null, BoffDutyStart=null, BoffDutyEnd=null, BcalculateLate=null, BcalculateEarly=null, BrestTime=null, ConDuty=null, ConDutyStart=null, ConDutyEnd=null, CoffDuty=null, CoffDutyStart=null, CoffDutyEnd=null, CcalculateLate=null, CcalculateEarly=null, CrestTime=null "
 		End If
 
 		strSQL = "Update TempShifts set " + cstr(strFieldsTemp) + " where TempShiftID=" + cstr(strRecordID) + ";"

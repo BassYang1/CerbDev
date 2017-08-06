@@ -56,7 +56,7 @@ fConnectADODB()
 'fConnectADOCE()
 dim a
 set a=new JSONClass
-strSQL = "select RuleId,EmployeeDesc,OnDutyMode,'' AS RuleDetail,NoBrushCard,DepartmentCode,EmployeeCode,OtherCode,FirstWeekDate,Monday1,Tuesday1,Wednesday1,Thursday1,Friday1,Saturday1,Sunday1,Monday2,Tuesday2,Wednesday2,Thursday2,Friday2,Saturday2,Sunday2,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,day26,day27,day28,day29,day30,day31,CONVERT(varchar(10),ISNULL((select top 1 ChangeDate from AttendanceOnDutyRuleChange where RuleId = R.RuleId order by ChangeId desc),''), 121) AS ChangeDate " 
+strSQL = "select RuleId,EmployeeDesc,OnDutyMode,'' AS RuleDetail,NoBrushCard,DepartmentCode,EmployeeCode,Relationship,OtherCode,FirstWeekDate,Monday1,Tuesday1,Wednesday1,Thursday1,Friday1,Saturday1,Sunday1,Monday2,Tuesday2,Wednesday2,Thursday2,Friday2,Saturday2,Sunday2,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,day26,day27,day28,day29,day30,day31,CONVERT(varchar(10),ISNULL((select top 1 ChangeDate from AttendanceOnDutyRuleChange where RuleId = R.RuleId order by ChangeId desc),''), 121) AS ChangeDate " 
 strSQL = strSQL & " from AttendanceOndutyRule R where 1 > 0 " & strWhere & " order by "& sidx & " " & sord
 
 'response.write strSQL

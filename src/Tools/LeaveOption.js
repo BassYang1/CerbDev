@@ -30,80 +30,88 @@ function initEditForm(){
 	$("#frm_Caption").text(getlbl("tool.LeaveOption"));
 
 	//可休年假职员
-	var deptHtml = "<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=annaloption&option=strAnnalDeptEmps&userId=" + userId + "'></iframe>";
+	var deptHtml = "<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=annaloption&id=strAnnalDeptEmps&userId=" + userId + "'></iframe>";
 	html = getlbl("tool.StrAnnalEmpDetail");
 	html = html.replace(/{{dropdownlist}}/, deptHtml);
 	$("#tr_StrAnnalEmp").children(".CaptionTD").text(getlbl("tool.StrAnnalEmp"));
 	$("#tr_StrAnnalEmp").children(".DataTD").html(html);
 
-	//可休年假
+	//可休年假 intIncreasePerYear
 	var basicDay = getOptionValue("intBasicDay", optObj);
-	var increaseType1 = getOptionValue("IncreaseType1", optObj);
-	var arrType1, increaseYear1, increaseDay1
-	var increaseType2 = getOptionValue("IncreaseType2", optObj);
-	var arrType2, increaseYear2, increaseDay2, increaseYear3, increaseDay3
+	var vacationType = getOptionValue("strVacationType", optObj);
+	vacationType = vacationType ? vacationType : "0";
+
+	//年假递增方式1
+	var arrType;
+	var increaseYear, increaseDay
+	var increasePerYear = getOptionValue("intIncreasePerYear", optObj);
+	
+	arrType = (increasePerYear ? increasePerYear : "").split(",");
+	increaseYear = arrType.length > 0 ? arrType[0] : "";
+	increaseDay = arrType.length > 1 ? arrType[1] : "";
+
+	//年假递增方式2
+	var increaseType1 = getOptionValue("strIncreaseType1", optObj);
+	var increaseYear1, increaseDay1;
+
+	arrType = (increaseType1 ? increaseType1 : "").split(",");
+	increaseYear1 = arrType.length > 0 ? arrType[0] : "";
+	increaseDay1 = arrType.length > 1 ? arrType[1] : "";
+
+	var increaseType2 = getOptionValue("strIncreaseType2", optObj);
+	var increaseYear2, increaseDay2
+
+	arrType = (increaseType2 ? increaseType2 : "").split(",");
+	increaseYear2 = arrType.length > 0 ? arrType[0] : "";
+	increaseDay2 = arrType.length > 1 ? arrType[1] : "";
+
+	//是否可延续到下一年，最大可休年假
 	var maxVacation = getOptionValue("intMaxVacation", optObj);
 	var continueNext = getOptionValue("blnContinueNext", optObj);
 
-	if(increaseType1 == undefined || increaseType1 == "" || increaseType1 == null ||
-		increaseType2 == undefined || increaseType2 == "" || increaseType2 == null){
-		increaseType1 = "1";
-	}
-	else{
-		arrType1 = (increaseType1 ? increaseType1 : "").split(",");
-		increaseType1 = arrType1.length > 0 ? arrType1[0] : "";
-		increaseYear1 = arrType1.length > 1 ? arrType1[1] : "";
-		increaseDay1 = arrType1.length > 2 ? arrType1[2] : "";
-
-		arrType2 = (increaseType2 ? increaseType2 : "").split(",");
-		increaseType2 = arrType1.length > 0 ? arrType1[0] : "";
-		increaseYear2 = arrType1.length > 1 ? arrType1[1] : "";
-		increaseDay2 = arrType1.length > 2 ? arrType1[2] : "";
-		increaseYear3 = arrType1.length > 3 ? arrType1[3] : "";
-		increaseDay3 = arrType1.length > 4 ? arrType1[4] : "";
-	}
-
-
 	html = getlbl("tool.StrAnnalDetail");
 	html = html.replace(/{{textbox}}/, "<input type='text' id='BasicAnnualDay' name='BasicAnnualDay' value='" + (basicDay && !isNaN(basicDay) ? basicDay : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
-	html = html.replace(/{{radiobox}}/, "<input type='radio' " + (increaseType1 == "1" ? "checked" : "") + " id='IncreaseType1' name='IncreaseType' role='radiobox' class='FormElement'>");
+	html = html.replace(/{{radiobox}}/, "<input type='radio'  id='VacationType1' name='VacationType' value='0'" + (vacationType == "0" ? "checked" : "") + " role='radiobox' class='FormElement'>");
+	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseYear' value='" + (increaseYear && !isNaN(increaseYear) ? increaseYear : "") + "' name='IncreaseYear' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseDay' value='" + (increaseDay && !isNaN(increaseDay) ? increaseDay : "") + "' name='IncreaseDay' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace(/{{radiobox}}/, "<input type='radio' id='VacationType2'  name='VacationType' value='1' " + (vacationType == "1" ? "checked" : "") + " role='radiobox' class='FormElement'>");
 	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseYear1' value='" + (increaseYear1 && !isNaN(increaseYear1) ? increaseYear1 : "") + "' name='IncreaseYear1' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
 	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseDay1' value='" + (increaseDay1 && !isNaN(increaseDay1) ? increaseDay1 : "") + "' name='IncreaseDay1' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
-	html = html.replace(/{{radiobox}}/, "<input type='radio' id='IncreaseType2' " + (increaseType2 == "1" ? "checked" : "") + " ame='IncreaseType' role='radiobox' class='FormElement'>");
 	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseYear2' value='" + (increaseYear2 && !isNaN(increaseYear2) ? increaseYear2 : "") + "' name='IncreaseYear2' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
 	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseDay2' value='" + (increaseDay2 && !isNaN(increaseDay2) ? increaseDay2 : "") + "' name='IncreaseDay2' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
-	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseYear3' value='" + (increaseYear3 && !isNaN(increaseYear3) ? increaseYear3 : "") + "' name='IncreaseYear3' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
-	html = html.replace(/{{textbox}}/, "<input type='text' id='IncreaseDay3' value='" + (increaseDay3 && !isNaN(increaseDay3) ? increaseDay3 : "") + "' name='IncreaseDay3' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
 	html = html.replace(/{{checkbox}}/, "<input type='checkbox' id='ContinueNext' name='ContinueNext' " + (continueNext == "1" ? "checked" : "") + "' role='checkbox' class='FormElement' checked='checked'>");
-	html = html.replace(/{{textbox}}/, "<input type='text' id='MaxAnnualNum' name='MaxAnnualNum' value='" + (maxVacation && !isNaN(maxVacation) ? maxVacation : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace(/{{textbox}}/, "<input type='text' id='MaxVacation' name='MaxVacation' value='" + (maxVacation && !isNaN(maxVacation) ? maxVacation : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
 	$("#tr_StrAnnal").children(".CaptionTD").text(getlbl("tool.StrAnnal"));
 	$("#tr_StrAnnal").children(".DataTD").html(html);
 
-	$("#IncreaseType1").change(function(){
+	$("#VacationType1").change(function(){
 		if($(this).is(":checked")){
-			$("#IncreaseYear2, #IncreaseDay2, #IncreaseYear3, #IncreaseDay3").attr("disabled",true).val("");
-			$("#IncreaseYear1, #IncreaseDay1").removeAttr("disabled");
+			$("#IncreaseYear1, #IncreaseDay1, #IncreaseYear2, #IncreaseDay2").attr("disabled",true).val("");
+			$("#IncreaseYear, #IncreaseDay").removeAttr("disabled");
 		}
 	});
 
-	$("#IncreaseType2").change(function(){
+	$("#VacationType2").change(function(){
 		if($(this).is(":checked")){
-			$("#IncreaseYear1, #IncreaseDay1").attr("disabled",true).val("");
-			$("#IncreaseYear2, #IncreaseDay2, #IncreaseYear3, #IncreaseDay3").removeAttr("disabled");
+			$("#IncreaseYear, #IncreaseDay").attr("disabled",true).val("");
+			$("#IncreaseYear1, #IncreaseDay1, #IncreaseYear2, #IncreaseDay2").removeAttr("disabled");
 		}
 	});
 
-	if(increaseType1 == "1"){
-		$("#IncreaseType2").change();
+	if(vacationType == "0"){
+		$("#VacationType1").change();
 	}
 	else{
-		$("#IncreaseType1").change();
+		$("#VacationType2").change();
 	}
 
 	//假期类型
 	var skipHoliday = getOptionValue("strSkipHoliday", optObj);
 	var workTime = getOptionValue("intWorkTime", optObj);
-	var arrHoliday = (skipHoliday ? skipHoliday : "").split(",");
+	skipHoliday = skipHoliday ? skipHoliday : "";
+	skipHoliday = skipHoliday.replace(/[a-z|A-Z]/g, "");
+
+	var arrHoliday = skipHoliday.split(",");
 	html = getlbl("tool.StrSkipHolidayDetail");
 	html = html.replace(/{{checkbox}}/, "<input type='checkbox' id='IsPrivate' name='IsPrivate' " + (arrHoliday.length > 0 && arrHoliday[0] == "1" ? "checked" : "") + " role='checkbox' class='FormElement'>");
 	html = html.replace(/{{checkbox}}/, "<input type='checkbox' id='IsSick' name='IsSick' " + (arrHoliday.length > 1 && arrHoliday[1] == "1" ? "checked" : "") + " role='checkbox' class='FormElement'>");
@@ -159,16 +167,17 @@ function fGetFormData(){
 
 	//年假规则
 	data.BasicAnnualDay = $("#BasicAnnualDay").val();
-	data.IncreaseType1 = $("#IncreaseType1").is(":checked") ? "1" : "0";
+	data.VacationType = $("#VacationType2").is(":checked") ? "1" : "0";
+
+	data.IncreaseYear = $("#IncreaseYear").val();
+	data.IncreaseDay = $("#IncreaseDay").val();
+
 	data.IncreaseYear1 = $("#IncreaseYear1").val();
 	data.IncreaseDay1 = $("#IncreaseDay1").val();
-	data.IncreaseType2 = $("#IncreaseType2").is(":checked") ? "1" : "0";
 	data.IncreaseYear2 = $("#IncreaseYear2").val();
 	data.IncreaseDay2 = $("#IncreaseDay2").val();
-	data.IncreaseYear3 = $("#IncreaseYear3").val();
-	data.IncreaseDay3 = $("#IncreaseDay3").val();
 	data.ContinueNext = $("#ContinueNext").is(":checked") ? "1" : "0";
-	data.MaxAnnualDay = $("#MaxAnnualDay").val();
+	data.MaxVacation = $("#MaxVacation").val();
 
 	//请假期间的[休息日、法定假]仍计为[休息日、法定假]
 	data.IsPrivate = $("#IsPrivate").is(":checked") ? "1" : "0";

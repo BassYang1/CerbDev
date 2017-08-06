@@ -3,13 +3,15 @@
 <!--#include file="..\Common\Page.asp"-->
 <!--#include file="..\CheckLoginStatus.asp"-->
 <!--#include file="..\Conn\GetLbl.asp"-->
+<!--#include file="..\Equipment\SearchExec.asp"-->
 <%
 Call CheckLoginStatus("parent.location.href='../login.html'")
 Call CheckOperPermissions()
 
 '//*********************  Declare Values  **********************//
 dim strSQL, strOper
-dim strDepartmentCode, strEmployeeCode, strDepartmentName, strEmployeeName, strEmployeeDesc
+dim strDepartmentCode, strEmployeeCode, strDepartmentName, strEmployeeName, strEmployeeDesc, strEmployeeExpress
+dim strRelationship, strOtherCode, strOtherCond, arrOtherCode, strField, strSearchOper, strFieldData
 dim strOnDutyMode, strRuleDetail, strLoopCount, strNoBrushCard, strFirstWeekDate,strChangeDate
 dim strMonday1, strTuesday1, strWednesday1, strThursday1, strFriday1, strSaturday1, strSunday1,strMonday2, strTuesday2, strWednesday2, strThursday2, strFriday2, strSaturday2, strSunday2
 dim strDay15,strDay16,strDay17,strDay18,strDay19,strDay20,strDay21,strDay22,strDay23,strDay24,strDay25,strDay26,strDay27,strDay28,strDay29,strDay30,strDay31
@@ -35,11 +37,26 @@ if strOper <> "del" then
 	'员工条件
 	strDepartmentCode = FormatStringSafe(Request.Form("DepartmentCode"))
 	strDepartmentName = FormatStringSafe(Request.Form("DepartmentName"))
-	strEmployeeCode = FormatStringSafe(Request.Form("EmployeeCode"))
+	strEmployeeExpress = FormatStringSafe(Request.Form("EmployeeExpress"))
 	strEmployeeName = FormatStringSafe(Request.Form("EmployeeName"))
 	strAdjustDate = FormatStringSafe(Request.Form("AdjustDate"))
 	strLoopCount = FormatStringSafe(Request.Form("LoopCount"))
 	strRuleDetail = FormatStringSafe(Request.Form("RuleDetail"))
+
+	strRelationship = Replace(Request.Form("Relationship"),"'","''")
+	strOtherCode = Replace(Request.Form("OtherCode"),"'","''")
+	strOtherCond = Replace(Request.Form("OtherCond"),"'","''")
+	arrOtherCode = split(strOtherCode, "|,")
+	if ubound(arrOtherCode) >= 0 then strField = arrOtherCode(0)
+	if ubound(arrOtherCode) >= 1 then strSearchOper = arrOtherCode(1)
+	if ubound(arrOtherCode) >= 2 then strFieldData = arrOtherCode(2)
+
+	if strOtherCode <> "" then strOtherCond = strOtherCond + "|," + strOtherCode
+	strOtherCode = ""
+
+	if strField <> "" then
+		strOtherCode = Replace(GetSearchSQLWhere(strField, strSearchOper, strFieldData),"'","''")
+	end if
 
 	if strRuleDetail = "" then	
 		Call ReturnErrMsg(GetEmpLbl("ShiftRule_Invalid"))'未设置上班规则
@@ -53,7 +70,35 @@ if strOper <> "del" then
 		strEmployeeDesc = strEmployeeDesc & "," & strEmployeeName
 	end if
 
-	if strEmployeeCode = "" and strDepartmentCode = "" and strEmployeeDesc = "" then	
+	if strOtherCond <> "" then
+		strEmployeeDesc = strEmployeeDesc & "," & split(strOtherCond, "|,")(0)
+	end if
+
+	if strEmployeeExpress <> "" then
+		strEmployeeCode = "(E.EmployeeId in (" + strEmployeeExpress + "))"
+	end if
+
+	if strDepartmentCode <> "" and left(strDepartmentCode, 1) <> "0" then
+		if strEmployeeCode <> "" then
+			strEmployeeCode = "(" + strEmployeeCode + " or (E.DepartmentId in (" + strDepartmentCode + ")))"
+		else
+			strEmployeeCode = "(E.DepartmentId in (" + strDepartmentCode + "))"
+		end if
+	end if
+
+	if strOtherCode <> "" then
+		if strEmployeeCode <> "" then
+			strEmployeeCode = "((" + strEmployeeCode + ") " + strRelationship + " (" + strOtherCode + "))"
+		else
+			strEmployeeCode = " (" + strOtherCode + ")"
+		end if
+	end if
+
+	if strEmployeeCode <> "" then
+		strEmployeeCode = " EmployeeId in (select E.EmployeeId from Employees E where " + strEmployeeCode + ") "
+	end if
+
+	if strEmployeeExpress = "" and strDepartmentCode = "" and strEmployeeDesc = "" then	
 		Call ReturnErrMsg(GetEmpLbl("ShiftRulesCondition"))'未设置上班规则员工条件
 	end if
 
@@ -148,12 +193,12 @@ strSQL=""
 
 Select Case strOper
 	Case "add": 'Add Record
-		strFields = "EmployeeDesc,EmployeeCode,DepartmentCode,OtherCode,OnDutyMode,NoBrushCard,FirstWeekDate,LoopCount,"
+		strFields = "EmployeeDesc,EmployeeExpress,DepartmentCode,Relationship,OtherCode,EmployeeCode,OnDutyMode,NoBrushCard,FirstWeekDate,LoopCount,"
 		strFields = strFields & "Monday1,Tuesday1,Wednesday1,Thursday1,Friday1,Saturday1,Sunday1,"
 		strFields = strFields & "Monday2,Tuesday2,Wednesday2,Thursday2,Friday2,Saturday2,Sunday2,"
 		strFields = strFields & "day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,day26,day27,day28,day29,day30,day31"
 
-		strValues = "'" & strEmployeeDesc & "','" & strEmployeeCode & "','" & strDepartmentCode & "',NULL,'" & strOnDutyMode & "','" & strNoBrushCardNo & "','" & strChangeDate & "'," & strLoopCount & ",'" & strMonday1 & "','" & strTuesday1 & "','" & strWednesday1 & "','" & strThursday1 & "','" & strFriday1 & "','" & strSaturday1 & "','" & strSunday1 & "','" & strMonday2 & "','" & strTuesday2 & "','" & strWednesday2 & "','" & strThursday2 & "','" & strFriday2 & "','" & strSaturday2 & "','" & strSunday2 & "','" & strDay15 & "','" & strDay16 & "','" & strDay17 & "','" & strDay18 & "','" & strDay19 & "','" & strDay20 & "','" & strDay21 & "','" & strDay22 & "','" & strDay23 & "','" & strDay24 & "','" & strDay25 & "','" & strDay26 & "','" & strDay27 & "','" & strDay28 & "','" & strDay29 & "','" & strDay30 & "','" & strDay31 & "'"
+		strValues = "'" & strEmployeeDesc & "','" & strEmployeeExpress & "','" & strDepartmentCode & "','" & strRelationship & "','" & strOtherCond & "','" & strEmployeeCode & "',NULL,'" & strOnDutyMode & "','" & strNoBrushCardNo & "','" & strChangeDate & "'," & strLoopCount & ",'" & strMonday1 & "','" & strTuesday1 & "','" & strWednesday1 & "','" & strThursday1 & "','" & strFriday1 & "','" & strSaturday1 & "','" & strSunday1 & "','" & strMonday2 & "','" & strTuesday2 & "','" & strWednesday2 & "','" & strThursday2 & "','" & strFriday2 & "','" & strSaturday2 & "','" & strSunday2 & "','" & strDay15 & "','" & strDay16 & "','" & strDay17 & "','" & strDay18 & "','" & strDay19 & "','" & strDay20 & "','" & strDay21 & "','" & strDay22 & "','" & strDay23 & "','" & strDay24 & "','" & strDay25 & "','" & strDay26 & "','" & strDay27 & "','" & strDay28 & "','" & strDay29 & "','" & strDay30 & "','" & strDay31 & "'"
 
 		strSQL = "BEGIN TRY "	
 		strSQL = strSQL & "BEGIN TRANSACTION "			
@@ -172,16 +217,16 @@ Select Case strOper
 			Call ReturnErrMsg(GetEmpLbl("IllegalOperate")) '非法操作！"
 		end if
 
-		strFields = "RuleId,ChangeDate,EmployeeDesc,EmployeeCode,DepartmentCode,OtherCode,OnDutyMode,NoBrushCard,FirstWeekDate,LoopCount,"
+		strFields = "RuleId,ChangeDate,EmployeeDesc,EmployeeExpress,DepartmentCode,Relationship,OtherCode,EmployeeCode,OnDutyMode,NoBrushCard,FirstWeekDate,LoopCount,"
 		strFields = strFields & "Monday1,Tuesday1,Wednesday1,Thursday1,Friday1,Saturday1,Sunday1,"
 		strFields = strFields & "Monday2,Tuesday2,Wednesday2,Thursday2,Friday2,Saturday2,Sunday2,"
 		strFields = strFields & "day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,day26,day27,day28,day29,day30,day31"
 
-		strValues = strRecordID & ",'" & strChangeDate & "','" & strEmployeeDesc & "','" & strEmployeeCode & "','" & strDepartmentCode & "',NULL,'" & strOnDutyMode & "','" & strNoBrushCardNo & "','" & strChangeDate & "'," & strLoopCount & ",'" & strMonday1 & "','" & strTuesday1 & "','" & strWednesday1 & "','" & strThursday1 & "','" & strFriday1 & "','" & strSaturday1 & "','" & strSunday1 & "','" & strMonday2 & "','" & strTuesday2 & "','" & strWednesday2 & "','" & strThursday2 & "','" & strFriday2 & "','" & strSaturday2 & "','" & strSunday2 & "','" & strDay15 & "','" & strDay16 & "','" & strDay17 & "','" & strDay18 & "','" & strDay19 & "','" & strDay20 & "','" & strDay21 & "','" & strDay22 & "','" & strDay23 & "','" & strDay24 & "','" & strDay25 & "','" & strDay26 & "','" & strDay27 & "','" & strDay28 & "','" & strDay29 & "','" & strDay30 & "','" & strDay31 & "'"
+		strValues = strRecordID & ",'" & strChangeDate & "','" & strEmployeeDesc & "','" & strEmployeeExpress & "','" & strDepartmentCode & "','" & strRelationship & "','" & strOtherCond & "','" & strEmployeeCode & "','" & strOnDutyMode & "','" & strNoBrushCardNo & "','" & strChangeDate & "'," & strLoopCount & ",'" & strMonday1 & "','" & strTuesday1 & "','" & strWednesday1 & "','" & strThursday1 & "','" & strFriday1 & "','" & strSaturday1 & "','" & strSunday1 & "','" & strMonday2 & "','" & strTuesday2 & "','" & strWednesday2 & "','" & strThursday2 & "','" & strFriday2 & "','" & strSaturday2 & "','" & strSunday2 & "','" & strDay15 & "','" & strDay16 & "','" & strDay17 & "','" & strDay18 & "','" & strDay19 & "','" & strDay20 & "','" & strDay21 & "','" & strDay22 & "','" & strDay23 & "','" & strDay24 & "','" & strDay25 & "','" & strDay26 & "','" & strDay27 & "','" & strDay28 & "','" & strDay29 & "','" & strDay30 & "','" & strDay31 & "'"
 
 		strSQL = "BEGIN TRY "	
 		strSQL = strSQL & "BEGIN TRANSACTION "			
-		strSQL = strSQL & "UPDATE AttendanceOndutyRule SET EmployeeDesc='" & strEmployeeDesc & "',EmployeeCode='" & strEmployeeCode & "',DepartmentCode='" & strDepartmentCode & "',OtherCode=NULL,OnDutyMode='" & strOnDutyMode & "',NoBrushCard='" & strBrushCard & "',FirstWeekDate='" & strFirstWeekDate & "',LoopCount=" & strLoopCount & ",Monday1='" & strMonday1 & "',Tuesday1='" & strTuesday1 & "',Wednesday1='" & strWednesday1 & "',Thursday1='" & strThursday1 & "',Friday1='" & strFriday1 & "',Saturday1='" & strSaturday1 & "',Sunday1='" & strSunday1 & "',Monday2='" & strMonday2 & "',Tuesday2='" & strTuesday2 & "',Wednesday2='" & strWednesday2 & "',Thursday2='" & strThursday2 & "',Friday2='" & strFriday2 & "',Saturday2='" & strSaturday2 & "',Sunday2='" & strSunday2 & "',day15='" & strDay15 & "',day16='" & strDay16 & "',day17='" & strDay17 & "',day18='" & strDay18 & "',day19='" & strDay19 & "',day20='" & strDay20 & "',day21='" & strDay21 & "',day22='" & strDay22 & "',day23='" & strDay23 & "',day24='" & strDay24 & "',day25='" & strDay25 & "',day26='" & strDay26 & "',day27='" & strDay27 & "',day28='" & strDay28 & "',day29='" & strDay29 & "',day30='" & strDay30 & "',day31='" & strDay31 & "' WHERE RuleId=" & strRecordID
+		strSQL = strSQL & "UPDATE AttendanceOndutyRule SET EmployeeDesc='" & strEmployeeDesc & "',EmployeeExpress='" & strEmployeeExpress & "',DepartmentCode='" & strDepartmentCode & "',OtherCode='" & strOtherCond & "',Relationship='" & strRelationship & "',EmployeeCode='" & strEmployeeCode & "',OnDutyMode='" & strOnDutyMode & "',NoBrushCard='" & strBrushCard & "',FirstWeekDate='" & strFirstWeekDate & "',LoopCount=" & strLoopCount & ",Monday1='" & strMonday1 & "',Tuesday1='" & strTuesday1 & "',Wednesday1='" & strWednesday1 & "',Thursday1='" & strThursday1 & "',Friday1='" & strFriday1 & "',Saturday1='" & strSaturday1 & "',Sunday1='" & strSunday1 & "',Monday2='" & strMonday2 & "',Tuesday2='" & strTuesday2 & "',Wednesday2='" & strWednesday2 & "',Thursday2='" & strThursday2 & "',Friday2='" & strFriday2 & "',Saturday2='" & strSaturday2 & "',Sunday2='" & strSunday2 & "',day15='" & strDay15 & "',day16='" & strDay16 & "',day17='" & strDay17 & "',day18='" & strDay18 & "',day19='" & strDay19 & "',day20='" & strDay20 & "',day21='" & strDay21 & "',day22='" & strDay22 & "',day23='" & strDay23 & "',day24='" & strDay24 & "',day25='" & strDay25 & "',day26='" & strDay26 & "',day27='" & strDay27 & "',day28='" & strDay28 & "',day29='" & strDay29 & "',day30='" & strDay30 & "',day31='" & strDay31 & "' WHERE RuleId=" & strRecordID
 		strSQL = strSQL + "DELETE FROM AttendanceOnDutyRuleChange WHERE RuleId=" + cstr(strRecordID) + " AND ChangeDate>'"+CStr(strChangeDate)+"' "
 		strSQL = strSQL & "INSERT INTO AttendanceOnDutyRuleChange(" & strFields & ") VALUES (" & strValues & ") "
 		strSQL = strSQL & "COMMIT TRANSACTION "

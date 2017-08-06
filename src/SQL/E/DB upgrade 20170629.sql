@@ -59,8 +59,8 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 	ALTER TABLE TempShifts ADD CcalculateEarly SMALLINT NULL --允许早到时间	
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
-	AND EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'EmployeeExpress')
-	ALTER TABLE TempShifts DROP COLUMN EmployeeExpress --允许早到时间
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'EmployeeExpress')
+	ALTER TABLE TempShifts ADD EmployeeExpress NTEXT NULL --员工条件
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'DepartmentCode')
@@ -71,6 +71,10 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 	ALTER TABLE TempShifts ADD EmployeeCode NTEXT NULL --保存职员列表条件	
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'Relationship')
+	ALTER TABLE TempShifts ADD Relationship NVARCHAR(10) NULL --预留,与其它条件关系
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'OtherCode')
 	ALTER TABLE TempShifts ADD OtherCode NTEXT NULL --预留,后续可能再增加的条件
 
@@ -78,18 +82,34 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'DepartmentCode')
 	ALTER TABLE AttendanceOndutyRule ADD DepartmentCode NTEXT NULL --保存部门列表条件	
+	
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'Relationship')
+	ALTER TABLE AttendanceOndutyRule ADD Relationship NVARCHAR(10) NULL --预留,与其它条件关系
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'OtherCode')
 	ALTER TABLE AttendanceOndutyRule ADD OtherCode NTEXT NULL --预留,后续可能再增加的条件
+	
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'EmployeeExpress')
+	ALTER TABLE AttendanceOndutyRule ADD EmployeeExpress NTEXT NULL --员工条件
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'DepartmentCode')
 	ALTER TABLE AttendanceOndutyRuleChange ADD DepartmentCode NTEXT NULL --保存部门列表条件	
+	
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'Relationship')
+	ALTER TABLE AttendanceOndutyRuleChange ADD Relationship NVARCHAR(10) NULL --预留,与其它条件关系
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'OtherCode')
 	ALTER TABLE AttendanceOndutyRuleChange ADD OtherCode NTEXT NULL --预留,后续可能再增加的条件		
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'EmployeeExpress')
+	ALTER TABLE AttendanceOndutyRuleChange ADD EmployeeExpress NTEXT NULL --员工条件
 
 --添加LabelText
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
@@ -505,8 +525,13 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'Options') AND XTyp
 	ALTER TABLE Options ALTER COLUMN VariableValue NVARCHAR(MAX) NULL
 
 --添加流程审批配置
-INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) VALUES ('strWorkflowApproval', N'启用流程审批，配置流程审批人', 'str', '0,0,,0')
-INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) VALUES ('strAnnalDeptEmps', N'按部门设置可休年假员工', 'str', '0 - All')
+INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) 
+SELECT 'strWorkflowApproval', N'启用流程审批，配置流程审批人', 'str', '0,0,,0'
+	WHERE NOT EXISTS(SELECT 1 FROM Options WHERE VariableName = 'strWorkflowApproval')
+
+INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) 
+SELECT 'strAnnalDeptEmps', N'按部门设置可休年假员工', 'str', '0 - All'
+	WHERE NOT EXISTS(SELECT 1 FROM Options WHERE VariableName = 'strAnnalDeptEmps')
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', 'Options', 'Options', '选项', '選項', 'Options', '' 

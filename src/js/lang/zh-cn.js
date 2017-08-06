@@ -126,6 +126,7 @@ var hr={
 	End: "截止",
 	hrefAdjustShift : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班次调整",
 	hrefShiftRules : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上班规则",
+	AdjustShift: "调整后的班次名",
 	AdjustDate: "调整日期",
 	Description: "调整说明",
 	DeptList: '部门列表',

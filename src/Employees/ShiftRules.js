@@ -13,8 +13,8 @@ $(document).ready(function () {
         url: 'ShiftRulesList.asp',
         editurl: "ShiftRulesEdit.asp",
         datatype: "json",
-        //colNames:['RuleId',员工说明','上班方式','详细规则','免打卡',DepartmentCode,EmployeeCode,OtherCode,FirstWeekDate,Monday1,Tuesday1,Wednesday1,Thursday1,Friday1,Saturday1,Sunday1,Monday2,Tuesday2,Wednesday2,Thursday2,Friday2,Saturday2,Sunday2,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,day26,day27,day28,day29,day30,day31,ChangeDate],
-        colNames: ['RuleId', getlbl("hr.EmpDesc"), getlbl("hr.OnDutyMode"), getlbl("hr.RuleDetail"), getlbl("hr.NoBrushCard"), getlbl("hr.DeptList"), getlbl("hr.EmpList"),'OtherCode',getlbl("hr.FirstWeekDate"),'Monday1','Tuesday1','Wednesday1','Thursday1','Friday1','Saturday1','Sunday1','Monday2','Tuesday2','Wednesday2','Thursday2','Friday2','Saturday2','Sunday2','day15','day16','day17','day18','day19','day20','day21','day22','day23','day24','day25','day26','day27','day28','day29','day30','day31',getlbl("hr.ChangeDate")],
+        //colNames:['RuleId',员工说明','上班方式','详细规则','免打卡','DepartmentCode','EmployeeCode','Relationship','OtherCode',FirstWeekDate,Monday1,Tuesday1,Wednesday1,Thursday1,Friday1,Saturday1,Sunday1,Monday2,Tuesday2,Wednesday2,Thursday2,Friday2,Saturday2,Sunday2,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,day26,day27,day28,day29,day30,day31,ChangeDate],
+        colNames: ['RuleId', getlbl("hr.EmpDesc"), getlbl("hr.OnDutyMode"), getlbl("hr.RuleDetail"), getlbl("hr.NoBrushCard"), getlbl("hr.DeptList"), getlbl("hr.EmpList"), getlbl("hr.Relationship"),getlbl("hr.OtherCond"),getlbl("hr.FirstWeekDate"),'Monday1','Tuesday1','Wednesday1','Thursday1','Friday1','Saturday1','Sunday1','Monday2','Tuesday2','Wednesday2','Thursday2','Friday2','Saturday2','Sunday2','day15','day16','day17','day18','day19','day20','day21','day22','day23','day24','day25','day26','day27','day28','day29','day30','day31',getlbl("hr.ChangeDate")],
         colModel: [
             { name: 'RuleId', index: 'RuleId', align: 'center', width: 10, hidden: true, viewable: false, search: false },
             { name: 'EmployeeDesc', index: 'EmployeeDesc', width: 250, align: 'center', viewable: true, search: false },
@@ -30,7 +30,7 @@ $(document).ready(function () {
                         return cellvalue; 
                     } 
                 },
-                formoptions: { rowpos: 3, colpos: 1 }
+                formoptions: { rowpos: 5, colpos: 1 }
             },
             {
                 name: 'RuleDetail', index: 'RuleDetail', align: 'center', hidden:true, width: 350, editable: true, editrules: { required: false, edithidden: true },
@@ -46,14 +46,14 @@ $(document).ready(function () {
 
                     return cellvalue.substr(1);
                 },
-                formoptions: { rowpos: 5, colpos: 1 }
+                formoptions: { rowpos: 7, colpos: 1 }
             },
             {
                 name: 'NoBrushCard', index: 'NoBrushCard', align: 'center', editable: true, editrules: { required: false, edithidden: true },
                 edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, 
                 stype: 'select', searchoptions: { sopt: ["eq"], value: ":;1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
                 formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
-                formoptions: { rowpos: 6, colpos: 1 }
+                formoptions: { rowpos: 8, colpos: 1 }
             },
             {
                 name: 'DepartmentCode', index: 'DepartmentCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
@@ -61,11 +61,21 @@ $(document).ready(function () {
                 editoptions: { },
             },
             {
-                name: 'EmployeeCode', index: 'EmployeeCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                name: 'EmployeeCode', index: 'EmployeeCode', align: 'center', width: 10, editable: false, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
                 formoptions: { rowpos: 2, colpos: 1 },
                 editoptions: { },
             },
-            { name: 'OtherCode', index: 'OtherCode', align: 'center', width: 10, editable: false, edittype: 'none', hidden: true, viewable: false, search: false },
+            {
+                name: 'Relationship', index: 'Relationship', width: 120, align: 'center', editable: true, sortable: false, search: false, hidden:true,
+                editrules: { required: true, edithidden: true },
+                edittype: 'select', editoptions: { value: 'and:' + getlbl("hr.RelaAnd") + ';or:' + getlbl("hr.RelaOr") },
+                formoptions: { rowpos: 3, colpos: 1 }
+            },
+            {
+                name: 'OtherCode', index: 'OtherCode', align: 'center', width: 10, editable: true, edittype: 'text', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                formoptions: { rowpos: 4, colpos: 1, elmsuffix: "&nbsp;<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='btnSearch' onclick='Search()'>" + getlbl("hr.Search") + "<span class='ui-icon ui-icon-search'></span></a>"},
+                editoptions: { disabled: true, code: ""},
+            },
             {
                 name: 'FirstWeekDate', index: 'FirstWeekDate', align: 'center', hidden: true, editable: true, editrules: { required: false, date: false, edithidden: true },
                 width: 150, search: false, formatter: 'date', sorttype: 'date',
@@ -76,7 +86,7 @@ $(document).ready(function () {
                         $(element).bind('focus', function(){WdatePicker({isShowClear:false,dateFmt:'yyyy-MM-dd'});});
                     }
                 },
-                formoptions: { rowpos: 4, colpos: 1 }
+                formoptions: { rowpos: 6, colpos: 1 }
             },
             { name: 'Monday1', index: 'Monday1', align: 'center', width: 10, hidden: true, viewable: false, search: false },
             { name: 'Tuesday1', index: 'Tuesday1', align: 'center', width: 10, hidden: true, viewable: false, search: false },
@@ -118,7 +128,7 @@ $(document).ready(function () {
                         $(element).bind('focus', function(){WdatePicker({isShowClear:false,dateFmt:'yyyy-MM-dd'});});
                     }
                 },
-                formoptions: { rowpos: 7, colpos: 1, elmsuffix:"<font color=#FF0000>*</font>" }
+                formoptions: { rowpos: 9, colpos: 1, elmsuffix:"<font color=#FF0000>*</font>" }
             },
         ],
         caption: getlbl("hr.ShiftRule"),//"上班规则"
@@ -274,6 +284,15 @@ function initEditForm(rowObject) {
 
     if(rowObject && rowObject.OnDutyMode){
         $("#tr_OnDutyMode").children("td.DataTD").children("input[value$='" + rowObject.OnDutyMode + "']").attr("checked", "checked");
+    }
+
+    if(rowObject && rowObject.OtherCode){ //其它条件
+        var arrCode = rowObject.OtherCode.split("|,");
+
+        if(arrCode.length >= 4){
+            $("#OtherCode").val(arrCode[0]);
+            $("#OtherCode").attr("code", arrCode[1] + "|," + arrCode[2] + "|," + arrCode[3]);
+        }
     }
 
     //加载部门
@@ -674,7 +693,11 @@ function initDepartments(ruleId) {
 
 //获取所选部门信息
 function GetSelDepts() {
-    return $("#depframe")[0].contentWindow.GetCheckDepts(); //{Ids: Ids, Names: Names}
+    if($("#depframe") && $("#depframe")[0] && $("#depframe")[0].contentWindow){
+        return $("#depframe")[0].contentWindow.GetCheckDepts(); //{Ids: Ids, Names: Names}
+    }
+
+    return "";
 }
 
 //初使化员工
@@ -790,6 +813,10 @@ function LoadSelEmp(empIds){
 function fGetFormData() {
     var data = {};
 
+    //员工条件
+    data.OtherCond = $("#OtherCode").val();
+    data.OtherCode = $("#OtherCode").attr("code");
+
     //上班方式
     data.OnDutyMode = $("#tr_OnDutyMode").find("input[name='OnDutyMode']").filter(":checked").val();
 
@@ -816,7 +843,7 @@ function fGetFormData() {
         empNames += "," + $(this).text();
     });
 
-    data.EmployeeCode = empIds.substr(1);
+    data.EmployeeExpress = empIds.substr(1);
     data.EmployeeName = empNames.substr(1);
 
     //规则详细
@@ -865,4 +892,26 @@ function GetTime() {
 function ExportData() {
     $("#divExport").load("../Tools/ExportDataUI.asp?nd=" + getRandom() + "&exportType=shiftrules");
     $("#divExport").show();
+}
+
+function Search(){
+    $("#divSearch").load("../Equipment/search.asp?submitfun=SearchSubmit()");
+    $("#divSearch").show();
+}
+
+function SearchSubmit(){
+    var strsearchField = $("#searRetColVal").html();
+    var strsearchOper = $("#searRetOperVal").html();
+    var strsearchString = $("#searRetDataVal").html();
+    var code = strsearchField + "|," + strsearchOper + "|," + encodeURI(strsearchString);
+
+    var searRetColText = $.trim($("#searRetColText").text());
+    var searRetOperText = $.trim($("#searRetOperText").text());
+    var searRetDataText = $.trim($("#searRetDataText").text());
+    searRetDataText = searRetDataText.replace(/[\|\-]/g, '')
+
+    if(code != ""){
+        $("#OtherCode").val(searRetColText + " " + searRetOperText + " '" + searRetDataText + "'");
+        $("#OtherCode").attr("code", code);
+    }
 }

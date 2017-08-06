@@ -248,7 +248,7 @@ function InitDepartments(templateId){
 	}
 
 	var userId = getCookie(cookieUserId); 
-	$data.html("&nbsp;<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=regcard&templateId=" + templateId + "&userId=" + userId + "'></iframe>");
+	$data.html("&nbsp;<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=regcard&id=" + templateId + "&userId=" + userId + "'></iframe>");
 }
 
 //初使化设备

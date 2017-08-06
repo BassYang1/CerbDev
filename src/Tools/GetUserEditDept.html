@@ -44,7 +44,7 @@ var loadedOver = false;
 var strUserId = Request(location.href, "userId");
 var strView = Request(location.href, "view");
 var oper = Request(location.href, "oper");
-var templateId = Request(location.href, "templateId");
+var id = Request(location.href, "id");
 
 if(oper){
 	$("#treeDemo").css({'height':'155px'});
@@ -55,7 +55,7 @@ else{
 	$("#treeDemo").css({'width':'240px'});
 }
 
-var strUrl = '../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&templateId=' + templateId + '&userId='+strUserId;
+var strUrl = '../Common/GetDepartmentJSON.asp?nd='+getRandom()+'&id=' + id + '&userId='+strUserId;
 var htmlObj = $.ajax({type:"post", url:strUrl, data:{oper: oper}, async:false});
 var zNodes = "";
 try{

@@ -56,7 +56,7 @@ fConnectADODB()
 'fConnectADOCE()
 dim a
 set a=new JSONClass
-strSQL = "select TempShiftID,ShiftType,AdjustDate,ShiftId,ShiftName,EmployeeDesc,Description,StretchShift,ShiftTime,Degree,Night,FirstOnDuty,DepartmentCode,EmployeeCode,OtherCode,"
+strSQL = "select TempShiftID,ShiftType,AdjustDate,ShiftId,ShiftName,EmployeeDesc,Description,StretchShift,ShiftTime,Degree,Night,FirstOnDuty,DepartmentCode,EmployeeCode,Relationship,OtherCode,"
 strSQL = strSQL & "CONVERT(CHAR(5),AonDuty,108),CONVERT(CHAR(5),AonDutyStart,108),CONVERT(CHAR(5),AonDutyEnd,108),CONVERT(CHAR(5),AoffDuty,108), CONVERT(CHAR(5),AoffDutyStart,108), CONVERT(CHAR(5),AoffDutyEnd,108),AcalculateLate,AcalculateEarly,ArestTime,"
 strSQL = strSQL & "CONVERT(CHAR(5),BonDuty,108),CONVERT(CHAR(5),BonDutyStart,108),CONVERT(CHAR(5),BonDutyEnd,108),CONVERT(CHAR(5),BoffDuty,108), CONVERT(CHAR(5),BoffDutyStart,108), CONVERT(CHAR(5),BoffDutyEnd,108),BcalculateLate,BcalculateEarly,BrestTime,"
 strSQL = strSQL & "CONVERT(CHAR(5),ConDuty,108),CONVERT(CHAR(5),ConDutyStart,108),CONVERT(CHAR(5),ConDutyEnd,108),CONVERT(CHAR(5),CoffDuty,108), CONVERT(CHAR(5),CoffDutyStart,108), CONVERT(CHAR(5),CoffDutyEnd,108),CcalculateLate,CcalculateEarly,CrestTime"

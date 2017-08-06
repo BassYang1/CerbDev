@@ -21,7 +21,7 @@ Call fConnectADODB()
 
 On Error Resume NEXT
 
-strSQL = "select(select '{"&chr(34)&"name"&chr(34)&":"&chr(34)&"'+ VariableName + '"&chr(34)&","&chr(34)&"value"&chr(34)&":"&chr(34)&"' + VariableValue + '"&chr(34)&"},' from Options where VariableName in ('intBasicDay', 'strIncreaseType1', 'strIncreaseType2', 'intMaxVacation', 'blnContinueNext', 'strSkipHoliday', 'intWorkTime')" & " order by VariableId for xml path('')) JsonData"
+strSQL = "select(select '{"&chr(34)&"name"&chr(34)&":"&chr(34)&"'+ VariableName + '"&chr(34)&","&chr(34)&"value"&chr(34)&":"&chr(34)&"' + VariableValue + '"&chr(34)&"},' from Options where VariableName in ('intBasicDay', 'strVacationType', 'intIncreasePerYear', 'strIncreaseType1', 'strIncreaseType2', 'intMaxVacation', 'blnContinueNext', 'strSkipHoliday', 'intWorkTime')" & " order by VariableId for xml path('')) JsonData"
 
 'response.write strSQL
 'response.end

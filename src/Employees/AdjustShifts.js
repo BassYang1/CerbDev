@@ -13,8 +13,8 @@ $(document).ready(function () {
         url: 'AdjustShiftsList.asp',
         editurl: "AdjustShiftsEdit.asp",
         datatype: "json",
-        //colNames:['TempShiftID','ShiftType','调整日期','ShiftId','班次名','EmployeeDesc','调整说明',弹性班次','基本工时','上班次数','是否过夜','第一次上班刷卡','DepartmentCode','EmployeeCode','OtherCode','AonDuty','AonDutyStart','AonDutyEnd','AoffDuty','AoffDutyStart','AoffDutyEnd','AcalculateLate','AcalculateEarly','ArestTime','BonDuty','BonDutyStart','BonDutyEnd','BoffDuty','BoffDutyStart','BoffDutyEnd','BcalculateLate','BcalculateEarly','BrestTime','ConDuty','ConDutyStart','ConDutyEnd','CoffDuty','CoffDutyStart','CoffDutyEnd','CcalculateLate','CcalculateEarly','CrestTime'],
-        colNames: ['TempShiftID', 'ShiftType', getlbl("hr.AdjustDate"), 'ShiftId', getlbl("hr.ShiftName"), 'EmployeeDesc', getlbl("hr.Description"), getlbl("hr.StretchShift"), getlbl("hr.ShiftTime"), getlbl("hr.Degree"), getlbl("hr.Night"), getlbl("hr.FirstOnDuty"), getlbl("hr.DeptList"), getlbl("hr.EmpList"), 'OtherCode', 'AonDuty', 'AonDutyStart', 'AonDutyEnd', 'AoffDuty', 'AoffDutyStart', 'AoffDutyEnd', 'AcalculateLate', 'AcalculateEarly', 'ArestTime', 'BonDuty', 'BonDutyStart', 'BonDutyEnd', 'BoffDuty', 'BoffDutyStart', 'BoffDutyEnd', 'BcalculateLate', 'BcalculateEarly', 'BrestTime', 'ConDuty', 'ConDutyStart', 'ConDutyEnd', 'CoffDuty', 'CoffDutyStart', 'CoffDutyEnd', 'CcalculateLate', 'CcalculateEarly', 'CrestTime'],
+        //colNames:['TempShiftID','ShiftType','调整日期','ShiftId','班次名','EmployeeDesc','调整说明',弹性班次','基本工时','上班次数','是否过夜','第一次上班刷卡','DepartmentCode','EmployeeCode','Relationship','OtherCode','AonDuty','AonDutyStart','AonDutyEnd','AoffDuty','AoffDutyStart','AoffDutyEnd','AcalculateLate','AcalculateEarly','ArestTime','BonDuty','BonDutyStart','BonDutyEnd','BoffDuty','BoffDutyStart','BoffDutyEnd','BcalculateLate','BcalculateEarly','BrestTime','ConDuty','ConDutyStart','ConDutyEnd','CoffDuty','CoffDutyStart','CoffDutyEnd','CcalculateLate','CcalculateEarly','CrestTime'],
+        colNames: ['TempShiftID', 'ShiftType', getlbl("hr.AdjustDate"), 'ShiftId', getlbl("hr.ShiftName"), 'EmployeeDesc', getlbl("hr.Description"), getlbl("hr.StretchShift"), getlbl("hr.ShiftTime"), getlbl("hr.Degree"), getlbl("hr.Night"), getlbl("hr.FirstOnDuty"), getlbl("hr.DeptList"), getlbl("hr.EmpList"), getlbl("hr.Relationship"), getlbl("hr.OtherCond"), 'AonDuty', 'AonDutyStart', 'AonDutyEnd', 'AoffDuty', 'AoffDutyStart', 'AoffDutyEnd', 'AcalculateLate', 'AcalculateEarly', 'ArestTime', 'BonDuty', 'BonDutyStart', 'BonDutyEnd', 'BoffDuty', 'BoffDutyStart', 'BoffDutyEnd', 'BcalculateLate', 'BcalculateEarly', 'BrestTime', 'ConDuty', 'ConDutyStart', 'ConDutyEnd', 'CoffDuty', 'CoffDutyStart', 'CoffDutyEnd', 'CcalculateLate', 'CcalculateEarly', 'CrestTime'],
         colModel: [
             { name: 'TempShiftID', index: 'TempShiftID', align: 'center', width: 10, hidden: true, viewable: false, search: false },
             { name: 'ShiftType', index: 'ShiftType', align: 'center', width: 10, hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false },
@@ -31,8 +31,8 @@ $(document).ready(function () {
             {
                 name: 'ShiftName', index: 'ShiftName', align: 'center', edittype: 'select', editable: true, editrules: { required: true, edithidden: true },
                 stype: 'select', searchoptions: { sopt: ["eq"], value:":", dataInit:initShiftsList },
-                formoptions: { rowpos: 5, colpos: 1 },
-                editoptions: {readonly:true,dataInit:initShiftsList}
+                formoptions: {rowpos: 7, colpos: 1, label: getlbl("hr.AdjustShift") },
+                editoptions: {dataInit:initShiftsList}
             },
             { name: 'EmployeeDesc', index: 'EmployeeDesc', align: 'center', width: 10, hidden: true, viewable: true, search: false },
             {
@@ -44,29 +44,29 @@ $(document).ready(function () {
                 name: 'StretchShift', index: 'StretchShift', align: 'center', editable: true, editrules: { required: false, edithidden: true },
                 edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
                 formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
-                formoptions: { rowpos: 7, colpos: 2 }
+                formoptions: { rowpos: 9, colpos: 2 }
             },
             {
                 name: 'ShiftTime', index: 'ShiftTime', width: 120, align: 'center', editable: true, sortable: false, search: false, formatter: 'number',
                 editrules: { required: true, edithidden: true },
-                formoptions: { rowpos: 5, colpos: 2, elmsuffix: "<font color=#FF0000>*</font>" }
+                formoptions: { rowpos: 7, colpos: 2, elmsuffix: "<font color=#FF0000>*</font>" }
             },
             {
                 name: 'Degree', index: 'Degree', width: 120, align: 'center', editable: true, sortable: false, search: false,
                 editrules: { required: true, edithidden: true },
                 edittype: 'select', editoptions: { value: '1:1;2:2;3:3' },
-                formoptions: { rowpos: 7, colpos: 1 }
+                formoptions: { rowpos: 9, colpos: 1 }
             },
             {
                 name: 'Night', index: 'Night', editable: true, align: 'center', editrules: { required: false, edithidden: true },
                 edittype: 'checkbox', editoptions: { value: getlbl("hr.Yes") + ":" + getlbl("hr.No") }, stype: 'select', searchoptions: { sopt: ["eq"], value: "1:" + getlbl("hr.Yes") + ";" + "0:" + getlbl("hr.No") }, //"0-否:1-是"
                 formatter: function (cellvalue, options, rowObject) { if (cellvalue == "True") { return getlbl("hr.Yes"); } else { return getlbl("hr.No"); } },
-                formoptions: { rowpos: 6, colpos: 1 }
+                formoptions: { rowpos: 8, colpos: 1 }
             },
             {
                 name: 'FirstOnDuty', index: 'FirstOnDuty', editable: true, hidden: true, align: 'center', editrules: { required: false, edithidden: true },
                 edittype: 'select', editoptions: { value: '0:' + getlbl("hr.OnThatDay") + ";1:" +  getlbl("hr.OnPriorDay")},
-                formoptions: { rowpos: 6, colpos: 2 }
+                formoptions: { rowpos: 8, colpos: 2 }
             },
             {
                 name: 'DepartmentCode', index: 'DepartmentCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
@@ -74,11 +74,21 @@ $(document).ready(function () {
                 editoptions: { dataInit: mergeFormCells },
             },
             {
-                name: 'EmployeeCode', index: 'EmployeeCode', align: 'center', width: 10, editable: true, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                name: 'EmployeeCode', index: 'EmployeeCode', align: 'center', width: 10, editable: false, edittype: 'select', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
                 formoptions: { rowpos: 4, colpos: 1 },
                 editoptions: { dataInit: mergeFormCells },
             },
-            { name: 'OtherCode', index: 'OtherCode', align: 'center', width: 10, editable: true, edittype: 'none', hidden: true, viewable: false, search: false },
+            {
+                name: 'Relationship', index: 'Relationship', width: 120, align: 'center', editable: true, sortable: false, search: false, hidden:true,
+                editrules: { required: true, edithidden: true },
+                edittype: 'select', editoptions: { value: 'and:' + getlbl("hr.RelaAnd") + ';or:' + getlbl("hr.RelaOr") },
+                formoptions: { rowpos: 5, colpos: 1 }
+            },
+            {
+                name: 'OtherCode', index: 'OtherCode', align: 'center', width: 10, editable: true, edittype: 'text', hidden: true, editrules: { required: false, edithidden: true }, viewable: false, search: false,
+                formoptions: { rowpos: 6, colpos: 1, elmsuffix: "&nbsp;<a class='fm-button ui-state-default ui-corner-all fm-button-icon-left' id='btnSearch' onclick='Search()'>" + getlbl("hr.Search") + "<span class='ui-icon ui-icon-search'></span></a>"},
+                editoptions: { disabled: true, code: "", dataInit: mergeFormCells },
+            },
             { name: 'AonDuty', index: 'AonDuty', align: 'center', width: 10, hidden: true, viewable: false, search: false },
             { name: 'AonDutyStart', index: 'AonDutyStart', align: 'center', width: 10, hidden: true, viewable: false, search: false },
             { name: 'AonDutyEnd', index: 'AonDutyEnd', align: 'center', width: 10, hidden: true, viewable: false, search: false },
@@ -256,6 +266,7 @@ function initShiftsList(element){
 
     var $selObj = $(element);
     $selObj.attr({"id":"ShiftName", "name":"ShiftName"});
+    $selObj.append("<option value='0-" + getlbl("hr.Rest") + "'>0-" + getlbl("hr.Rest") + "</option>");
 
     for(var i in arrShifts){
         $selObj.append("<option value='" + arrShifts[i].id + "'>" + arrShifts[i].name + "</option>");
@@ -551,6 +562,15 @@ function initEditForm(rowObject) {
         LoadSelEmp(rowObject.EmployeeCode);
     }
 
+    if(rowObject && rowObject.OtherCode){ //其它条件
+        var arrCode = rowObject.OtherCode.split("|,");
+
+        if(arrCode.length >= 4){
+            $("#OtherCode").val(arrCode[0]);
+            $("#OtherCode").attr("code", arrCode[1] + "|," + arrCode[2] + "|," + arrCode[3]);
+        }
+    }
+
     $("#AdjustDate").bind("focus", function () { 
         WdatePicker({ isShowClear: false, dateFmt: 'yyyy-MM-dd' }); 
     }).blur();
@@ -605,17 +625,17 @@ function initEditForm(rowObject) {
 }
 
 //初使化部门
-function InitDepartments(templateId) {
+function InitDepartments(shiftId) {
     var $tr = $("#tr_DepartmentCode"),
         $label = $tr.children("td.CaptionTD"),
         $data = $tr.children("td.DataTD");
 
-    if (templateId == undefined || templateId == null || templateId == "" || typeof templateId != "string") {
-        templateId = "0";
+    if (shiftId == undefined || shiftId == null || shiftId == "" || typeof shiftId != "string") {
+        shiftId = "0";
     }
 
     var userId = getCookie(cookieUserId);
-    $data.html("&nbsp;<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=shiftadjustment&templateId=" + templateId + "&userId=" + userId + "'></iframe>");
+    $data.html("&nbsp;<iframe id='depframe' name='depframe' width='90%' height='180' marginheight='0' marginwidth='0' frameborder='0' align='center' src='../Tools/GetUserEditDept.html?nd=" + getRandom() + "&oper=shiftadjustment&id=" + shiftId + "&userId=" + userId + "'></iframe>");
 }
 
 function InitEmployees() {
@@ -762,7 +782,11 @@ function fGetFormData() {
     });
 
     data.EmployeeCode = empIds.substr(1);
-    data.EmployeeName = empNames.substr(1);
+    data.EmployeeName = empNames.substr(1);    
+
+    //员工条件
+    data.OtherCond = $("#OtherCode").val();
+    data.OtherCode = $("#OtherCode").attr("code");
 
     data.StretchShift = $("#StretchShift").is(":checked") ? "1" : "0";
     data.Night = $("#Night").is(":checked") ? "1" : "0";
@@ -802,10 +826,36 @@ function fGetFormData() {
 }
 
 function GetSelDepts() {
-    return $("#depframe")[0].contentWindow.GetCheckDepts(); //{Ids: Ids, Names: Names}
+    if($("#depframe") && $("#depframe")[0] && $("#depframe")[0].contentWindow){
+        return $("#depframe")[0].contentWindow.GetCheckDepts(); //{Ids: Ids, Names: Names}
+    }
+
+    return "";
 }
 
 function ExportData() {
     $("#divExport").load("../Tools/ExportDataUI.asp?nd=" + getRandom() + "&exportType=shiftadjustment");
     $("#divExport").show();
+}
+
+function Search(){
+    $("#divSearch").load("../Equipment/search.asp?submitfun=SearchSubmit()");
+    $("#divSearch").show();
+}
+
+function SearchSubmit(){
+    var strsearchField = $("#searRetColVal").html();
+    var strsearchOper = $("#searRetOperVal").html();
+    var strsearchString = $("#searRetDataVal").html();
+    var code = strsearchField + "|," + strsearchOper + "|," + encodeURI(strsearchString);
+
+    var searRetColText = $.trim($("#searRetColText").text());
+    var searRetOperText = $.trim($("#searRetOperText").text());
+    var searRetDataText = $.trim($("#searRetDataText").text());
+    searRetDataText = searRetDataText.replace(/[\|\-]/g, '')
+
+    if(code != ""){
+        $("#OtherCode").val(searRetColText + " " + searRetOperText + " '" + searRetDataText + "'");
+        $("#OtherCode").attr("code", code);
+    }
 }
