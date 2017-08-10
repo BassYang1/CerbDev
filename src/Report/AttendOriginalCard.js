@@ -121,32 +121,26 @@ jQuery("#DataGrid").jqGrid({
 				url:"AttendOriginalCardDetailList.asp?EmployeeId="+row_id,
 				datatype: "json",
 				//colNames:['日期','Nobrushcard','班次','上班','下班','上班','下班','上班','下班','Result1','Result2','Result3','Result4','Result5','Result6','工时(M)','LateTime1','LateTime2','LateTime3','迟到(M)','LeaveEarlyTime1','LeaveEarlyTime2','LeaveEarlyTime3','早退(M)','Absent','SignInFlag','OTtime'],
-				colNames:[getlbl("rep.BCDate"),'Nobrushcard',getlbl("rep.Shift"),getlbl("rep.OnDuty"),getlbl("rep.OffDuty"),getlbl("rep.OnDuty"),getlbl("rep.OffDuty"),getlbl("rep.OnDuty"),getlbl("rep.OffDuty"),'Result1','Result2','Result3','Result4','Result5','Result6',getlbl("rep.WorkTime"),'LateTime1','LateTime2','LateTime3',getlbl("rep.LateTime"),'LeaveEarlyTime1','LeaveEarlyTime2','LeaveEarlyTime3',getlbl("rep.LeaveEarly"),'Absent','SignInFlag','OTtime'],
+				colNames:[getlbl("rep.BCDate"),'Nobrushcard',getlbl("rep.Shift"),getlbl("rep.OnDuty"),getlbl("rep.OffDuty"),getlbl("rep.OnDuty"),getlbl("rep.OffDuty"),getlbl("rep.OnDuty"),getlbl("rep.OffDuty"),getlbl("rep.Remark"),'Result1','Result2','Result3','Result4','Result5','Result6',getlbl("rep.WorkTime"),'LateTime1','LateTime2','LateTime3',getlbl("rep.LateTime"),'LeaveEarlyTime1','LeaveEarlyTime2','LeaveEarlyTime3',getlbl("rep.LeaveEarly"),'Absent','SignInFlag','OTtime'],
 				colModel :[
-					{name:'OnDutyDate1',width:60,hidden:false,align:'center',sortable:false,},
+					{
+						name:'OnDutyDate1',width:60,hidden:false,align:'center',sortable:false,
+						formatter: function (cellvalue, options, rowObject) { 
+							if(cellvalue && !isNaN(cellvalue)){
+								var dt = new Date($("#startTime").val() + "-" + cellvalue);
+								var day = checkWeekday(dt.getDay());
+
+								if(day == "") return cellvalue;
+
+								return cellvalue + "(" + day + ")";
+							}
+
+							return cellvalue;
+						},
+					},
 					{name:'Nobrushcard',width:10,hidden:true,},
 					{name:'ShiftName',width:20,hidden:true,align:'center',sortable:false,},
 					{name:'OnDuty1',width:120,hidden:false,align:'center',sortable:false,
-						formatter:function(cellvalue, options, rowObject){
-							if(rowObject[16] != undefined && rowObject[16] != "" && rowObject[16] != "0"){
-								return "<font color=#FF0000>"+cellvalue+"</font>";
-							}
-							else{
-								return cellvalue;
-							}
-						}
-					},
-					{name:'OffDuty1',width:120,hidden:false,align:'center',sortable:false,
-						formatter:function(cellvalue, options, rowObject){
-							if(rowObject[20] != undefined && rowObject[20] != "" && rowObject[20] != "0"){
-								return "<font color=#FF0000>"+cellvalue+"</font>";
-							}
-							else{
-								return cellvalue;
-							}
-						}
-					},
-					{name:'OnDuty2',width:120,hidden:false,align:'center',sortable:false,
 						formatter:function(cellvalue, options, rowObject){
 							if(rowObject[17] != undefined && rowObject[17] != "" && rowObject[17] != "0"){
 								return "<font color=#FF0000>"+cellvalue+"</font>";
@@ -156,7 +150,7 @@ jQuery("#DataGrid").jqGrid({
 							}
 						}
 					},
-					{name:'OffDuty2',width:120,hidden:false,align:'center',sortable:false,
+					{name:'OffDuty1',width:120,hidden:false,align:'center',sortable:false,
 						formatter:function(cellvalue, options, rowObject){
 							if(rowObject[21] != undefined && rowObject[21] != "" && rowObject[21] != "0"){
 								return "<font color=#FF0000>"+cellvalue+"</font>";
@@ -166,9 +160,29 @@ jQuery("#DataGrid").jqGrid({
 							}
 						}
 					},
-					{name:'OnDuty3',width:120,hidden:false,align:'center',sortable:false,
+					{name:'OnDuty2',width:120,hidden:false,align:'center',sortable:false,
 						formatter:function(cellvalue, options, rowObject){
 							if(rowObject[18] != undefined && rowObject[18] != "" && rowObject[18] != "0"){
+								return "<font color=#FF0000>"+cellvalue+"</font>";
+							}
+							else{
+								return cellvalue;
+							}
+						}
+					},
+					{name:'OffDuty2',width:120,hidden:false,align:'center',sortable:false,
+						formatter:function(cellvalue, options, rowObject){
+							if(rowObject[22] != undefined && rowObject[22] != "" && rowObject[22] != "0"){
+								return "<font color=#FF0000>"+cellvalue+"</font>";
+							}
+							else{
+								return cellvalue;
+							}
+						}
+					},
+					{name:'OnDuty3',width:120,hidden:false,align:'center',sortable:false,
+						formatter:function(cellvalue, options, rowObject){
+							if(rowObject[19] != undefined && rowObject[19] != "" && rowObject[19] != "0"){
 								return "<font color=#FF0000>"+cellvalue+"</font>";
 							}
 							else{
@@ -179,7 +193,7 @@ jQuery("#DataGrid").jqGrid({
 					
 					{name:'OffDuty3',width:120,hidden:false,align:'center',sortable:false,
 						formatter:function(cellvalue, options, rowObject){
-							if(rowObject[22] != undefined && rowObject[22] != "" && rowObject[22] != "0"){
+							if(rowObject[23] != undefined && rowObject[23] != "" && rowObject[23] != "0"){
 								return "<font color=#FF0000>"+cellvalue+"</font>";
 							}
 							else{
@@ -187,6 +201,7 @@ jQuery("#DataGrid").jqGrid({
 							}
 						}
 					},
+					{name:'Remark',width:40,hidden:false,align:'center',},
 					{name:'Result1',width:10,hidden:true,},
 					{name:'Result2',width:10,hidden:true,},
 					{name:'Result3',width:10,hidden:true,},

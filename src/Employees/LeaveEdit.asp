@@ -7,7 +7,7 @@
 Call CheckLoginStatus("parent.location.href='../login.html'")
 
 Dim strSQL,strOper, strRecordID, strLeaveType,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strAllDay,strStartTime,strEndTime,strLeaveNum,strNote, strEmpId, strDescription
-Dim strSumTotal, strTimeTemp, strAskDay, strStatus, blnRefuse
+Dim strSumTotal, strTimeTemp, strAskDay, strStatus, blnRefuse, strNextStep
 Dim strFields, strValues
 Dim strDepartmentName, strEmployeeName
 Dim isEditEmpCode,arr
@@ -124,12 +124,13 @@ Select Case strOper
 			strStatus = getEmpLbl("FlowStatus_Applied_0")
 		else 
 			strStatus = getEmpLbl("FlowStatus_Approved_2")	
+			strNextStep = "E - 流程完成"
 		end if
 
 		strFields = " EmployeeId, StartTime, EndTime, AskForLeaveType, AllDay, SumTotal, TransactThing, Note, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName, DeputizeId, DeputizeName "
 		strValues = cstr(strEmpId)+", '"+cstr(strStartTime)+"','"+CStr(strEndTime)+"','"+CStr(strLeaveType)
 		strValues = strValues + "',"+CStr(strAllDay)+",'"+cstr(strSumTotal)+"', '', '"+CStr(strNote)+"', '" + strStatus + " ', 0"
-		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"', 0, ''"
+		strValues = strValues + ", '', 0, '0','" + strNextStep + "', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"', 0, ''"
 		strSQL = "Insert into AttendanceAskForLeave(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceAskForLeave where AskforleaveId=(select Max(AskforleaveId) from AttendanceAskForLeave)"
 	Case "edit": 'Edit Record
@@ -139,6 +140,7 @@ Select Case strOper
 
 		if blnRefuse = "0" then
 			strStatus = getEmpLbl("FlowStatus_Approved_2")	
+			strNextStep = "E - 流程完成"
 		else
 			strStatus = getEmpLbl("FlowStatus_Refused_3")	
 		end if
@@ -148,7 +150,7 @@ Select Case strOper
 			Call ReturnErrMsg(GetEmpLbl("FlowApprove_Desc_Length_50"))	'"批注/说明最多长度为50个字符！"
 		End if
 
-		strSQL = "update AttendanceAskForLeave set Status='" + strStatus + "', TransactorId=" + CStr(strTransactorId) + ", TransactorName='" + cstr(strTransactorName) + "' where askforleaveid=" + CStr(strRecordID)
+		strSQL = "update AttendanceAskForLeave set Status='" + strStatus + "', TransactorId=" + CStr(strTransactorId) + ", TransactorName='" + cstr(strTransactorName) + "', NextStep='" + strNextStep + "' where askforleaveid=" + CStr(strRecordID)
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Leave_0") + "', AskForLeaveId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus +  "', getdate(), '" + cstr(strDescription) + "' from AttendanceAskForLeave where AskforleaveId=" + strRecordID
 	Case "del": 'Delete Record
 		if strRecordID = "" then

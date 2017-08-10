@@ -515,6 +515,78 @@ SELECT 'Tool', 'AttendOption', 'Annual_Year_Not_Numeric', '增加年限需填写数值！'
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', 'AttendOption', 'Holiday_Work_Time_Not_Numeric', '休息日所计工时需填写数值！', '休息日所計工時需填寫數值！', 'The work time is not a numeric!', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Holiday_Work_Time_Not_Numeric');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'OverTimeTotal', '加班汇总', '加班匯總', 'OT Summary', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'OverTimeTotal');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendOTTitle', N'月份,部门,姓名,工号,超时加班(M),加班次数,休息日加班(M),节假日加班(M)', N'月份,部門,姓名,工號,超時加班(M),加班次數,休息日加班(M),節假日加班(M)', 'Month,Department,Name,Number,OT WorkDay,OT Count,OT RestDay,OT', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendOTTitle');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendTodayOnduty', '今日上班', '今日上班', 'Today', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendTodayOnduty');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendTodayOndutyTitle', N'部门,在职人数,本日实到,迟到,事假,病假,出差,其它,旷工', N'部門,編制人數,本日實到,遲到,事假,病假,出差,其它,曠職', 'Department,Regimented Employees,Current Day on Duty,Late,Private Leave,Sick Leave,Trip,Other Leaves,Absence', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendTodayOndutyTitle');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Emp', '实上班人员', '實上班人員', 'Employees on Duty', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Leave_Emp', '请假人员', '請假人員', 'Employees on Leave', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Leave_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Abs_Emp', '未上班人员', '未上班人員', 'Employees on Absence', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Abs_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Late_Emp', '迟到人员', '	', 'Employees on Late Attendance', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Late_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','AttendTodayDetail','AttTodayDetail_Leave_Type','年假,事假,病假,工伤,婚假,产假,出差,丧假,补假,法定假,其它假,哺乳假,探亲假','年假,事假,病假,工傷,婚假,產假,出差,喪假,補假,法定假,其他假,哺乳假,探親假','Annual Leave,Private Leave,Sick Leave,Injury for Job,Matrimony Leave,Maternity Leave,Trip,Funeral Leave,Compensatory Leave,Legal Holiday,Other Leave,Lactation Leave,Family Visit Leave', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Leave_Type');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Name','姓名','姓名','Name', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Name');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_First_Brush','第一次刷卡时间','第一次刷卡時間','Brush card first time', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_First_Brush');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Gender','性别','性別','Gender', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Gender');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Number','编号','編號','Serial No.', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Number');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Card','卡号','卡號','Card No.', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Card');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Duty','职务','職務','Duty', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Duty');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Join_Date','入职日期','入職日期','Joining Date', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Join_Date');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Leave_Categ','假别','假別','Leave Category', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Leave_Categ');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_NoData','无数据显示','沒有記錄','No records to view', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_NoData');
 	
 GO
 

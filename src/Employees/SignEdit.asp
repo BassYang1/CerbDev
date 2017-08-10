@@ -7,7 +7,7 @@
 Call CheckLoginStatus("parent.location.href='../login.html'")
 
 Dim strSQL,strOper, strRecordID, strLeaveType,strEmployeeDesc,strEmployeeCode,strDepartmentCode,strOtherCode,strBrushTime,strRemark, strEmpId
-Dim strStatus, blnRefuse
+Dim strStatus, blnRefuse, strNextStep
 Dim strFields, strValues
 Dim strDepartmentName, strEmployeeName
 Dim isEditEmpCode,arr
@@ -91,11 +91,12 @@ Select Case strOper
 			strStatus = getEmpLbl("FlowStatus_Applied_0")
 		else 
 			strStatus = getEmpLbl("FlowStatus_Approved_2")	
+			strNextStep = "E - 流程完成"
 		end if
 
 		strFields = " EmployeeId, BrushTime, Remark, Status, WorkFlowId, WorkFlowName, NowStep, NextStep, TransactorDesc, TransactorId, TransactorName "
 		strValues = cstr(strEmpId)+", '"+cstr(strBrushTime)+"', '"+CStr(strRemark)+"', '" + strStatus + " ', 0"
-		strValues = strValues + ", '', 0, '0','', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"' "
+		strValues = strValues + ", '', 0, '0','" + strNextStep + "', "+CStr(strTransactorId)+", '"+cstr(strTransactorName)+"' "
 		strSQL = "Insert into AttendanceSignIn(" + cstr(strFields) + ")values(" + cstr(strValues) + ")"
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, "+CStr(strEmpId)+", (select Name from Employees where EmployeeId="+CStr(strEmpId)+") AS TransactorName, '" + strStatus + "', getdate() from AttendanceSignIn where SignId=(select Max(SignId) from AttendanceSignIn)"
 	Case "edit": 'Edit Record
@@ -105,12 +106,13 @@ Select Case strOper
 
 		if blnRefuse = "0" then
 			strStatus = getEmpLbl("FlowStatus_Approved_2")	
+			strNextStep = "E - 流程完成"
 		else
 			strStatus = getEmpLbl("FlowStatus_Refused_3")	
 		end if
 
 		strDescription = Replace(Request.Form("Description"),"'","''")
-		strSQL = "update AttendanceSignIn set Status='" + strStatus + "', TransactorId=" + CStr(strTransactorId) + ", TransactorName='" + cstr(strTransactorName) + "' where SignId=" + CStr(strRecordID)
+		strSQL = "update AttendanceSignIn set Status='" + strStatus + "', TransactorId=" + CStr(strTransactorId) + ", TransactorName='" + cstr(strTransactorName) + "', NextStep='" + strNextStep + "' where SignId=" + CStr(strRecordID)
 		strSQL = strSQL + " ; insert into FlowStepDetail(FlowType, FlowDataId, StepId, Transactorid,Transactor, Operation, OperateTime, Postil) select '" + getEmpLbl("FlowType_Signcard_3") + "', SignId, 0, "+CStr(strTransactorId)+", '" + cstr(strTransactorName) + "' as TransactorName, '" + strStatus+  "', getdate(), '" + cstr(strDescription) + "' from AttendanceSignIn where SignId=" + strRecordID
 	Case "del": 'Delete Record
 		if strRecordID = "" then

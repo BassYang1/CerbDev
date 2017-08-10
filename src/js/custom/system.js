@@ -1,4 +1,4 @@
-﻿// JavaScript Document
+// JavaScript Document
 
 var cookieUserName = "Cerb%5FUserName"; // 用户名字 Cookie : Cerb_UserName
 var cookieUserId = "Cerb%5FUserId"; // 用户Id Cookie : Cerb_UserId
@@ -207,6 +207,32 @@ function isAdmin(){
 function getRandom()
 {
 	return Math.round(Math.random(0)*100000);
+}
+
+function checkWeekday(day){
+	if(day == 1){
+		return getlbl("rep.Monday");
+	}
+	else if(day == 2){
+		return getlbl("rep.Tuesday");
+	}
+	else if(day == 3){
+		return getlbl("rep.Wednesday");
+	}
+	else if(day == 4){
+		return getlbl("rep.Thursday");
+	}
+	else if(day == 5){
+		return getlbl("rep.Friday");
+	}
+	else if(day == 6){
+		return getlbl("rep.Saturday");
+	}
+	else if(day == 0){
+		return getlbl("rep.Sunday");
+	}
+
+	return ""
 }
 
 //获取当前所选部门下拉框所有的子部门ID（包括当前所选的部门的ID）

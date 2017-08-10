@@ -103,6 +103,12 @@ else if(strexportType == "signcard"){
 else if(strexportType == "overtime"){
 	strSheetName = "<%=GetToolLbl("OverTime")%>";//加班
 }
+else if(strexportType == "attendottotal"){
+	strSheetName = "<%=GetToolLbl("OverTimeTotal")%>";//加班汇总
+}
+else if(strexportType == "attendtodayonduty"){
+	strSheetName = "<%=GetToolLbl("AttendTodayOnduty")%>";//今日上班
+}
 else
 {
 	strSheetName = "Sheet1";

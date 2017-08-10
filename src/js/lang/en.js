@@ -485,7 +485,38 @@ var rep={
 	spanNavACS : "Access Control",//门禁
 	aAcsDetailReport : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entrance/Exit Details",//进出明细
 	aAcsIllegalReport : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Illegal Entrance/Exit",//非法进出
-	aAcsButtonReport : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Event Records"//按钮事件
+	aAcsButtonReport : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Event Records",//按钮事件
+	Monday: "Mon.",
+	Tuesday: "Tue.",
+	Wednesday: "Wed.",
+	Thursday: "Thu.",
+	Friday: "Fri.",
+	Saturday: "Sat.",
+	Sunday: "Sun.",
+	Remark: "Remark",
+	aAttendOtTotal: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OT Summary",
+	AttendOtTotalReport : "OT Summary Report",
+	AttendOTTime: "OT WorkDay",
+	AttendOTCount: "OT Count",
+	AttendRestday: "OT RestDay",
+	AttendHoliday: "OT Holiday",
+	AttendTotal: "Total",
+	aAttendTodayOnduty: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Today",
+	AttendTodayOndutyReport : "Today Onduty Report",
+	EmpCount: "Regimented Employees",
+	EmpTodayCount: "Current Day on Duty",
+	Name: "Name", 
+	Sex: "Gender", 
+	Number: "Serial No.", 
+	CardNo: "Card No.", 
+	Headship: "Duty", 
+	FirstBrush: "Brush card first time",
+	JoinDate: "Joining Date",
+	LeaveType: "Leave Category",
+	RegEmp:"Employees on Duty",
+	LeaveEmp:"Employees on Leave",
+	AbsEmp:"Employees on Absence",
+	LateEmp:"Employees on Late Attendance",
 }
 
 var tool={

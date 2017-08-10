@@ -30,7 +30,7 @@ window.onload = function() {
 	$("#spanNavAttend").click(function(){  
 		try{
 			if($("#divNavAttend").hasClass('collapsed')){
-				window.parent.mainFrame.location.href="AttendOriginalReport.html";
+				window.parent.mainFrame.location.href="AttendTodayOnduty.html";
 			}
 		}catch(exception){}
 	}); 
@@ -69,10 +69,12 @@ window.onload = function() {
 	<div class="collapsed " style="color:#FFFFFF; font-weight:bold;overflow:hidden; text-align:center " id="Report">报表</div>
 	<div id="divNavAttend" class="collapsed">
 		<span id="spanNavAttend">考勤</span>
+        <a href="AttendTodayOnduty.html" target="mainFrame" id="aAttendTodayOnduty" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今日上班</a>
         <a href="AttendTotal.html" target="mainFrame" id="aAttendTotal" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;考勤汇总</a>
         <a href="AttendOriginalCard.html" target="mainFrame" id="aAttendOriginalCard" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;考勤卡</a>
 		<a href="AttendOriginalReport.html" target="mainFrame" id="aAttendOriginalReport" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原始刷卡</a>
 		<a href="AttendDetailReport.html" target="mainFrame" id="aAttendDetailReport" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刷卡明细</a>
+        <a href="AttendOtTotal.html" target="mainFrame" id="aAttendOtTotal" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加班汇总</a>
 	</div>
 	<div id="divNavACS" class="collapsed">
 		<span id="spanNavACS">门禁</span>
@@ -87,10 +89,12 @@ window.onload = function() {
 $(document).ready(function(){  
 	$("#Report").html(getlbl("rep.Report"));	//报表
 	$("#spanNavAttend").html(getlbl("rep.spanNavAttend"));	//考勤
+	$("#aAttendTodayOnduty").html(getlbl("rep.aAttendTodayOnduty"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;今日上班
 	$("#aAttendTotal").html(getlbl("rep.aAttendTotal"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;考勤汇总
 	$("#aAttendOriginalCard").html(getlbl("rep.aAttendOriginalCard"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;考勤卡
 	$("#aAttendOriginalReport").html(getlbl("rep.aAttendOriginalReport"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原始刷卡
 	$("#aAttendDetailReport").html(getlbl("rep.aAttendDetailReport"));		//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刷卡明细
+	$("#aAttendOtTotal").html(getlbl("rep.aAttendOtTotal"));		//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加班汇总
 	$("#spanNavACS").html(getlbl("rep.spanNavACS"));	//门禁
 	$("#aAcsDetailReport").html(getlbl("rep.aAcsDetailReport"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;进出明细
 	$("#aAcsIllegalReport").html(getlbl("rep.aAcsIllegalReport"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;非法进出
