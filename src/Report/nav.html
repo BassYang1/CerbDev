@@ -75,6 +75,7 @@ window.onload = function() {
 		<a href="AttendOriginalReport.html" target="mainFrame" id="aAttendOriginalReport" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原始刷卡</a>
 		<a href="AttendDetailReport.html" target="mainFrame" id="aAttendDetailReport" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刷卡明细</a>
         <a href="AttendOtTotal.html" target="mainFrame" id="aAttendOtTotal" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加班汇总</a>
+        <a href="AttendMonthTotal.html" target="mainFrame" id="aAttendMonthTotal" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每月出勤</a>
 	</div>
 	<div id="divNavACS" class="collapsed">
 		<span id="spanNavACS">门禁</span>
@@ -95,6 +96,7 @@ $(document).ready(function(){
 	$("#aAttendOriginalReport").html(getlbl("rep.aAttendOriginalReport"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原始刷卡
 	$("#aAttendDetailReport").html(getlbl("rep.aAttendDetailReport"));		//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刷卡明细
 	$("#aAttendOtTotal").html(getlbl("rep.aAttendOtTotal"));		//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加班汇总
+	$("#aAttendMonthTotal").html(getlbl("rep.aAttendMonthTotal"));		//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每月出勤
 	$("#spanNavACS").html(getlbl("rep.spanNavACS"));	//门禁
 	$("#aAcsDetailReport").html(getlbl("rep.aAcsDetailReport"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;进出明细
 	$("#aAcsIllegalReport").html(getlbl("rep.aAcsIllegalReport"));	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;非法进出

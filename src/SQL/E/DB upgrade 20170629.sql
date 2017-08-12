@@ -587,7 +587,24 @@ SELECT 'Report','','R_P_Leave_Categ','假别','假別','Leave Category', ''
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Report','','R_P_NoData','无数据显示','沒有記錄','No records to view', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_NoData');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Io','进,出','進,出','In,Out', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Io');
 	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Not_Supp_CSV','不支持CSV格式','不支持CSV格式','Do not support the CSV format', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Not_Supp_CSV');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendMonthTotal', '月份出勤报表', '月份出勤報表', 'Month', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendMonthTotal');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendMonthTotalTitle', N'姓名,上下班,01$二,02$三,03$四,04$五,05$六,06$日,07$一,08$二,09$三,10$四,11$五,12$六,13$日,14$一,15$二,16$三,17$四,18$五,19$六,20$日,21$一,22$二,23$三,24$四,25$五,26$六,27$日,28$一,29$二,30$三,31$四,出勤天数,应到天数', N'姓名,上下班,01$二,02$三,03$四,04$五,05$六,06$日,07$壹,08$二,09$三,10$四,11$五,12$六,13$日,14$壹,15$二,16$三,17$四,18$五,19$六,20$日,21$壹,22$二,23$三,24$四,25$五,26$六,27$日,28$壹,29$二,30$三,31$四,出勤天數,應到天數', 'Name,OnDuty,01$Tue,02$Wed,03$Thu,04$Fri,05$Sat,06$Sun,07\n\Mon,08$Tue,09$Wed,10$Thu,11$Fri,12$Sat,13$Sun,14\n\Mon,15$Tue,16$Wed,17$Thu,18$Fri,19$Sat,20$Sun,21\n\Mon,22$Tue,23$Wed,24$Thu,25$Fri,26$Sat,27$Sun,28\n\Mon,29$Tue,30$Wed,31$Thu,Attendance Days,Actual Attendance Days', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendMonthTotalTitle');
+
+--delete from labeltext where labelid = 'R_P_Not_Supp_CSV'
 GO
 
 

@@ -59,8 +59,8 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 	ALTER TABLE TempShifts ADD CcalculateEarly SMALLINT NULL --允许早到时间	
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
-	AND EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'EmployeeExpress')
-	ALTER TABLE TempShifts DROP COLUMN EmployeeExpress --允许早到时间
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'EmployeeExpress')
+	ALTER TABLE TempShifts ADD EmployeeExpress NTEXT NULL --员工条件
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'DepartmentCode')
@@ -71,6 +71,10 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 	ALTER TABLE TempShifts ADD EmployeeCode NTEXT NULL --保存职员列表条件	
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'Relationship')
+	ALTER TABLE TempShifts ADD Relationship NVARCHAR(10) NULL --预留,与其它条件关系
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'TempShifts') AND name = N'OtherCode')
 	ALTER TABLE TempShifts ADD OtherCode NTEXT NULL --预留,后续可能再增加的条件
 
@@ -78,18 +82,34 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'TempShifts') AND X
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'DepartmentCode')
 	ALTER TABLE AttendanceOndutyRule ADD DepartmentCode NTEXT NULL --保存部门列表条件	
+	
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'Relationship')
+	ALTER TABLE AttendanceOndutyRule ADD Relationship NVARCHAR(10) NULL --预留,与其它条件关系
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'OtherCode')
 	ALTER TABLE AttendanceOndutyRule ADD OtherCode NTEXT NULL --预留,后续可能再增加的条件
+	
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRule') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRule') AND name = N'EmployeeExpress')
+	ALTER TABLE AttendanceOndutyRule ADD EmployeeExpress NTEXT NULL --员工条件
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'DepartmentCode')
 	ALTER TABLE AttendanceOndutyRuleChange ADD DepartmentCode NTEXT NULL --保存部门列表条件	
+	
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'Relationship')
+	ALTER TABLE AttendanceOndutyRuleChange ADD Relationship NVARCHAR(10) NULL --预留,与其它条件关系
 
 IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
 	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'OtherCode')
 	ALTER TABLE AttendanceOndutyRuleChange ADD OtherCode NTEXT NULL --预留,后续可能再增加的条件		
+
+IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND XType = N'U')
+	AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'AttendanceOndutyRuleChange') AND name = N'EmployeeExpress')
+	ALTER TABLE AttendanceOndutyRuleChange ADD EmployeeExpress NTEXT NULL --员工条件
 
 --添加LabelText
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
@@ -495,7 +515,96 @@ SELECT 'Tool', 'AttendOption', 'Annual_Year_Not_Numeric', '增加年限需填写数值！'
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', 'AttendOption', 'Holiday_Work_Time_Not_Numeric', '休息日所计工时需填写数值！', '休息日所計工時需填寫數值！', 'The work time is not a numeric!', '' 
 	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'Holiday_Work_Time_Not_Numeric');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'OverTimeTotal', '加班汇总', '加班匯總', 'OT Summary', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'OverTimeTotal');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendOTTitle', N'月份,部门,姓名,工号,超时加班(M),加班次数,休息日加班(M),节假日加班(M)', N'月份,部門,姓名,工號,超時加班(M),加班次數,休息日加班(M),節假日加班(M)', 'Month,Department,Name,Number,OT WorkDay,OT Count,OT RestDay,OT', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendOTTitle');
 	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendTodayOnduty', '今日上班', '今日上班', 'Today', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendTodayOnduty');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendTodayOndutyTitle', N'部门,在职人数,本日实到,迟到,事假,病假,出差,其它,旷工', N'部門,編制人數,本日實到,遲到,事假,病假,出差,其它,曠職', 'Department,Regimented Employees,Current Day on Duty,Late,Private Leave,Sick Leave,Trip,Other Leaves,Absence', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendTodayOndutyTitle');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Emp', '实上班人员', '實上班人員', 'Employees on Duty', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Leave_Emp', '请假人员', '請假人員', 'Employees on Leave', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Leave_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Abs_Emp', '未上班人员', '未上班人員', 'Employees on Absence', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Abs_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report', 'AttendTodayDetail', 'AttTodayDetail_Late_Emp', '迟到人员', '	', 'Employees on Late Attendance', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Late_Emp');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','AttendTodayDetail','AttTodayDetail_Leave_Type','年假,事假,病假,工伤,婚假,产假,出差,丧假,补假,法定假,其它假,哺乳假,探亲假','年假,事假,病假,工傷,婚假,產假,出差,喪假,補假,法定假,其他假,哺乳假,探親假','Annual Leave,Private Leave,Sick Leave,Injury for Job,Matrimony Leave,Maternity Leave,Trip,Funeral Leave,Compensatory Leave,Legal Holiday,Other Leave,Lactation Leave,Family Visit Leave', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'AttTodayDetail_Leave_Type');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Name','姓名','姓名','Name', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Name');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_First_Brush','第一次刷卡时间','第一次刷卡時間','Brush card first time', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_First_Brush');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Gender','性别','性別','Gender', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Gender');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Number','编号','編號','Serial No.', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Number');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Card','卡号','卡號','Card No.', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Card');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Duty','职务','職務','Duty', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Duty');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Join_Date','入职日期','入職日期','Joining Date', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Join_Date');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Leave_Categ','假别','假別','Leave Category', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Leave_Categ');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_NoData','无数据显示','沒有記錄','No records to view', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_NoData');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Io','进,出','進,出','In,Out', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Io');
+	
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Report','','R_P_Not_Supp_CSV','不支持CSV格式','不支持CSV格式','Do not support the CSV format', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Report' AND LabelId = 'R_P_Not_Supp_CSV');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendMonthTotal', '月份出勤报表', '月份出勤報表', 'Month', '' 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendMonthTotal');
+
+INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
+SELECT 'Tool', NULL, 'AttendMonthTotalTitle', N'姓名,上下班,01$二,02$三,03$四,04$五,05$六,06$日,07$一,08$二,09$三,10$四,11$五,12$六,13$日,14$一,15$二,16$三,17$四,18$五,19$六,20$日,21$一,22$二,23$三,24$四,25$五,26$六,27$日,28$一,29$二,30$三,31$四,出勤天数,应到天数', N'姓名,上下班,01$二,02$三,03$四,04$五,05$六,06$日,07$壹,08$二,09$三,10$四,11$五,12$六,13$日,14$壹,15$二,16$三,17$四,18$五,19$六,20$日,21$壹,22$二,23$三,24$四,25$五,26$六,27$日,28$壹,29$二,30$三,31$四,出勤天數,應到天數', 'Name,OnDuty,01$Tue,02$Wed,03$Thu,04$Fri,05$Sat,06$Sun,07\n\Mon,08$Tue,09$Wed,10$Thu,11$Fri,12$Sat,13$Sun,14\n\Mon,15$Tue,16$Wed,17$Thu,18$Fri,19$Sat,20$Sun,21\n\Mon,22$Tue,23$Wed,24$Thu,25$Fri,26$Sat,27$Sun,28\n\Mon,29$Tue,30$Wed,31$Thu,Attendance Days,Actual Attendance Days', NULL 
+	WHERE NOT EXISTS(SELECT 1 FROM LabelText WHERE PageFolder = 'Tool' AND LabelId = 'AttendMonthTotalTitle');
+
+--delete from labeltext where labelid = 'R_P_Not_Supp_CSV'
 GO
 
 
@@ -505,8 +614,13 @@ IF EXISTS(SElECT 1 FROM dbo.SYSOBJECTS WHERE Id = OBJECT_ID(N'Options') AND XTyp
 	ALTER TABLE Options ALTER COLUMN VariableValue NVARCHAR(MAX) NULL
 
 --添加流程审批配置
-INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) VALUES ('strWorkflowApproval', N'启用流程审批，配置流程审批人', 'str', '0,0,,0')
-INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) VALUES ('strAnnalDeptEmps', N'按部门设置可休年假员工', 'str', '0 - All')
+INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) 
+SELECT 'strWorkflowApproval', N'启用流程审批，配置流程审批人', 'str', '0,0,,0'
+	WHERE NOT EXISTS(SELECT 1 FROM Options WHERE VariableName = 'strWorkflowApproval')
+
+INSERT INTO [dbo].[Options]([VariableName],[VariableDesc],[VariableType],[VariableValue]) 
+SELECT 'strAnnalDeptEmps', N'按部门设置可休年假员工', 'str', '0 - All'
+	WHERE NOT EXISTS(SELECT 1 FROM Options WHERE VariableName = 'strAnnalDeptEmps')
 
 INSERT INTO LabelText(PageFolder, PageName, LabelId, LabelZhcnText, LabelZhtwText, LabelEnText, LabelCustomText)
 SELECT 'Tool', 'Options', 'Options', '选项', '選項', 'Options', '' 

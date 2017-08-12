@@ -7,6 +7,8 @@
 
 <script type="text/javascript" src="../js/export/Base64.js"></script>
 <script type="text/javascript" src="../js/export/e2e-0.8.js"></script>
+<script type="text/javascript" src="../js/custom/system.js"></script>
+
 </head>
 <body>
 
@@ -109,26 +111,42 @@ else if(strexportType == "attendottotal"){
 else if(strexportType == "attendtodayonduty"){
 	strSheetName = "<%=GetToolLbl("AttendTodayOnduty")%>";//今日上班
 }
+else if(strexportType == "attendmonthtotal"){
+	strSheetName = "<%=GetToolLbl("AttendMonthTotal")%>" + $("#startTime").val();//月份出勤
+}
 else
 {
 	strSheetName = "Sheet1";
 }
+
+var days = getDays($("#startTime").val());
 
 if(strexportFlag == "excel"){
 	//导出excel格式
 	if(strisIE=="1"){
 		//IE导出.  GetExportdataIE返回的是JSON数据，包含表头
 		var htmlObj = $.ajax({url:'../Tools/GetExportdataIE.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1',async:false});
-		var responseMsg = $.parseJSON(htmlObj.responseText);
-		if(strexportType == "attendcard"){
-			IE_ExportToXLS_AttendCard(responseMsg); //导出考勤卡
-		}else{
-			IE_ExportToXLS(responseMsg);
+		if(htmlObj && htmlObj.responseText){
+			var responseMsg = $.parseJSON(htmlObj.responseText);
+			if(strexportType == "attendcard"){
+				IE_ExportToXLS_AttendCard(responseMsg); //导出考勤卡
+			}
+			else if(strexportType == "attendmonthtotal"){
+				IE_ExportToXLS_AttendMonth(responseMsg); //导出月份出勤
+			}
+			else
+			{
+				IE_ExportToXLS(responseMsg);
+			}
+		}
+		else{
+			alert("<%=GetReportLbl("R_P_NoData")%>");
 		}
 	}
 	else{
 		//GetExportdataTable.asp返回的是Table
-		var htmlObj = $.ajax({url:'../Tools/GetExportdataTable.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1',async:false});
+		var htmlObj = $.ajax({url:'../Tools/GetExportdataTable.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1&days='+days+"&month="+$("#startTime").val(),async:false});
+				//alert(htmlObj.responseText);
 		$("#div_tableId").html(htmlObj.responseText);
 		$('#tableid1').e2e({sheetName:strSheetName});
 	}
@@ -136,30 +154,46 @@ if(strexportFlag == "excel"){
 else{
 	//导出csv格式
 	if(strisIE=="1"){
-		//IE导出. GetExportdataIE返回的是JSON数据，包含表头
-		var htmlObj = $.ajax({url:'../Tools/GetExportdataIE.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1',async:false});
-		var responseMsg = $.parseJSON(htmlObj.responseText);
-		if(strexportType == "attendcard"){
-			IE_ExportToCSV_AttendCard(responseMsg);
+		if(strexportType == "attendmonthtotal"){
+			alert("<%=GetReportLbl("R_P_Not_Supp_CSV")%>");
 		}
 		else{
-			IE_ExportToCSV(responseMsg);
+			//IE导出. GetExportdataIE返回的是JSON数据，包含表头
+			var htmlObj = $.ajax({url:'../Tools/GetExportdataIE.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1',async:false});
+
+			if(htmlObj && htmlObj.responseText){
+				var responseMsg = $.parseJSON(htmlObj.responseText);
+				if(strexportType == "attendcard"){
+					IE_ExportToCSV_AttendCard(responseMsg);
+				}
+				else{
+					IE_ExportToCSV(responseMsg);
+				}
+			}
+			else{
+				alert("<%=GetReportLbl("R_P_NoData")%>");
+			}
 		}
 	}
 	else{
-		//GetExportdataCSV.asp返回的是以逗号分隔的数据 
-		var htmlObj = $.ajax({url:'../Tools/GetExportdataCSV.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1',async:false});
-		var str = htmlObj.responseText;
-		
-		str =  encodeURIComponent(str);
-		var uri = 'data:text/csv;charset=utf-8,\ufeff' + str;
-		var downloadLink = document.createElement("a");
-		downloadLink.href = uri;
-		downloadLink.download = strexportType+".csv"; //"export.csv"
-		
-		document.body.appendChild(downloadLink);
-		downloadLink.click();
-		document.body.removeChild(downloadLink);
+		if(strexportType == "attendmonthtotal"){
+			alert("<%=GetReportLbl("R_P_Not_Supp_CSV")%>");
+		}
+		else{
+			//GetExportdataCSV.asp返回的是以逗号分隔的数据 
+			var htmlObj = $.ajax({url:'../Tools/GetExportdataCSV.asp?nd='+getRandom()+'&exportType='+strexportType+'&TableId=tableid1',async:false});
+			var str = htmlObj.responseText;
+			
+			str =  encodeURIComponent(str);
+			var uri = 'data:text/csv;charset=utf-8,\ufeff' + str;
+			var downloadLink = document.createElement("a");
+			downloadLink.href = uri;
+			downloadLink.download = strexportType+".csv"; //"export.csv"
+			
+			document.body.appendChild(downloadLink);
+			downloadLink.click();
+			document.body.removeChild(downloadLink);
+		}
 	}
 }
 
@@ -273,6 +307,111 @@ function IE_ExportToXLS_AttendCard(respData)
 			i++;
 		}
 		
+		xlWorksheet.SaveAs(tfile);
+		xlWorksheet = null;
+		xlApplication.Workbooks.close();
+		xlApplication.Quit();
+		xlApplication=null;
+		alert("<%=GetToolLbl("ExportComplete")%>");	//导出完成！
+	}
+	catch(e)
+	{
+		try{
+			if (e.name != "SyntaxError")
+			{
+				//alert("导出失败("+e.message+")\n请尝试：工具 -> Internet 选项 -> 安全 -> \n自定义安全级别 -> ActiveX 控件与插件 ->\n对未标记为可安全执行脚本的ActiveX 控件初始化并执行\n设置为[启用]");
+				alert("<%=GetToolLbl("ExportFail")%>"+"("+e.message+")"+"<%=GetToolLbl("ExportFailMsg")%>");
+			}
+			else{
+				//alert(e.message+"\n请尝试：工具 -> Internet 选项 -> 安全 -> \n自定义安全级别 -> ActiveX 控件与插件 ->\n对未标记为可安全执行脚本的ActiveX 控件初始化并执行\n设置为[启用]");
+				alert(e.message+"<%=GetToolLbl("ExportFailMsg")%>");
+			}
+			xlWorksheet = null;
+			xlApplication.ActiveWorkBook.Saved = true;
+			xlApplication.Workbooks.close();
+			xlApplication.Quit();
+			xlApplication=null;
+		}
+		catch(ex)
+		{}
+	}
+}
+
+function IE_ExportToXLS_AttendMonth(respData)
+{
+	var i,j,m,t;
+	var arrFields, strField, arr;
+	var tfile = strIEFileName;
+	var month = $("#startTime").val();
+	var days = getDays(month);
+
+	try
+	{
+		var xlWorksheet ;
+		var xlApplication;
+		var cells;
+		var fdCount; //字段个数
+		
+		xlApplication = new ActiveXObject("Excel.Application");
+		xlApplication.SheetsInNewWorkbook=1; 
+		xlApplication.Workbooks.Add();
+		
+		xlWorksheet = xlApplication.Worksheets(1);	
+		xlWorksheet.name = strSheetName+month;
+		cells = xlWorksheet.Cells;
+
+
+		xlWorksheet.Range("A1", "D1").MergeCells = true; //合并单元格
+		cells(1,1).Value = month;
+
+		i=2;
+
+		for(m = 0; m < respData.rows.length; m++)
+		{
+			arrFields = respData.rows[m];
+
+			if(m == 0){ //列名
+				for (j=0;j<arrFields.cell.length ;j++ ){
+					strField = arrFields.cell[j];
+					strField = strField ? strField : "";
+
+					if(j == 0 || j == 1 || j >= arrFields.cell.length - 2){
+						xlWorksheet.Range(cells(i,j+1), cells(i+1,j+1)).MergeCells = true; //合并单元格
+						cells(i,(j+1)).Value = strField;
+					}
+					else if(j < days + 2){
+						arr = strField.split("$")
+						cells(i,(j+1)).Value = arr.length >= 1 ? arr[0] : "";
+						cells(i+1,(j+1)).Value = arr.length >= 2 ? arr[1] : "";
+					}
+				}
+			}
+			else{//列数据
+				fdCount = arrFields.cell.length - 1;
+
+				for (j=1;j<arrFields.cell.length ;j++ ){
+					strField = arrFields.cell[j];
+					strField = strField ? strField : "";
+
+					if(j == 1 || j >= arrFields.cell.length - 2){
+						xlWorksheet.Range(cells(i,j), cells(i+1,j)).MergeCells = true; //合并单元格
+						cells(i,(j)).Value = strField;
+					}
+					else if(j <= days + 2){
+						arr = strField.split(",")
+						cells(i,j).Value = arr.length >= 1 ? arr[0] : "";
+						cells(i+1,j).Value = arr.length >= 2 ? arr[1] : "";
+					}
+				}
+			}
+
+			i += 2;
+		}
+
+		for(var i = 1; i <= 31 - days; i ++){ //要删除的列数: 31(每月最大天数) - days(当月实际天数)
+			xlWorksheet.Columns(days + 2 + 1).delete(); //删除列(列索引): days + 2 + 1
+		}
+
 		xlWorksheet.SaveAs(tfile);
 		xlWorksheet = null;
 		xlApplication.Workbooks.close();

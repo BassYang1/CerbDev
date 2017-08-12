@@ -469,6 +469,7 @@ var rep={
 	RedColor : " Note: <font color=#FF0000> (red) </font>illegal ",//注：<font color=#FF0000>(红色)</font>表示非法卡
 	Month : "Month",//月份
 	WorkDay_0 : "Attendance Days",//出勤天数
+	WorkDay_1 : "Actual Attendance Days",//应到天数
 	WorkTime_0 : "Total Work Hours",//总工时
 	LateCount_0 : "Late Times",//迟到次数
 	LateTime_0 : "Late Time",//迟到时间
@@ -517,6 +518,11 @@ var rep={
 	LeaveEmp:"Employees on Leave",
 	AbsEmp:"Employees on Absence",
 	LateEmp:"Employees on Late Attendance",
+	aAttendMonthTotal: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Month Attendance",
+	AttendMonthTotal: "Month Attendance",
+	Io: "In,Out",
+	IoDesc: "Onduty",
+	AttendMonthMsg: "Do not support the format of the report",
 }
 
 var tool={

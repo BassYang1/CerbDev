@@ -209,6 +209,13 @@ function getRandom()
 	return Math.round(Math.random(0)*100000);
 }
 
+function getDays(time){ //time: 2017-08
+  	var year = time.split("-")[0];
+  	var month = time.split("-")[1];
+  	var dt = new Date(parseInt(year), parseInt(month), 0);
+  	return dt.getDate();
+}
+
 function checkWeekday(day){
 	if(day == 1){
 		return getlbl("rep.Monday");

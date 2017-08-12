@@ -334,7 +334,87 @@ elseif LCase(strexportType) = "attendcard" then
 	strJS=strJS & "</table>"
 	response.write strJS	
 
-	
+elseif LCase(strexportType) = "attendmonthtotal" then '月份出勤'
+	dim strDays, nDays, strMonth
+	strMonth = Cstr(Trim(Request.QueryString("month")))
+	strDays = Cstr(Trim(Request.QueryString("days")))
+	nDays = 0
+	if isnumeric(strDays) = true then nDays = Cint(strDays)
+
+	dim strTr1, strTr2, maxIdx, arr, strTd1, strTd2
+
+	strSQL = Session("exportdata")
+	strColumnName=GetToolLbl("AttendMonthTotalTitle")
+	arrColumn = Split(strColumnName,",")
+
+	strJS=strJS & "<tr><td colspan='" & cstr(ndays + 4) & "'>" & strMonth & "</td></tr>"
+	strTr1 = "<tr>"
+	strTr2 = "<tr>"
+	maxIdx = ubound(arrColumn) 
+	for i=0 to maxIdx 
+		if i = 0 or i = 1 or i > maxIdx - 2 then '前面两列和后台两列不合并单元格'
+			strTr1=strTr1&"<td rowspan='2'>"&arrColumn(i)&"</td>"
+		elseif i < ndays + 2 then
+			strTd1 = ""
+			strTd2 = ""
+			arr = split(arrColumn(i), "$")
+			if ubound(arr) = 0 or ubound(arr) = 1 then strTd1 = arr(0)
+			if ubound(arr) = 1 then strTd2 = arr(1)
+			strTr1=strTr1&"<td>"&strTd1&"</td>"
+			strTr2=strTr2&"<td>"&strTd2&"</td>"
+		end if
+	next  
+	strTr1=strTr1&"</tr>"
+	strTr2=strTr2&"</tr>"
+	strJS=strJS&strTr1&strTr2
+	On Error Resume Next
+	Rs.open strSQL, Conn, 2, 1
+	if err.number <> 0 then
+		Rs.close
+		set Rs=Nothing
+		fCloseADO()
+		strJS = strJS & "<tr><td>"+Err.Description+"</td></tr></table>"
+		response.write strJS
+		On Error GoTo 0
+		response.End()
+	end if
+	if Rs.eof=false and Rs.Bof=false then
+		maxIdx = Rs.Fields.Count -1
+
+		while NOT Rs.EOF
+			strTr1 = "<tr>"
+			strTr2 = "<tr>"
+			for i=1 to maxIdx
+
+				if i = 1 or i > maxIdx - 2 then '前面一列和后台两列不合并单元格'
+					if NOT ISNULL(Rs.Fields(i).value) then
+						strTr1=strTr1&"<td rowspan='2'>"&Rs.Fields(i).Value&"</td>"
+					else
+						strTr1=strTr1&"<td rowspan='2'> </td>"
+					end if
+				elseif i <= ndays + 2 then
+					if NOT ISNULL(Rs.Fields(i).value) then
+						strTd1 = ""
+						strTd2 = ""
+						arr = split(Rs.Fields(i).value, ",")
+						if len(arr) = 1 then strTd1 = arr(0)
+						if len(arr) = 2 then strTd2 = arr(1)
+						strTr1=strTr1&"<td>"&strTd1&"</td>"
+						strTr2=strTr2&"<td>"&strTd2&"</td>"
+					else
+						strTr1=strTr1&"<td> </td>"
+						strTr2=strTr2&"<td> </td>"
+					end if
+				end if
+			Next
+			strTr1=strTr1&"</tr>"
+			strTr2=strTr2&"</tr>"
+			strJS=strJS&strTr1&strTr2
+			Rs.MoveNext
+		wend
+	end if
+	strJS=strJS & "</table>"
+	response.write strJS		
 end if
 
 	

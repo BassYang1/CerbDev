@@ -52,6 +52,7 @@ fConnectADODB()
 
 strSQL = "select Employees.Name,PersonalLeave,SickLeave,WorkDay_0,cast((WorkTime_0/60.0) as decimal(18,2)) as WorkTime_0 ,Absent,LateCount_0,LeaveEarlyCount_0,LateTime_0,LeaveEarlyTime_0,OtTime_0 from Employees,AttendanceTotal where  Employees.EmployeeId=AttendanceTotal.EmployeeId and AttendanceTotal.AttendMonth='"+Trim(strAttendMonth)+"' and Employees.EmployeeId="+Trim(strEmployeeId) 
 
+'response.write strSQL
 
 WorkDay_0=0
 WorkTime_0=0

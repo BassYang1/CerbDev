@@ -471,6 +471,7 @@ var rep={
 	RedColor : " 注：<font color=#FF0000>(红色)</font>表示非法卡",
 	Month : "月份",
 	WorkDay_0 : "出勤天数",
+	WorkDay_1 : "应到天数",
 	WorkTime_0 : "总工时",
 	LateCount_0 : "迟到次数",
 	LateTime_0 : "迟到时间",
@@ -519,6 +520,11 @@ var rep={
 	LeaveEmp:"请假人员",
 	AbsEmp:"未上班人员",
 	LateEmp:"迟到人员",
+	aAttendMonthTotal: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每月出勤",
+	AttendMonthTotal: "月份出勤报表",
+	Io: "进,出",
+	IoDesc: "上下班",
+	AttendMonthMsg: "月份出勤不支持导出CSV格式",
 }
 
 var tool={
