@@ -111,7 +111,7 @@ if strOper <> "del" then
 	end if
 
 	if strAdjustDate = "" OR CDate(strAdjustDate) < Date then
-		Call ReturnMsg("false",GetEmpLbl("AdjustShiftDate_Invalid"),0)'未设置班次调整员工条件
+		Call ReturnMsg("false",GetEmpLbl("AdjustShiftDate_Invalid"),0)'班次調整時間無效
 		response.End()
 	end if
 

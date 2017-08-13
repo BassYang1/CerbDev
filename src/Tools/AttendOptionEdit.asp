@@ -49,13 +49,15 @@ strOtOff = Trim(Replace(Request.Form("IsOtOff"),"'","''"))
 strOt = Cstr(strOtOn) + "," + Cstr(strOtOff)
 
 '超时加班'
-Dim strOtOver, strEarlyOt, strLateOt, strOtAll, strOtBase, strOtBaseNum
+Dim strOtOver, strEarlyOt, strLateOt, strOtAll, strOtBase, strOtBaseNum, strOtTime, blnOtTime
 strEarlyOt = Trim(Replace(Request.Form("IsEarlyOt"),"'","''"))
 strLateOt = Trim(Replace(Request.Form("IsLateOt"),"'","''"))
 strOtAll = Trim(Replace(Request.Form("IsOtAll"),"'","''"))
 strOtBase = Trim(Replace(Request.Form("IsOtBase"),"'","''"))
 strOtBaseMin = Trim(Replace(Request.Form("OtBase"),"'","''"))
-strOtOver = Cstr(strEarlyOt) + "," + Cstr(strLateOt) + "," + Cstr(strOtAll) + "," + Cstr(strOtBase) + "," + Cstr(strOtBaseMin)
+strOtTime = Trim(Replace(Request.Form("OtTime"),"'","''"))
+blnOtTime = Trim(Replace(Request.Form("HasOtTime"),"'","''"))
+strOtOver = Cstr(strEarlyOt) + "," + Cstr(strLateOt) + "," + Cstr(strOtAll) + "," + Cstr(strOtBase) + "," + Cstr(strOtBaseMin) + "," + Cstr(strOtTime) + "," + Cstr(blnOtTime)
 
 if strOtBaseMin <> "" and not ISNUMERIC(strOtBaseMin) then
 	Call ReturnErrMsg(GetToolLbl("Ot_Over_Min_Not_Numeric"))	'"加班超时时间需填写数值"

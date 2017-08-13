@@ -587,7 +587,7 @@ var tool={
 	StrOtApply: "Application for Overtime",
 	StrOtApplyDetail: "<div>&nbsp;{{checkbox}}On Duty Punching&nbsp;&nbsp;{{checkbox}}Off Duty Punching</div>",
 	StrOtOver: "OT",
-	StrOtOverDetail: "<div>&nbsp;{{checkbox}}Advance clock in is OT.&nbsp;&nbsp;{{checkbox}}Late clock out is OT.</div><div>&nbsp;{{radiobox}}OT calculation based on work hours for advance clock in and late clock out.&nbsp;&nbsp;{{radiobox}}OT calculation based on integer folds.Base:{{textbox}} Minute",
+	StrOtOverDetail: "<div>&nbsp;{{checkbox}}Advance clock in is OT.&nbsp;&nbsp;{{checkbox}}Late clock out is OT.</div><div>&nbsp;{{radiobox}}OT calculation based on work hours for advance clock in and late clock out.&nbsp;&nbsp;{{radiobox}}OT calculation based on integer folds.Base:{{textbox}} Minute</div><div>&nbsp;OffDuty more than {{textbox}} minutes to calculate OT&nbsp;{{checkbox}}Calculate OT time include timeout range</div>",
 	StrAnalyseOffDuty: "Analysis on Brushing Card for Clock out",
 	StrAnalyseOffDutyDetail: "<div>&nbsp;{{radiobox}}The First Brushing Card&nbsp;&nbsp;{{radiobox}}The Last Brushing Card",
 	StrWorkDay: "Attendance Days",

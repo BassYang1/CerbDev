@@ -589,7 +589,7 @@ var tool={
 	StrOtApply: "申请加班",
 	StrOtApplyDetail: "<div>&nbsp;{{checkbox}}刷上班卡&nbsp;&nbsp;{{checkbox}}刷下班卡</div>",
 	StrOtOver: "超时加班",
-	StrOtOverDetail: "<div>&nbsp;{{checkbox}}提前上班属于加班&nbsp;&nbsp;{{checkbox}}延时下班属于加班</div><div>&nbsp;{{radiobox}}按提前或延后的所有工时计为加班&nbsp;&nbsp;{{radiobox}}按整数倍方式计为加班，基数：{{textbox}}分",
+	StrOtOverDetail: "<div>&nbsp;{{checkbox}}提前上班属于加班&nbsp;&nbsp;{{checkbox}}延时下班属于加班</div><div>&nbsp;{{radiobox}}按提前或延后的所有工时计为加班&nbsp;&nbsp;{{radiobox}}按整数倍方式计为加班，基数：{{textbox}}分</div><div>&nbsp;{{textbox}}提前上班属于加班&nbsp;{{checkbox}}延时下班属于加班</div>",
 	StrAnalyseOffDuty: "分析下班刷卡",
 	StrAnalyseOffDutyDetail: "<div>&nbsp;{{radiobox}}第一次刷卡&nbsp;&nbsp;{{radiobox}}最后一次刷卡",
 	StrWorkDay: "出勤天数",

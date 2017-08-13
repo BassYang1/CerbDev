@@ -32,19 +32,23 @@ function initEditForm(){
 	var strLate = getOptionValue("strLate", optObj);
 	var arrLate = (strLate ? strLate : "").split(",");
 	html = getlbl("tool.StrLateDetail");
-	html = html.replace("{{textbox}}", "<input type='text' id='LateTime' name='LateTime' value='" + (arrLate.length > 0 && !isNaN(arrLate[0]) ? arrLate[0] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	//html = html.replace("{{textbox}}", "<input type='text' id='LateTime' name='LateTime' value='" + (arrLate.length > 0 && !isNaN(arrLate[0]) ? arrLate[0] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace("{{textbox}}", "<input type='text' id='LateTime' name='LateTime' disabled value='0' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
 	html = html.replace("{{checkbox}}", "<input type='checkbox' id='HasLateTime' name='HasLateTime' " + (arrLate.length > 1 && arrLate[1] == "1" ? "checked" : "") + " role='checkbox' class='FormElement' checked='checked'>");
 	$("#tr_StrLate").children(".CaptionTD").text(getlbl("tool.StrLate"));
 	$("#tr_StrLate").children(".DataTD").html(html);
+	$("#tr_StrLate").children(".DataTD").children("div:first").hide();
 
 	//早退规则
 	var strEarly = getOptionValue("strLeaveEarly", optObj);
 	var arrEarly = (strEarly ? strEarly : "").split(",");
 	html = getlbl("tool.StrEarlyDetail");
-	html = html.replace("{{textbox}}", "<input type='text' id='EarlyTime' name='EarlyTime' value='" + (arrEarly.length > 0 && !isNaN(arrEarly[0]) ? arrEarly[0] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	///html = html.replace("{{textbox}}", "<input type='text' id='EarlyTime' name='EarlyTime' value='" + (arrEarly.length > 0 && !isNaN(arrEarly[0]) ? arrEarly[0] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace("{{textbox}}", "<input type='text' id='EarlyTime' name='EarlyTime' disabled value='0' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
 	html = html.replace("{{checkbox}}", "<input type='checkbox' id='HasEarlyTime' name='HasEarlyTime' " + (arrEarly.length > 1 && arrEarly[1] == "1" ? "checked" : "") + " role='checkbox' class='FormElement'>");
 	$("#tr_StrEarly").children(".CaptionTD").text(getlbl("tool.StrEarly"));
 	$("#tr_StrEarly").children(".DataTD").html(html);
+	$("#tr_StrEarly").children(".DataTD").children("div:first").hide();
 
 	//请假超时
 	// var strLeaveOt = getOptionValue("strAskForLeaveOT", optObj);
@@ -91,6 +95,8 @@ function initEditForm(){
 	html = html.replace(/{{radiobox}}/, "<input type='radio' checked='checked' id='IsOtAll' name='OtOver' " + (arrOTType.length > 2 && arrOTType[2] == "1" ? "checked" : "") + " role='radiobox' class='FormElement'>");
 	html = html.replace(/{{radiobox}}/, "<input type='radio' id='IsOtBase' name='OtOver' " + (arrOTType.length > 3 && arrOTType[3] == "1" ? "checked" : "") + " role='radiobox' class='FormElement'>");
 	html = html.replace("{{textbox}}", "<input type='text' id='OtBase' name='OtBase' value='" + (arrOTType.length > 4 && !isNaN(arrOTType[4]) ? arrOTType[4] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace("{{textbox}}", "<input type='text' id='OtTime' name='OtTime' value='" + (arrOTType.length > 5 && !isNaN(arrOTType[5]) ? arrOTType[5] : "") + "' role='textbox' class='FormElement ui-widget-content ui-corner-all' style='width: 15px;'>");
+	html = html.replace("{{checkbox}}", "<input type='checkbox' id='HasOtTime' name='HasOtTime' " + (arrOTType.length > 6 && arrOTType[6] == "1" ? "checked" : "") + " role='checkbox' class='FormElement' checked='checked'>");
 	$("#tr_StrOtOver").children(".CaptionTD").text(getlbl("tool.StrOtOver"));
 	$("#tr_StrOtOver").children(".DataTD").html(html);
 
@@ -249,7 +255,8 @@ function fGetFormData(){
 	var data = {};
 
 	//迟到规则
-	data.LateTime = $("#LateTime").val();
+	//data.LateTime = $("#LateTime").val();
+	data.LateTime = "0";
 	data.HasLateTime = $("#HasLateTime").is(":checked") ? "1" : "0";
 
 	if(isNaN(data.LateTime)){
@@ -258,7 +265,8 @@ function fGetFormData(){
 	}
 
 	//早退规则
-	data.EarlyTime = $("#EarlyTime").val();
+	//data.EarlyTime = $("#EarlyTime").val();
+	data.EarlyTime = "0";
 	data.HasEarlyTime = $("#HasEarlyTime").is(":checked") ? "1" : "0";
 
 	if(isNaN(data.EarlyTime)){
@@ -277,8 +285,10 @@ function fGetFormData(){
 	data.IsEarlyOt = $("#IsEarlyOt").is(":checked") ? "1" : "0";
 	data.IsLateOt = $("#IsLateOt").is(":checked") ? "1" : "0";
 	data.IsOtAll = $("#IsOtAll").is(":checked") ? "1" : "0";
-	data.IsOtAll = $("#IsOtBase").is(":checked") ? "1" : "0";
+	data.IsOtBase = $("#IsOtBase").is(":checked") ? "1" : "0";
 	data.OtBase = $("#OtBase").val();
+	data.OtTime = $("#OtTime").val();
+	data.HasOtTime = $("#HasOtTime").is(":checked") ? "1" : "0";
 
 	//结算周期
 	data.StartMonth = $("#StartMonth").val();

@@ -13,7 +13,7 @@ dim intRound
 
 Dim datDate
 Dim strMonth
-Dim arrTotalCycle
+Dim arrTotalCycle, strTotalCycle
 Dim StartDate 
 Dim EndDate   
 Dim SStardate
@@ -132,14 +132,21 @@ end if
     '*********************************************************************************
     Set rsz = Conn.Execute("select getdate() as SDate")
     datDate = Year(rsz("SDate")) & "-" & Month(rsz("SDate")) & "-" & Day(rsz("SDate")) '当前日期
-    Set rsz = Conn.Execute("Select * from Options where variablename='StrTotalCycle'")
-    if isnull(rsz("variablevalue"))  then 
-    	arrtotalcycle=Split("0-"&GetToolLbl("ThisMonth")&",1,0-"&GetToolLbl("ThisMonth")&",31",",")	'本月
-    else
-	    arrtotalcycle = Split(rsz("variablevalue"), ",")
-    end if
     rsz.Close
-	
+
+
+	Rs.open "Select VariableValue from Options where variablename='StrTotalCycle'", Conn, 1, 1
+	If Not Rs.eof Then
+		strTotalCycle = Trim(Rs.fields("VariableValue").value)
+	End if
+
+    if strTotalCycle = "" then     
+    	strTotalCycle="0-"&GetToolLbl("ThisMonth")&",1,0-"&GetToolLbl("ThisMonth")&",31"	'本月
+    end if
+	Rs.close
+
+	arrtotalcycle=Split(strTotalCycle,",")	'本月
+
 	for intround=0 to ubound(arrtotalcycle)
 		if arrtotalcycle(intround)="" or isempty(arrtotalcycle(intround)) then 
 			Call ReturnMsg("false",GetToolLbl("TotalCycleError"),0)	'统计周期设置有误！无法统计！
@@ -218,7 +225,9 @@ end if
 	else
 		strMsg = GetEmpLbl("No")	'"否"
 	end if
-	
+
+	'Call ReturnErrMsg(StartDate & " " & EndDate & " " & strmonth & " 1 " & blndimission)
+
 	if strBy = "page" then 
 		'页面立即调用统计
 		Conn.Execute "Update Options set VariableValue='' where VariableName='strTotal'"
@@ -231,15 +240,15 @@ end if
 		
 		'Call AddLogEvent("工具-考勤统计-统计","统计","立即统计["+startdate+"]-["+enddate+"]，仅统计离职:"+strMsg)
 		Call AddLogEvent(GetToolLbl("Tool")&"-"&GetToolLbl("AttendTotal")&"-"&GetToolLbl("Total"),GetToolLbl("Total"),GetToolLbl("ImmediatelyTotal")&"["&startdate&"]-["&enddate&"], "&GetToolLbl("TotalDimission")&strMsg)
-		
+
 		Set MyComm = Server.CreateObject("ADODB.Command")
 		MyComm.ActiveConnection = Conn 'MyConStr是数据库连接字串
 		MyComm.CommandTimeout=0
 		MyComm.CommandText = "pAttendTotal" '指定存储过程名
 		MyComm.CommandType = 4 '表明这是一个存储过程
 		MyComm.Prepared = true '要求将SQL命令先行编译
-		Mycomm.Parameters(1) = startdate
-		Mycomm.Parameters(2) = enddate
+		Mycomm.Parameters(1) = StartDate
+		Mycomm.Parameters(2) = EndDate
 		Mycomm.Parameters(3) = strmonth
 		Mycomm.parameters(4)="1"
 		Mycomm.parameters(5)=blndimission

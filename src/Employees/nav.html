@@ -28,6 +28,7 @@ window.onload = function() {
 		var span=myDiv[1].getElementsByTagName("span")[0];
 		span.click();//当只有一个大菜单时，自动展开
 	}
+
 	$("#spanNavEmp").click(function(){  
 		try{
 			if($("#divNavEmp").hasClass('collapsed')){
@@ -35,7 +36,16 @@ window.onload = function() {
 			}
 		}catch(exception){
 		}
-	});  
+	}); 
+
+	$("#spanNavAtt").click(function(){  
+		try{
+			if($("#divNavAtt").hasClass('collapsed')){
+				window.parent.mainFrame.location.href="Shifts.html";
+			}
+		}catch(exception){}
+	}); 
+
 	try{
 		myDiv = my_menu.getElementsByTagName("div");
 		if(myDiv.length >= 2){
@@ -56,14 +66,7 @@ window.onload = function() {
 	}catch(Exception){
 	}
 	
-	$("#spanNavAtt").click(function(){  
-		try{
-			if($("#divNavAtt").hasClass('collapsed')){
-				window.parent.mainFrame.location.href="Shifts.html";
-			}
-		}catch(exception){}
-	}); 
-	$("#hrefAttShift").attr("href","Shifts.html?nd="+getRandom() );
+	//$("#hrefAttShift").attr("href","Shifts.html?nd="+getRandom() );
 };
 </script>
 </head>
@@ -71,12 +74,12 @@ window.onload = function() {
 <div class="line"></div>
 <div id="my_menu" class="sdmenu" style="top:10px;">
 	<div class="collapsed " style="color:#FFFFFF; font-weight:bold;overflow:hidden; text-align:center " id="divEmp">Employees</div>
-	<div id="divNavEmp" class=" collapsed">
+	<div id="divNavEmp" class="collapsed">
 		<span id="spanNavEmp">Employees Data</span>
 		<a id="hrefDept" href="Department.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Department list</a>
 		<a id="hrefEmp" href="Employees.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Employees list</a>
 	</div>
-    <div id="divNavAtt" class=" collapsed">
+    <div id="divNavAtt" class="collapsed">
 		<span id="spanNavAtt">Attend</span>
 		<a id="hrefAttShift" href="Shifts.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts</a>
 		<a id="hrefAdjustShift" href="AdjustShifts.html" target="mainFrame" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts Adjustment</a>
